@@ -188,7 +188,6 @@
             margin-top: 10px;
         }
 
-        /* شريط أزرار التفاعل الجديد */
         .interaction-bar {
             display: flex;
             justify-content: space-around;
@@ -207,15 +206,54 @@
             display: flex;
             align-items: center;
             gap: 5px;
-            transition: color 0.2s;
-        }
-
-        .action-btn:hover {
-            color: var(--primary-glow);
         }
 
         .action-btn.liked {
             color: var(--like-red);
+        }
+
+        /* قسم التعليقات */
+        .comments-section {
+            display: none;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .comment-input-box input {
+            flex: 1;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .comment-input-box button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .comment-item {
+            background-color: var(--input-bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 6px;
+            border: 1px solid var(--border-color);
         }
 
         input[type="file"] {
@@ -338,37 +376,62 @@
                 content.innerText = text;
             }
 
-            // إنشاء شريط التفاعل أسفل كل بطاقة
+            const postId = 'post-' + Math.random().toString(36).substr(2, 9);
+
             const actionBar = document.createElement('div');
             actionBar.className = 'interaction-bar';
-
             actionBar.innerHTML = `
                 <button class="action-btn" onclick="toggleLike(this)">❤️ إعجاب</button>
-                <button class="action-btn" onclick="alert('قريباً: فتح نافذة كتابة تعليق')">💬 تعليق</button>
-                <button class="action-btn" onclick="alert('تم إعادة نشر المنشور بنجاح!')">🔁 إعادة نشر</button>
-                <button class="action-btn" onclick="sharePost('${event.id || ''}')">🔗 مشاركة</button>
+                <button class="action-btn" onclick="toggleCommentBox('${postId}')">💬 تعليق</button>
+                <button class="action-btn" onclick="alert('تم إعادة النشر بنجاح!')">🔁 إعادة نشر</button>
+                <button class="action-btn" onclick="sharePost()">🔗 مشاركة</button>
+            `;
+
+            const commentsSection = document.createElement('div');
+            commentsSection.className = 'comments-section';
+            commentsSection.id = postId;
+            commentsSection.innerHTML = `
+                <div class="comment-input-box">
+                    <input type="text" placeholder="اكتب تعليقك..." id="input-${postId}">
+                    <button onclick="addComment('${postId}')">إرسال</button>
+                </div>
+                <div id="list-${postId}"></div>
             `;
 
             card.appendChild(author);
             card.appendChild(content);
             card.appendChild(actionBar);
+            card.appendChild(commentsSection);
             feedDiv.prepend(card);
         }
 
         function toggleLike(btn) {
             btn.classList.toggle('liked');
-            if (btn.classList.contains('liked')) {
-                btn.innerText = '❤️ أعجبك';
-            } else {
-                btn.innerText = '❤️ إعجاب';
-            }
+            btn.innerText = btn.classList.contains('liked') ? '❤️ أعجبك' : '❤️ إعجاب';
         }
 
-        function sharePost(id) {
+        function toggleCommentBox(id) {
+            const sec = document.getElementById(id);
+            sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function addComment(id) {
+            const input = document.getElementById(`input-${id}`);
+            const list = document.getElementById(`list-${id}`);
+            if (!input.value.trim()) return;
+
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            item.innerText = input.value;
+            list.appendChild(item);
+            input.value = '';
+        }
+
+        function sharePost() {
             if (navigator.share) {
                 navigator.share({ title: 'منصة كلمات', url: window.location.href });
             } else {
-                alert('تم نسخ رابط المنصة لـ الحافظة!');
+                alert('تم نسخ رابط المنصة!');
             }
         }
 
