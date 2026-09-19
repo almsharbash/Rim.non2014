@@ -1,198 +1,231 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة كلمات - Nostr</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0d1322;
-            --card-bg: #161f33;
-            --text-color: #f1f5f9;
+            --bg-primary: #0a0e17;
+            --bg-secondary: #121824;
+            --bg-tertiary: #1a2332;
+            --border-color: #26334d;
+            --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --primary: #2563eb;
-            --primary-glow: #38bdf8;
-            --gold: #f59e0b;
-            --border-color: #243049;
-            --input-bg: #0f172a;
-            --like-red: #ef4444;
+            --accent-blue: #38bdf8;
+            --accent-purple: #818cf8;
+            --accent-red: #f43f5e;
+            --accent-green: #34d399;
         }
 
-        [data-theme="light"] {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-color: #0f172a;
-            --text-secondary: #64748b;
-            --primary: #2563eb;
-            --primary-glow: #0284c7;
-            --gold: #d97706;
-            --border-color: #e2e8f0;
-            --input-bg: #f1f5f9;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 12px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: background-color 0.3s, color 0.3s;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 0 10px;
         }
 
-        .container {
-            max-width: 650px;
+        .app-container {
             width: 100%;
+            max-width: 620px;
+            padding-bottom: 40px;
         }
 
+        /* Header */
         header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 0 20px 0;
+            padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
-            margin-bottom: 15px;
+            z-index: 100;
         }
 
-        .logo-box {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .logo-box img {
-            width: 42px;
-            height: 42px;
+        .brand img {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--gold);
+            border: 2px solid var(--accent-blue);
         }
 
-        .logo-box h1 {
-            font-size: 22px;
-            margin: 0;
-            color: var(--primary-glow);
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .icon-btn {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 6px 12px;
+        .status-badge {
+            font-size: 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .status {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .create-post-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 15px;
-            margin-bottom: 25px;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 110px;
-            background-color: var(--input-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 15px;
-            resize: vertical;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        textarea:focus {
-            border-color: var(--primary-glow);
-        }
-
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 12px;
-        }
-
-        .file-upload-btn {
+            background-color: rgba(52, 211, 153, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(52, 211, 153, 0.2);
             display: flex;
             align-items: center;
             gap: 6px;
-            background-color: var(--input-bg);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+        }
+
+        /* Composer */
+        .composer {
+            background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            color: var(--gold);
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 16px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .composer textarea {
+            width: 100%;
+            height: 90px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 15px;
+            resize: none;
+            outline: none;
+        }
+
+        .composer-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .attach-btn {
+            background: transparent;
+            border: none;
+            color: var(--accent-blue);
             font-size: 13px;
-            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .attach-btn:hover {
+            background-color: var(--bg-tertiary);
         }
 
         .publish-btn {
-            background-color: var(--primary);
-            color: #ffffff;
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: #fff;
             border: none;
-            padding: 9px 22px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
             font-size: 14px;
             cursor: pointer;
+            transition: opacity 0.2s;
         }
 
+        .publish-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Posts */
         .post-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
+            background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            word-break: break-word;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
         }
 
-        .post-author {
-            font-size: 12px;
-            color: var(--primary-glow);
-            margin-bottom: 8px;
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
+            color: var(--accent-blue);
+            border: 1px solid var(--border-color);
         }
 
-        .post-content {
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .author-key {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .post-body {
             font-size: 15px;
             line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            white-space: pre-line;
         }
 
-        .post-image {
-            max-width: 100%;
-            border-radius: 10px;
-            margin-top: 10px;
+        .post-media {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-top: 8px;
+            border: 1px solid var(--border-color);
         }
 
-        .interaction-bar {
+        /* Action Buttons */
+        .post-actions {
             display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-top: 12px;
+            justify-content: space-between;
             padding-top: 10px;
             border-top: 1px solid var(--border-color);
         }
@@ -201,112 +234,137 @@
             background: transparent;
             border: none;
             color: var(--text-secondary);
-            cursor: pointer;
             font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
         }
 
         .action-btn.liked {
-            color: var(--like-red);
+            color: var(--accent-red);
         }
 
-        /* قسم التعليقات */
-        .comments-section {
+        /* Inline Comments Section */
+        .comments-container {
             display: none;
             margin-top: 12px;
-            padding-top: 10px;
+            padding-top: 12px;
             border-top: 1px dashed var(--border-color);
         }
 
-        .comment-input-box {
+        .comment-box {
             display: flex;
             gap: 8px;
             margin-bottom: 10px;
         }
 
-        .comment-input-box input {
+        .comment-box input {
             flex: 1;
-            background-color: var(--input-bg);
+            background-color: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 8px 12px;
-            border-radius: 6px;
+            border-radius: 20px;
+            padding: 8px 14px;
+            color: var(--text-primary);
             font-size: 13px;
             outline: none;
         }
 
-        .comment-input-box button {
-            background-color: var(--primary);
+        .comment-box input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .comment-box button {
+            background-color: var(--accent-blue);
             color: #fff;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 12px;
             cursor: pointer;
         }
 
         .comment-item {
-            background-color: var(--input-bg);
+            background-color: var(--bg-tertiary);
             padding: 8px 12px;
-            border-radius: 6px;
+            border-radius: 10px;
             font-size: 13px;
             margin-top: 6px;
-            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
         }
 
-        input[type="file"] {
-            display: none;
+        /* Modern Toast Notification */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
+
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="app-container">
         <header>
-            <div class="logo-box">
+            <div class="brand">
                 <img src="https://raw.githubusercontent.com/almsharbash/Rim.non2014/main/1000224814.png" alt="كلمات" onerror="this.style.display='none'">
                 <h1>كلمات</h1>
             </div>
-            <div class="header-actions">
-                <button class="icon-btn" onclick="alert('لا توجد إشعارات جديدة حالياً')">🔔 الإشعارات</button>
-                <button class="icon-btn" onclick="toggleTheme()">☀️/🌙</button>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span id="statusText">متصل بالشبكة</span>
             </div>
         </header>
 
-        <div id="status" class="status">جاري الاتصال بشبكة Nostr...</div>
-
-        <div class="create-post-card">
-            <textarea id="postInput" placeholder="اكتب كلمتك هنا..."></textarea>
-            <div class="post-actions">
-                <label class="file-upload-btn">
-                    📷 إضافة صورة من المعرض
+        <div class="composer">
+            <textarea id="postInput" placeholder="ماذا يدور في ذهنك؟"></textarea>
+            <div class="composer-footer">
+                <label class="attach-btn">
+                    📷 إضافة صورة
                     <input type="file" id="imageInput" accept="image/*" onchange="handleImageSelect(event)">
                 </label>
-                <button class="publish-btn" onclick="publishPost()">نشر 🪶</button>
+                <button class="publish-btn" onclick="publishPost()">نشر</button>
             </div>
-            <div id="uploadStatus" style="font-size: 12px; color: var(--gold); margin-top: 6px;"></div>
+            <div id="uploadStatus" style="font-size: 12px; color: var(--accent-blue); margin-top: 6px;"></div>
         </div>
 
         <div id="feed"></div>
     </div>
 
+    <div id="toast">تم الإجراء بنجاح</div>
+
     <script>
         const relayUrl = 'wss://relay.damus.io';
         const socket = new WebSocket(relayUrl);
-        const statusDiv = document.getElementById('status');
         const feedDiv = document.getElementById('feed');
         let selectedImageUrl = "";
 
         socket.onopen = () => {
-            statusDiv.innerText = 'تم الاتصال بنجاح! جاري جلب أحدث المنشورات...';
-            statusDiv.style.color = '#10b981';
-
-            const request = JSON.stringify([
-                "REQ", "main-feed",
-                { kinds: [1], limit: 15 }
-            ]);
+            document.getElementById('statusText').innerText = 'متصل بشبكة Nostr';
+            const request = JSON.stringify(["REQ", "main-feed", { kinds: [1], limit: 15 }]);
             socket.send(request);
         };
 
@@ -317,10 +375,11 @@
             }
         };
 
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
         async function handleImageSelect(event) {
@@ -339,14 +398,14 @@
                     body: formData
                 });
                 const result = await response.json();
-                if (result && result.data && result.data.url) {
+                if (result?.data?.url) {
                     selectedImageUrl = result.data.url;
-                    uploadStatus.innerText = "تم إرفاق الصورة بنجاح! ✅";
+                    uploadStatus.innerText = "تم إرفاق الصورة جاهزة للنشر ✨";
                 } else {
-                    uploadStatus.innerText = "تعذر رفع الصورة، يمكنك إدراج رابط الصورة مباشرة.";
+                    uploadStatus.innerText = "فشل رفع الصورة.";
                 }
             } catch (err) {
-                uploadStatus.innerText = "حدث خطأ أثناء الاتصال بخادم الصور.";
+                uploadStatus.innerText = "خطأ في الاتصال أثناء رفع الصورة.";
             }
         }
 
@@ -354,65 +413,54 @@
             const card = document.createElement('div');
             card.className = 'post-card';
             
-            const author = document.createElement('div');
-            author.className = 'post-author';
-            author.innerText = `ناشر: ${event.pubkey ? event.pubkey.substring(0, 10) : "مستخدم"}...`;
+            const pubkeyShort = event.pubkey ? event.pubkey.substring(0, 8) : "مستخدم";
+            const postId = 'post-' + Math.random().toString(36).substr(2, 9);
 
-            const content = document.createElement('div');
-            content.className = 'post-content';
-            
             let text = event.content || "";
             const imgRegex = /(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))/i;
             const match = text.match(imgRegex);
+            let mediaHtml = "";
 
             if (match) {
                 text = text.replace(match[0], '');
-                content.innerText = text;
-                const img = document.createElement('img');
-                img.src = match[0];
-                img.className = 'post-image';
-                content.appendChild(img);
-            } else {
-                content.innerText = text;
+                mediaHtml = `<img src="${match[0]}" class="post-media" loading="lazy">`;
             }
 
-            const postId = 'post-' + Math.random().toString(36).substr(2, 9);
-
-            const actionBar = document.createElement('div');
-            actionBar.className = 'interaction-bar';
-            actionBar.innerHTML = `
-                <button class="action-btn" onclick="toggleLike(this)">❤️ إعجاب</button>
-                <button class="action-btn" onclick="toggleCommentBox('${postId}')">💬 تعليق</button>
-                <button class="action-btn" onclick="alert('تم إعادة النشر بنجاح!')">🔁 إعادة نشر</button>
-                <button class="action-btn" onclick="sharePost()">🔗 مشاركة</button>
-            `;
-
-            const commentsSection = document.createElement('div');
-            commentsSection.className = 'comments-section';
-            commentsSection.id = postId;
-            commentsSection.innerHTML = `
-                <div class="comment-input-box">
-                    <input type="text" placeholder="اكتب تعليقك..." id="input-${postId}">
-                    <button onclick="addComment('${postId}')">إرسال</button>
+            card.innerHTML = `
+                <div class="post-header">
+                    <div class="avatar">${pubkeyShort.substring(0, 2).toUpperCase()}</div>
+                    <div class="author-info">
+                        <span class="author-name">${pubkeyShort}</span>
+                        <span class="author-key">Nostr Protocol</span>
+                    </div>
                 </div>
-                <div id="list-${postId}"></div>
+                <div class="post-body">${escapeHtml(text)}${mediaHtml}</div>
+                <div class="post-actions">
+                    <button class="action-btn" onclick="toggleLike(this)">❤️ إعجاب</button>
+                    <button class="action-btn" onclick="toggleComments('${postId}')">💬 تعليق</button>
+                    <button class="action-btn" onclick="repost()">🔁 إعادة نشر</button>
+                    <button class="action-btn" onclick="sharePost()">🔗 مشاركة</button>
+                </div>
+                <div class="comments-container" id="${postId}">
+                    <div class="comment-box">
+                        <input type="text" placeholder="اكتب تعليقك..." id="input-${postId}">
+                        <button onclick="addComment('${postId}')">إرسال</button>
+                    </div>
+                    <div id="list-${postId}"></div>
+                </div>
             `;
 
-            card.appendChild(author);
-            card.appendChild(content);
-            card.appendChild(actionBar);
-            card.appendChild(commentsSection);
             feedDiv.prepend(card);
         }
 
         function toggleLike(btn) {
             btn.classList.toggle('liked');
-            btn.innerText = btn.classList.contains('liked') ? '❤️ أعجبك' : '❤️ إعجاب';
+            showToast(btn.classList.contains('liked') ? 'تم إضافة الإعجاب' : 'تم إلغاء الإعجاب');
         }
 
-        function toggleCommentBox(id) {
-            const sec = document.getElementById(id);
-            sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+        function toggleComments(id) {
+            const container = document.getElementById(id);
+            container.style.display = container.style.display === 'block' ? 'none' : 'block';
         }
 
         function addComment(id) {
@@ -425,13 +473,19 @@
             item.innerText = input.value;
             list.appendChild(item);
             input.value = '';
+            showToast('تم إضافة تعليقك');
+        }
+
+        function repost() {
+            showToast('تمت إعادة النشر بنجاح');
         }
 
         function sharePost() {
             if (navigator.share) {
                 navigator.share({ title: 'منصة كلمات', url: window.location.href });
             } else {
-                alert('تم نسخ رابط المنصة!');
+                navigator.clipboard.writeText(window.location.href);
+                showToast('تم نسخ رابط المنشور');
             }
         }
 
@@ -444,19 +498,25 @@
             }
 
             if (!contentText) {
-                alert("يرجى كتابة نص أو إرفاق صورة أولاً.");
+                showToast('يرجى كتابة نص أو إضافة صورة أولاً');
                 return;
             }
 
-            const dummyEvent = {
-                pubkey: "أنت (المستخدم الحالي)",
+            displayPost({
+                pubkey: "أنت (المستقبل)",
                 content: contentText
-            };
-            displayPost(dummyEvent);
+            });
 
             input.value = "";
             document.getElementById('uploadStatus').innerText = "";
             selectedImageUrl = "";
+            showToast('تم نشر كلمتك بنجاح');
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
         }
     </script>
 </body>
