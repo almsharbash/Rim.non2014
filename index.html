@@ -12,6 +12,9 @@
     <meta property="og:type" content="website" />
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- استدعاء مكتبة Nostr الرسمية لاشتقاق وتوليد المفاتيح بدقة -->
+    <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
 
     <style>
         :root {
@@ -565,7 +568,7 @@
 </head>
 <body class="dark-theme">
 
-    <div id="welcome-toast" class="welcome-toast">أهلاً بك في منصة كلمات الحرّة! ✨</div>
+    <div id="welcome-toast" class="welcome-toast">تم توليد مفاتيح Nostr بنجاح! ✨</div>
 
     <!-- الهيدر -->
     <header class="app-header">
@@ -640,7 +643,7 @@
             <div class="input-group">
                 <label>المفتاح العام (Public Key - npub):</label>
                 <div class="key-box-wrapper">
-                    <input type="text" id="setting-npub" class="input-field key-box-input" placeholder="npub1..." value="لم يتم الإنشاء بعد">
+                    <input type="text" id="setting-npub" class="input-field key-box-input" readonly placeholder="جاري التوليد...">
                     <button class="copy-btn" onclick="copyToClipboard('setting-npub')">نسخ</button>
                 </div>
             </div>
@@ -652,7 +655,7 @@
 
             <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
                 <button class="btn-primary" onclick="updateCustomKeys()">حفظ وتعديل المفاتيح يدوياً 💾</button>
-                <button class="btn-secondary" onclick="generateNewNostrAccount()">توليد حساب مفاتيح جديد ✨</button>
+                <button class="btn-secondary" onclick="generateNewNostrAccount(true)">توليد حساب مفاتيح جديد ✨</button>
             </div>
         </div>
     </section>
@@ -720,93 +723,27 @@
 
     <script>
         // ==========================================
-        // خوارزمية تشفير Bech32 وتوليد مفاتيح Nostr ذاتية ومستقلة 100%
+        // وحدة توليد مفاتيح Nostr المشفرة
         // ==========================================
-        const NostrCrypto = (() => {
-            const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+        const NostrCrypto = {
+            generateAccount: function() {
+                try {
+                    // توليد مفتاح خاص عشوائي محلياً باستخدام NostrTools
+                    const sk = window.NostrTools.generatePrivateKey();
+                    const nsec = window.NostrTools.nip19.nsecEncode(sk);
 
-            function polymod(values) {
-                let chk = 1;
-                for (let p = 0; p < values.length; ++p) {
-                    let top = chk >> 25;
-                    chk = ((chk & 0x1ffffff) << 5) ^ values[p];
-                    if ((top >> 0) & 1) chk ^= 0x3b6a57b2;
-                    if ((top >> 1) & 1) chk ^= 0x26508e6d;
-                    if ((top >> 2) & 1) chk ^= 0x1ea119fa;
-                    if ((top >> 3) & 1) chk ^= 0x3d4233dd;
-                    if ((top >> 4) & 1) chk ^= 0x2a1462b3;
-                }
-                return chk;
-            }
-
-            function hrpExpand(hrp) {
-                let ret = [];
-                for (let i = 0; i < hrp.length; ++i) ret.push(hrp.charCodeAt(i) >> 5);
-                ret.push(0);
-                for (let i = 0; i < hrp.length; ++i) ret.push(hrp.charCodeAt(i) & 31);
-                return ret;
-            }
-
-            function createChecksum(hrp, data) {
-                let values = hrpExpand(hrp).concat(data).concat([0, 0, 0, 0, 0, 0]);
-                let mod = polymod(values) ^ 1;
-                let ret = [];
-                for (let p = 0; p < 6; ++p) ret.push((mod >> (5 * (5 - p))) & 31);
-                return ret;
-            }
-
-            function convertBits(data, frombits, tobits, pad = true) {
-                let acc = 0, bits = 0, ret = [], maxv = (1 << tobits) - 1;
-                for (let i = 0; i < data.length; ++i) {
-                    let value = data[i];
-                    if (value < 0 || (value >> frombits) !== 0) return null;
-                    acc = (acc << frombits) | value;
-                    bits += frombits;
-                    while (bits >= tobits) {
-                        bits -= tobits;
-                        ret.push((acc >> bits) & maxv);
-                    }
-                }
-                if (pad) {
-                    if (bits > 0) ret.push((acc << (tobits - bits)) & maxv);
-                } else if (bits >= frombits || ((acc << (tobits - bits)) & maxv)) {
-                    return null;
-                }
-                return ret;
-            }
-
-            function encodeBech32(hrp, hex) {
-                let bytes = [];
-                for (let c = 0; c < hex.length; c += 2) {
-                    bytes.push(parseInt(hex.substr(c, 2), 16));
-                }
-                let data5 = convertBits(bytes, 8, 5, true);
-                let combined = data5.concat(createChecksum(hrp, data5));
-                let ret = hrp + '1';
-                for (let p = 0; p < combined.length; ++p) {
-                    ret += CHARSET.charAt(combined[p]);
-                }
-                return ret;
-            }
-
-            function getRandomHex(bytesLength = 32) {
-                const array = new Uint8Array(bytesLength);
-                window.crypto.getRandomValues(array);
-                return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-            }
-
-            return {
-                generateAccount: function() {
-                    const privateHex = getRandomHex(32);
-                    const publicHex = getRandomHex(32);
-
-                    const nsec = encodeBech32('nsec', privateHex);
-                    const npub = encodeBech32('npub', publicHex);
+                    // اشتقاق المفتاح العام المترابط به
+                    const pk = window.NostrTools.getPublicKey(sk);
+                    const npub = window.NostrTools.nip19.npubEncode(pk);
 
                     return { nsec, npub };
+                } catch (err) {
+                    console.error("خطأ في مكتبة NostrTools:", err);
+                    alert("تعذر استخدام مكتبة التشفير، تأكد من الاتصال بالشبكة لمرة واحدة.");
+                    return null;
                 }
-            };
-        })();
+            }
+        };
 
         // ==========================================
         // منطق وإداريات المنصة
@@ -822,7 +759,7 @@
                 avatar: 'ك',
                 avatarBg: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
                 time: 'الآن',
-                text: '🎉 أهلاً بك في منصة كلمات! يمكنك الآن تعديل وإدارة المفاتيح الخاصة والعامة يدوياً بنجاح.',
+                text: '🎉 أهلاً بك في منصة كلمات! تم تحديث النظام وتوليد مفاتيح Nostr الخاصة بك بنجاح وأمان محلياً.',
                 zaps: 12,
                 likes: 24,
                 reposts: 5,
@@ -841,8 +778,9 @@
             return div.innerHTML;
         }
 
-        function showWelcomeBanner() {
+        function showWelcomeBanner(message = "أهلاً بك في منصة كلمات الحرّة! ✨") {
             const toast = document.getElementById('welcome-toast');
+            toast.textContent = message;
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
@@ -959,21 +897,19 @@
             closePrimalComposer();
         }
 
-        // توليد حساب جديد وحفظه
-        function generateNewNostrAccount() {
-            try {
-                const keys = NostrCrypto.generateAccount();
+        // توليد حساب جديد وحفظه تلقائياً أو يدوياً
+        function generateNewNostrAccount(isManual = false) {
+            const keys = NostrCrypto.generateAccount();
+            if (!keys) return;
 
-                document.getElementById('setting-nsec').value = keys.nsec;
-                document.getElementById('setting-npub').value = keys.npub;
+            document.getElementById('setting-nsec').value = keys.nsec;
+            document.getElementById('setting-npub').value = keys.npub;
 
-                localStorage.setItem('kalimat_nsec', keys.nsec);
-                localStorage.setItem('kalimat_npub', keys.npub);
+            localStorage.setItem('kalimat_nsec', keys.nsec);
+            localStorage.setItem('kalimat_npub', keys.npub);
 
-                showWelcomeBanner();
-            } catch (error) {
-                console.error("خطأ التوليد:", error);
-                alert("حدث خطأ أثناء توليد المفاتيح.");
+            if (isManual) {
+                showWelcomeBanner("تم توليد زوج مفاتيح جديد بنجاح! ✨");
             }
         }
 
@@ -1005,7 +941,7 @@
             const inputField = document.getElementById(elementId);
             const text = inputField.value;
             
-            if(!text || text === "لم يتم الإنشاء بعد") return;
+            if(!text) return;
             
             navigator.clipboard.writeText(text).then(() => {
                 alert("تم نسخ المفتاح بنجاح!");
@@ -1041,10 +977,16 @@
                 });
             }
 
-            const nsec = localStorage.getItem('kalimat_nsec');
-            const npub = localStorage.getItem('kalimat_npub');
-            if(nsec) document.getElementById('setting-nsec').value = nsec;
-            if(npub) document.getElementById('setting-npub').value = npub;
+            let nsec = localStorage.getItem('kalimat_nsec');
+            let npub = localStorage.getItem('kalimat_npub');
+
+            // إذا لم تكن هناك مفاتيح مخزنة سابقاً، يتم التوليد التلقائي محلياً فوراً
+            if (!nsec || !npub) {
+                generateNewNostrAccount(false);
+            } else {
+                document.getElementById('setting-nsec').value = nsec;
+                document.getElementById('setting-npub').value = npub;
+            }
         }
 
         function toggleLike(btn) {
