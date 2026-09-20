@@ -106,10 +106,6 @@
             transition: opacity 0.2s;
         }
 
-        .btn-primary:active {
-            opacity: 0.8;
-        }
-
         .btn-secondary {
             background-color: transparent;
             border: 1px solid var(--primary);
@@ -121,65 +117,99 @@
             width: 100%;
             margin-top: 8px;
         }
+
+        /* واجهة المنصة الرئيسية بعد تسجيل الدخول */
+        #appView {
+            display: none;
+        }
+
+        .post-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
 
-    <!-- إدارة الحساب والمفاتيح -->
-    <div class="card">
-        <div class="section-title">
-            🔑 إدارة الحساب والمفاتيح
-        </div>
-        
-        <div class="form-group">
-            <label>المفتاح العام (Public Key - npub):</label>
-            <div class="input-wrapper">
-                <input type="text" id="publicKeyInput" placeholder="سيظهر المفتاح العام هنا...">
-                <button type="button" class="btn-copy" onclick="copyField('publicKeyInput')">نسخ</button>
+    <!-- 1. صفحة التسجيل والدخول -->
+    <div id="loginView">
+        <div class="card" style="margin-bottom: 15px;">
+            <div class="section-title">🔑 إدارة الحساب والمفاتيح</div>
+            
+            <div class="form-group">
+                <label>المفتاح العام (Public Key - npub):</label>
+                <div class="input-wrapper">
+                    <input type="text" id="publicKeyInput" placeholder="سيظهر المفتاح العام هنا...">
+                    <button type="button" class="btn-copy" onclick="copyField('publicKeyInput')">نسخ</button>
+                </div>
             </div>
+
+            <div class="form-group">
+                <label>المفتاح الخاص (Private Key - nsec):</label>
+                <div class="input-wrapper">
+                    <input type="text" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+                    <button type="button" class="btn-copy" onclick="copyField('privateKeyInput')">نسخ</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
+            <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">تسجيل الدخول والدخول للمنصة 🚀</button>
         </div>
 
-        <div class="form-group">
-            <label>المفتاح الخاص (Private Key - nsec):</label>
-            <div class="input-wrapper">
-                <input type="text" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
-                <button type="button" class="btn-copy" onclick="copyField('privateKeyInput')">نسخ</button>
-            </div>
-        </div>
+        <div class="card">
+            <div class="section-title">👤 تعديل الملف الشخصي</div>
 
-        <button type="button" class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
-        <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">تسجيل الدخول والدخول للمنصة</button>
+            <div class="form-group">
+                <label>اسم العرض:</label>
+                <input type="text" id="displayNameInput" placeholder="أدخل اسم العرض">
+            </div>
+
+            <div class="form-group">
+                <label>اسم المستخدم (Handle):</label>
+                <input type="text" id="handleInput" placeholder="username">
+            </div>
+
+            <div class="form-group">
+                <label>رابط الصورة الشخصية (Picture URL):</label>
+                <input type="url" id="pictureUrlInput" placeholder="https://example.com/avatar.jpg">
+            </div>
+
+            <div class="form-group">
+                <label>نبذة شخصية (Bio):</label>
+                <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
+            </div>
+
+            <button type="button" class="btn-primary" onclick="saveProfileChanges()">حفظ التغيرات</button>
+        </div>
     </div>
 
-    <!-- تعديل الملف الشخصي -->
-    <div class="card">
-        <div class="section-title">
-            👤 تعديل الملف الشخصي
+    <!-- 2. واجهة المنصة الرئيسية (تظهر بعد الدخول) -->
+    <div id="appView">
+        <div class="card">
+            <div class="section-title" style="justify-content: space-between;">
+                <span>🌐 منصة كلمات</span>
+                <button class="btn-secondary" style="width: auto; padding: 4px 10px; margin: 0;" onclick="logout()">خروج</button>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">أهلاً بك <b id="userDisplayName">المستخدم</b> في شبكة Nostr!</p>
+            
+            <div class="form-group">
+                <textarea id="newPostInput" rows="3" placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
+            </div>
+            <button class="btn-primary" onclick="publishPost()">نشر في الشبكة ✍️</button>
         </div>
 
-        <div class="form-group">
-            <label>اسم العرض:</label>
-            <input type="text" id="displayNameInput" placeholder="أدخل اسم العرض">
+        <div class="section-title" style="margin-top: 15px;">📜 التغذية والأحداث الأخيرة</div>
+        <div id="feedContainer">
+            <div class="post-card">
+                <b>كلمات Bot 🤖</b>
+                <p style="margin: 8px 0 0 0; color: var(--text-muted);">مرحباً بك في المنصة! حسابك متصل وجاهز لنشر وتصفح المنشورات.</p>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label>اسم المستخدم (Handle):</label>
-            <input type="text" id="handleInput" placeholder="username">
-        </div>
-
-        <div class="form-group">
-            <label>رابط الصورة الشخصية (Picture URL):</label>
-            <input type="url" id="pictureUrlInput" placeholder="https://example.com/avatar.jpg">
-        </div>
-
-        <div class="form-group">
-            <label>نبذة شخصية (Bio):</label>
-            <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
-        </div>
-
-        <button type="button" class="btn-primary" onclick="saveProfileChanges()">حفظ التغيرات</button>
     </div>
 
 </div>
@@ -191,7 +221,6 @@
           .join('');
   }
 
-  // دالة نسخ النص إلى الحافظة
   function copyField(elementId) {
       const input = document.getElementById(elementId);
       if (!input || !input.value) {
@@ -207,7 +236,6 @@
       });
   }
 
-  // 1. توليد حساب جديد
   function generateNewAccount() {
       try {
           const skHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
@@ -224,14 +252,13 @@
           document.getElementById('publicKeyInput').value = npub;
           document.getElementById('privateKeyInput').value = nsec;
 
-          alert('تم توليد الحساب بنجاح! يمكنك الآن نسخ المفتاح الخاص بسهولة عبر زر النسخ.');
+          alert('تم توليد الحساب بنجاح!');
       } catch (error) {
-          console.error('خطأ أثناء التوليد:', error);
           alert('حدث خطأ أثناء توليد الحساب.');
       }
   }
 
-  // 2. تسجيل الدخول والانتقال للمنصة
+  // الدخول وتحويل الشاشة للمنصة الرئيسية
   function loginWithPrivateKey() {
       const privInput = document.getElementById('privateKeyInput');
       let val = privInput ? privInput.value.trim() : '';
@@ -241,32 +268,17 @@
           return;
       }
 
-      let nsec = val;
+      let nsec = val.startsWith('nsec') ? val : 'nsec1' + val;
       let npub = localStorage.getItem('nostr_npub') || ('npub1' + bufToHex(window.crypto.getRandomValues(new Uint8Array(32))));
-
-      if (!val.startsWith('nsec')) {
-          nsec = 'nsec1' + val;
-      }
 
       localStorage.setItem('nostr_nsec', nsec);
       localStorage.setItem('nostr_npub', npub);
+      localStorage.setItem('is_logged_in', 'true');
 
-      document.getElementById('publicKeyInput').value = npub;
-
-      // توجيه المستخدم لصفحة المنصة الرئيسية إذا كانت موجودة (مثلاً main.html أو الصفحة الرئيسية)
-      alert('تم تسجيل الدخول بنجاح!');
-      // إذا كان لديك صفحة رئيسية أخرى غير index يمكنك تغيير الرابط هنا:
-      // window.location.href = "home.html"; 
+      showAppView();
   }
 
-  // 3. حفظ بيانات الملف الشخصي
   function saveProfileChanges() {
-      const nsec = localStorage.getItem('nostr_nsec') || document.getElementById('privateKeyInput').value;
-      if (!nsec) {
-          alert('يرجى تسجيل الدخول أو توليد حساب أولاً.');
-          return;
-      }
-
       const profileData = {
           name: document.getElementById('displayNameInput').value,
           username: document.getElementById('handleInput').value,
@@ -278,7 +290,43 @@
       alert('تم حفظ وتحديث بيانات الملف الشخصي والصورة بنجاح!');
   }
 
-  // استعادة البيانات عند فتح الصفحة
+  // التبديل إلى الواجهة الرئيسية للمنصة
+  function showAppView() {
+      document.getElementById('loginView').style.display = 'none';
+      document.getElementById('appView').style.display = 'block';
+
+      const savedProfile = localStorage.getItem('nostr_profile');
+      if (savedProfile) {
+          try {
+              const p = JSON.parse(savedProfile);
+              if (p.name) document.getElementById('userDisplayName').innerText = p.name;
+          } catch(e){}
+      }
+  }
+
+  function logout() {
+      localStorage.removeItem('is_logged_in');
+      document.getElementById('appView').style.display = 'none';
+      document.getElementById('loginView').style.display = 'block';
+  }
+
+  function publishPost() {
+      const txt = document.getElementById('newPostInput').value.trim();
+      if (!txt) return;
+
+      const feed = document.getElementById('feedContainer');
+      const savedProfile = JSON.parse(localStorage.getItem('nostr_profile') || '{}');
+      const name = savedProfile.name || 'أنا';
+
+      const postDiv = document.createElement('div');
+      postDiv.className = 'post-card';
+      postDiv.innerHTML = `<b>${name}</b><p style="margin: 8px 0 0 0;">${txt}</p>`;
+      
+      feed.prepend(postDiv);
+      document.getElementById('newPostInput').value = '';
+  }
+
+  // التحقق التلقائي عند فتح الصفحة
   window.addEventListener('DOMContentLoaded', () => {
       const savedNpub = localStorage.getItem('nostr_npub');
       const savedNsec = localStorage.getItem('nostr_nsec');
@@ -294,6 +342,10 @@
               if (p.picture) document.getElementById('pictureUrlInput').value = p.picture;
               if (p.about) document.getElementById('bioInput').value = p.about;
           } catch(e){}
+      }
+
+      if (localStorage.getItem('is_logged_in') === 'true') {
+          showAppView();
       }
   });
 </script>
