@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة كلمات - Nostr الحية</title>
+    <title>منصة كلمات - Nostr</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- استدعاء مكتبة nostr-tools للتشفير والتوقيع -->
-    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
+    <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
 
     <style>
         :root {
@@ -34,25 +32,36 @@
         .brand img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent-blue); }
         .brand h1 { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        .auth-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin: 16px 0; }
-        .auth-card h3 { font-size: 15px; margin-bottom: 10px; color: var(--accent-blue); }
-        .auth-inputs { display: flex; gap: 8px; flex-wrap: wrap; }
-        .auth-inputs input { flex: 1; min-width: 200px; background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; }
-        .btn-sec { background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-        .btn-main { background: linear-gradient(135deg, var(--accent-blue), #2563eb); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
+        .account-bar { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .nsec-box { display: none; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+        .nsec-box input { width: 100%; background: var(--bg-tertiary); border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; color: #fff; margin-top: 6px; outline: none; }
 
         .composer { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
-        .composer textarea { width: 100%; height: 90px; background: transparent; border: none; color: var(--text-primary); font-size: 15px; resize: none; outline: none; }
+        .composer textarea { width: 100%; height: 80px; background: transparent; border: none; color: var(--text-primary); font-size: 15px; resize: none; outline: none; }
         .composer-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); }
+
+        .btn-icon { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; }
+        .btn-publish { background: linear-gradient(135deg, var(--accent-blue), #2563eb); color: #fff; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 14px; }
 
         .post-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; word-break: break-word; }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; background-color: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-blue); border: 1px solid var(--border-color); }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; background-color: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-blue); border: 1px solid var(--border-color); font-size: 12px; }
         .author-info { display: flex; flex-direction: column; }
         .author-name { font-size: 13px; font-weight: 600; color: var(--accent-blue); }
         .post-body { font-size: 15px; line-height: 1.6; color: var(--text-primary); white-space: pre-line; }
 
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 25px; font-size: 13px; transition: transform 0.3s ease; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .post-actions { display: flex; justify-content: space-around; padding-top: 10px; margin-top: 10px; border-top: 1px solid var(--border-color); }
+        .action-btn { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; }
+        .action-btn:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
+        .action-btn.liked { color: var(--accent-red); }
+
+        .comment-section { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); }
+        .comment-input { display: flex; gap: 6px; }
+        .comment-input input { flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 15px; padding: 6px 12px; color: #fff; font-size: 12px; outline: none; }
+        .comment-input button { background: var(--accent-blue); color: #fff; border: none; border-radius: 15px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
+        .comment-list { margin-top: 8px; font-size: 12px; color: var(--text-secondary); }
+
+        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; font-size: 13px; transition: transform 0.3s ease; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
         #toast.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -64,26 +73,24 @@
                 <img src="https://raw.githubusercontent.com/almsharbash/Rim.non2014/main/1000224814.png" alt="كلمات" onerror="this.style.display='none'">
                 <h1>كلمات</h1>
             </div>
-            <div id="userStatus" style="font-size: 12px; color: var(--accent-green);">زائر (عرض فقط)</div>
+            <button class="btn-icon" onclick="toggleNsecBox()">🔑 المفتاح الخاص</button>
         </header>
 
-        <!-- كارت إدارة الهوية والتسجيل -->
-        <div class="auth-card">
-            <h3>🔑 تسجيل الدخول والنشر الحي:</h3>
-            <div class="auth-inputs">
-                <input type="password" id="nsecInput" placeholder="أدخل المفتاح الخاص (nsec...)">
-                <button class="btn-sec" onclick="loginWithNsec()">دخول بـ nsec</button>
-                <button class="btn-sec" onclick="loginWithExtension()">إضافة المتصفح (NIP-07)</button>
-                <button class="btn-main" onclick="generateNewAccount()">إنشاء حساب جديد</button>
-            </div>
-            <div id="keysDisplay" style="font-size: 11px; color: var(--text-secondary); margin-top: 8px; word-break: break-all;"></div>
+        <div class="account-bar">
+            <span>الحساب الحسابي المولد: <strong id="userNpubDisplay" style="color:var(--accent-green)">...</strong></span>
+            <button class="btn-icon" onclick="copyNsec()">نسخ nsec 📋</button>
+        </div>
+
+        <div class="nsec-box" id="nsecBox">
+            <span style="font-size: 12px; color: var(--text-secondary);">إذا كان لديك حساب سابق، أدخل nsec هنا:</span>
+            <input type="password" id="customNsec" placeholder="nsec1..." onchange="loadCustomNsec()">
         </div>
 
         <div class="composer">
-            <textarea id="postInput" placeholder="اكتب كلمتك هنا لبثها حياً للعالم عبر Nostr..."></textarea>
+            <textarea id="postInput" placeholder="اكتب كلمتك هنا..."></textarea>
             <div class="composer-footer">
-                <span id="relayStatus" style="font-size: 12px; color: var(--text-secondary);">متصل بـ 4 خوادم</span>
-                <button class="btn-main" onclick="publishLivePost()">نشر حقيقي 🪶</button>
+                <span id="statusInfo" style="font-size: 11px; color: var(--text-secondary);">متصل بالشبكة</span>
+                <button class="btn-publish" onclick="publishPost()">✨ نشر</button>
             </div>
         </div>
 
@@ -93,190 +100,170 @@
     <div id="toast">تم الإجراء بنجاح</div>
 
     <script>
-        // قائمة خوادم الـ Relays للبث المتوازي
-        const relayUrls = [
-            'wss://relay.damus.io',
-            'wss://nos.lol',
-            'wss://relay.nostr.band',
-            'ws://localhost:8080'
-        ];
-
+        const relayUrls = ['wss://relay.damus.io', 'wss://nos.lol', 'wss://relay.nostr.band'];
         let sockets = [];
-        let userPrivateKeyHex = null;
-        let userPublicKeyHex = null;
+        let sk = null;
+        let pk = null;
 
-        // الاتصال بجميع الخوادم عند فتح الصفحة
+        function initAccount() {
+            let savedSk = localStorage.getItem('kalimat_sk');
+            if (!savedSk) {
+                sk = NostrTools.generatePrivateKey();
+                localStorage.setItem('kalimat_sk', sk);
+            } else {
+                sk = savedSk;
+            }
+            pk = NostrTools.getPublicKey(sk);
+            const npub = NostrTools.nip19.npubEncode(pk);
+            document.getElementById('userNpubDisplay').innerText = npub.substring(0, 10) + "...";
+        }
+
         function initRelays() {
             relayUrls.forEach(url => {
                 try {
                     const ws = new WebSocket(url);
                     ws.onopen = () => {
-                        console.log('متصل بـ:', url);
-                        // طلب جلب أحدث 15 منشور Kind 1
-                        ws.send(JSON.stringify(["REQ", "sub-feed", { kinds: [1], limit: 15 }]));
+                        ws.send(JSON.stringify(["REQ", "main-feed", { kinds: [1], limit: 15 }]));
                     };
                     ws.onmessage = (e) => {
                         const msg = JSON.parse(e.data);
-                        if (msg[0] === "EVENT") {
-                            displayPost(msg[2]);
-                        }
+                        if (msg[0] === "EVENT") displayPost(msg[2]);
                     };
                     sockets.push(ws);
-                } catch(err) {
-                    console.log('تعذر الاتصال بـ:', url);
-                }
+                } catch(err) {}
             });
         }
 
-        // 1. إنشاء حساب جديد وتوليد المفاتيح
-        function generateNewAccount() {
-            const sk = NostrTools.generatePrivateKey();
-            const pk = NostrTools.getPublicKey(sk);
-            
-            userPrivateKeyHex = sk;
-            userPublicKeyHex = pk;
+        function publishPost() {
+            const input = document.getElementById('postInput');
+            const text = input.value.trim();
+            if (!text) return;
 
-            const nsec = NostrTools.nip19.nsecEncode(sk);
-            const npub = NostrTools.nip19.npubEncode(pk);
-
-            document.getElementById('keysDisplay').innerHTML = `
-                <strong style="color:var(--accent-green)">تم إنشاؤه بنجاح! احفظ مفتاحك الخاص:</strong><br>
-                <b>nsec:</b> ${nsec}<br>
-                <b>npub:</b> ${npub}
-            `;
-            document.getElementById('userStatus').innerText = 'تم تسجيل الدخول (حساب جديد)';
-            showToast('تم إنشاء حساب جديد بنجاح!');
-        }
-
-        // 2. تسجيل الدخول بواسطة nsec
-        function loginWithNsec() {
-            const val = document.getElementById('nsecInput').value.trim();
-            if (!val.startsWith('nsec1')) {
-                alert('يرجى إدخال مفتاح nsec صحيح يبدأ بـ nsec1');
-                return;
-            }
-            try {
-                const { type, data } = NostrTools.nip19.decode(val);
-                userPrivateKeyHex = data;
-                userPublicKeyHex = NostrTools.getPublicKey(data);
-                
-                document.getElementById('userStatus').innerText = 'متصل بالمفتاح الخاص';
-                document.getElementById('keysDisplay').innerText = 'المفتاح العام: ' + NostrTools.nip19.npubEncode(userPublicKeyHex);
-                showToast('تم تسجيل الدخول بنجاح');
-            } catch(e) {
-                alert('المفتاح الخاص غير صالح');
-            }
-        }
-
-        // 3. تسجيل الدخول بواسطة إضافات المتصفح (Alby / nos2x)
-        async function loginWithExtension() {
-            if (window.nostr) {
-                try {
-                    userPublicKeyHex = await window.nostr.getPublicKey();
-                    document.getElementById('userStatus').innerText = 'متصل عبر إضافة المتصفح';
-                    document.getElementById('keysDisplay').innerText = 'المفتاح العام: ' + NostrTools.nip19.npubEncode(userPublicKeyHex);
-                    showToast('تم الاتصال بإضافة المتصفح');
-                } catch(e) {
-                    alert('تعذر الحصول على المفتاح العام من إضافة المتصفح');
-                }
-            } else {
-                alert('لم يتم العثور على إضافة Nostr في متصفحك (مثل Alby أو nos2x)');
-            }
-        }
-
-        // 4. صياغة، توقيع، وبث المنشور حياً لشبكة Nostr
-        async function publishLivePost() {
-            const content = document.getElementById('postInput').value.trim();
-            if (!content) {
-                alert('يرجى كتابة نص المنشور أولاً');
-                return;
-            }
-
-            if (!userPublicKeyHex) {
-                alert('يرجى تسجيل الدخول أو إنشاء حساب جديد لتتمكن من توقيع ونشر الكلمات حياً.');
-                return;
-            }
-
-            // بناء الحدث القياسي Kind 1
             let event = {
                 kind: 1,
                 created_at: Math.floor(Date.now() / 1000),
                 tags: [],
-                content: content,
-                pubkey: userPublicKeyHex
+                content: text,
+                pubkey: pk
             };
 
-            // التوقيع الرقمي للحدث
-            if (userPrivateKeyHex) {
-                // التوقيع بالمفتاح الخاص المباشر
-                event.id = NostrTools.getEventHash(event);
-                event.sig = NostrTools.signEvent(event, userPrivateKeyHex);
-            } else if (window.nostr) {
-                // التوقيع بواسطة إضافة المتصفح
-                try {
-                    event = await window.nostr.signEvent(event);
-                } catch(e) {
-                    alert('تم رفض توقيع المنشور من قبل إضافة المتصفح');
-                    return;
-                }
-            }
+            event.id = NostrTools.getEventHash(event);
+            event.sig = NostrTools.signEvent(event, sk);
 
-            // بث الحدث الموقع إلى جميع الخوادم المفتوحة المتوازية
-            const broadcastMessage = JSON.stringify(["EVENT", event]);
-            let successCount = 0;
-
+            const msg = JSON.stringify(["EVENT", event]);
             sockets.forEach(ws => {
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(broadcastMessage);
-                    successCount++;
-                }
+                if (ws.readyState === WebSocket.OPEN) ws.send(msg);
             });
 
-            // عرض المنشور فوراً في الواجهة محلياً
             displayPost(event);
-            document.getElementById('postInput').value = '';
-            showToast(`تم التوقيع والبث الحي عبر ${successCount} خوادم! 🚀`);
+            input.value = '';
+            showToast('تم النشر بنجاح ✨');
         }
 
-        // عرض المنشورات ومنع التكرار
-        const renderedPostIds = new Set();
+        const renderedIds = new Set();
         function displayPost(event) {
-            if (renderedPostIds.has(event.id)) return;
-            renderedPostIds.add(event.id);
+            if (renderedIds.has(event.id)) return;
+            renderedIds.add(event.id);
 
             const feed = document.getElementById('feed');
             const card = document.createElement('div');
             card.className = 'post-card';
+            const postId = 'p-' + Math.random().toString(36).substr(2, 7);
 
-            let npubShort = event.pubkey ? NostrTools.nip19.npubEncode(event.pubkey).substring(0, 12) + "..." : "مستخدم";
+            let npubShort = event.pubkey ? NostrTools.nip19.npubEncode(event.pubkey).substring(0, 9) + "..." : "عضو";
 
             card.innerHTML = `
                 <div class="post-header">
                     <div class="avatar">${npubShort.substring(5, 7).toUpperCase()}</div>
                     <div class="author-info">
                         <span class="author-name">${npubShort}</span>
-                        <span style="font-size:10px; color:var(--text-secondary)">${new Date(event.created_at * 1000).toLocaleTimeString('ar-EG')}</span>
                     </div>
                 </div>
                 <div class="post-body">${escapeHtml(event.content)}</div>
+                <div class="post-actions">
+                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
+                    <button class="action-btn" onclick="toggleComments('${postId}')">💬</button>
+                    <button class="action-btn" onclick="sharePost()">🔗</button>
+                </div>
+                <div class="comment-section" id="${postId}">
+                    <div class="comment-input">
+                        <input type="text" placeholder="اكتب تعليقاً..." id="in-${postId}">
+                        <button onclick="addComment('${postId}')">إرسال</button>
+                    </div>
+                    <div class="comment-list" id="list-${postId}"></div>
+                </div>
             `;
-
             feed.prepend(card);
+        }
+
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+            showToast(btn.classList.contains('liked') ? 'تم الإعجاب' : 'تم الغاء الإعجاب');
+        }
+
+        function toggleComments(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function addComment(id) {
+            const input = document.getElementById(`in-${id}`);
+            const list = document.getElementById(`list-${id}`);
+            if (!input.value.trim()) return;
+
+            const div = document.createElement('div');
+            div.style.marginTop = '4px';
+            div.innerText = '• ' + input.value;
+            list.appendChild(div);
+            input.value = '';
+            showToast('تمت إضافة التعليق');
+        }
+
+        function sharePost() {
+            navigator.clipboard.writeText(window.location.href);
+            showToast('تم نسخ الرابط');
+        }
+
+        function toggleNsecBox() {
+            const b = document.getElementById('nsecBox');
+            b.style.display = b.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function copyNsec() {
+            const nsec = NostrTools.nip19.nsecEncode(sk);
+            navigator.clipboard.writeText(nsec);
+            showToast('تم نسخ مفتاح nsec الخاص بك');
+        }
+
+        function loadCustomNsec() {
+            const val = document.getElementById('customNsec').value.trim();
+            try {
+                const { data } = NostrTools.nip19.decode(val);
+                sk = data;
+                pk = NostrTools.getPublicKey(sk);
+                localStorage.setItem('kalimat_sk', sk);
+                document.getElementById('userNpubDisplay').innerText = NostrTools.nip19.npubEncode(pk).substring(0, 10) + "...";
+                showToast('تم تحميل حسابك بنجاح');
+            } catch(e) {
+                showToast('رمز غير صالح');
+            }
         }
 
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.innerText = msg;
             t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            setTimeout(() => t.classList.remove('show'), 2500);
         }
 
         function escapeHtml(str) {
             return str ? str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])) : '';
         }
 
-        // تشغيل الاتصالات عند فتح الصفحة
-        window.onload = initRelays;
+        window.onload = () => {
+            initAccount();
+            initRelays();
+        };
     </script>
 </body>
 </html>
