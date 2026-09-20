@@ -3,84 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nostr Relay Reader</title>
+    <title>منصة كلمات | Kalimat</title>
     <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary: #6200ee;
+            --primary-hover: #3700b3;
+            --text-main: #e0e0e0;
+            --text-muted: #aaaaaa;
+            --border-color: #333333;
+        }
+
         body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            padding: 20px;
-            max-width: 800px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 15px;
+            max-width: 750px;
             margin: 0 auto;
+            line-height: 1.6;
         }
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
         }
-        input {
-            flex: 1;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #333;
-            background: #1e1e1e;
+
+        h1 {
+            color: #ffffff;
+            margin: 0 0 5px 0;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .publish-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 90px;
+            background: #151515;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             color: #fff;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 1rem;
         }
-        button {
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .btn {
             padding: 10px 20px;
             border-radius: 6px;
             border: none;
-            background: #6200ee;
+            background: var(--primary);
             color: white;
             cursor: pointer;
             font-weight: bold;
+            font-size: 0.95rem;
+            transition: background 0.2s;
         }
-        button:hover { background: #3700b3; }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
         #status {
             margin-bottom: 15px;
-            font-size: 0.9em;
-            color: #888;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: #1a1a1a;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-right: 3px solid var(--primary);
         }
+
         .event-card {
-            background: #1e1e1e;
-            border: 1px solid #333;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 15px;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             word-break: break-word;
         }
+
         .event-header {
-            font-size: 0.8em;
-            color: #aaa;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
         }
+
         .event-content {
-            font-size: 1em;
-            line-height: 1.5;
+            font-size: 1.05rem;
+            white-space: pre-wrap;
+        }
+
+        .tag-badge {
+            background: #2a2a2a;
+            color: #bb86fc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
-    <h2>قارئ خوادم Nostr (Relay)</h2>
-    
-    <div class="controls">
-        <input type="text" id="relayUrl" value="wss://relay.damus.io" placeholder="رابط الـ Relay">
-        <button onclick="connectAndFetch()">اتصال وجلب الأحداث</button>
+    <header>
+        <h1>منصة كلمات</h1>
+        <p class="subtitle">شبكة تواصل حرة ومفتوحة عبر بروتوكول Nostr</p>
+    </header>
+
+    <!-- صندوق النشر السريع -->
+    <div class="publish-box">
+        <textarea id="postContent" placeholder="ماذا يدور في ذهنك؟ (سيُضاف هاشتاج #كلمات تلقائياً)..."></textarea>
+        <div class="action-bar">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">النشر يتطلب إضافة Nostr مثبتة (مثل Alby)</span>
+            <button class="btn" onclick="publishPost()">نشر الآن</button>
+        </div>
     </div>
 
-    <div id="status">الحالة: غير متصل</div>
+    <!-- التحكم بالخادم والجلب -->
+    <div class="controls">
+        <input type="text" id="relayUrl" value="wss://relay.damus.io" placeholder="رابط الـ Relay">
+        <button class="btn" onclick="connectAndFetch()">تحديث الخلاصة</button>
+    </div>
+
+    <div id="status">الحالة: جاري إعداد الاتصال...</div>
     <div id="eventsContainer"></div>
 
     <script>
         let ws = null;
+
+        // الاتصال التلقائي عند فتح الصفحة
+        window.addEventListener('load', () => {
+            connectAndFetch();
+        });
 
         function connectAndFetch() {
             const relayUrl = document.getElementById('relayUrl').value.trim();
             const statusDiv = document.getElementById('status');
             const container = document.getElementById('eventsContainer');
 
-            // إغلاق أي اتصال سابق إذا كان مفتوحاً
             if (ws) {
                 ws.close();
             }
@@ -89,21 +197,20 @@
             statusDiv.textContent = 'جاري الاتصال بـ ' + relayUrl + '...';
 
             try {
-                // فتح اتصال WebSocket جديد
                 ws = new WebSocket(relayUrl);
 
                 ws.onopen = () => {
-                    statusDiv.textContent = 'تم الاتصال بنجاح! جاري طلب الأحداث...';
+                    statusDiv.textContent = 'تم الاتصال بنجاح! جاري جلب منشورات #كلمات...';
 
-                    // إرسال طلب جلب الأحداث (REQ)
-                    // جلب آخر 15 منشور نصي (Kind 1)
-                    const subscriptionId = "sub_" + Math.random().toString(36).substring(7);
+                    // طلب جلب المنشورات التي تحوي هاشتاج #كلمات فقط
+                    const subscriptionId = "sub_kalimat_" + Math.random().toString(36).substring(7);
                     const reqMessage = [
                         "REQ",
                         subscriptionId,
                         {
-                            kinds: [1], // 1 تعني المنشورات النصية Text Notes
-                            limit: 15  // عدد الأحداث المطلوبة
+                            kinds: [1], // منشورات نصية
+                            "#t": ["كلمات"], // فلترة المنشورات الخاصة بـ كلمات
+                            limit: 25
                         }
                     ];
 
@@ -112,44 +219,45 @@
 
                 ws.onmessage = (event) => {
                     const data = JSON.parse(event.data);
-                    const messageType = data[0]; // نوع الرسالة (EVENT, EOSE, NOTICE)
+                    const messageType = data[0];
 
                     if (messageType === "EVENT") {
-                        const eventData = data[2]; // تفاصيل الحدث
+                        const eventData = data[2];
                         displayEvent(eventData);
                     } else if (messageType === "EOSE") {
-                        statusDiv.textContent = 'تم اكتفاء الـ Relay واكتمال جلب البيانات (End of Stored Events).';
+                        statusDiv.textContent = 'اكتمل جلب أحدث المنشورات.';
                     }
                 };
 
                 ws.onerror = (error) => {
-                    statusDiv.textContent = 'حدث خطأ في الاتصال بالـ Relay.';
+                    statusDiv.textContent = 'حدث خطأ أثناء الاتصال بالخادم.';
                     console.error("WebSocket Error:", error);
                 };
 
-                ws.onclose = () => {
-                    console.log("تم إغلاق الاتصال.");
-                };
-
             } catch (err) {
-                statusDiv.textContent = 'الرابط غير صالح أو فشل الاتصال.';
+                statusDiv.textContent = 'رابط الخادم غير صالح.';
                 console.error(err);
             }
         }
 
-        // دالة لعرض الحدث داخل الصفحة
+        // دالة عرض المنشورات
         function displayEvent(eventData) {
             const container = document.getElementById('eventsContainer');
 
+            // منع تكرار عرض نفس المنشور
+            if (document.getElementById("evt-" + eventData.id)) return;
+
             const card = document.createElement('div');
             card.className = 'event-card';
+            card.id = "evt-" + eventData.id;
 
             const date = new Date(eventData.created_at * 1000).toLocaleString('ar-EG');
-            const pubkeyShort = eventData.pubkey.substring(0, 8) + "..." + eventData.pubkey.substring(eventData.pubkey.length - 8);
+            const pubkeyShort = eventData.pubkey.substring(0, 8) + "..." + eventData.pubkey.substring(eventData.pubkey.length - 6);
 
             card.innerHTML = `
                 <div class="event-header">
-                    <strong>الناشر:</strong> ${pubkeyShort} | <strong>التاريخ:</strong> ${date}
+                    <span><strong>الناشر:</strong> ${pubkeyShort}</span>
+                    <span>${date}</span>
                 </div>
                 <div class="event-content">${escapeHtml(eventData.content)}</div>
             `;
@@ -157,7 +265,56 @@
             container.appendChild(card);
         }
 
-        // دالة لتنظيف النص ومنع الهجمات (XSS)
+        // دالة النشر التلقائي بدون كلمة سر
+        async function publishPost() {
+            const contentInput = document.getElementById('postContent');
+            const text = contentInput.value.trim();
+
+            if (!text) {
+                alert("يرجى كتابة نص المنشور أولاً.");
+                return;
+            }
+
+            // التحقق من وجود إضافة Nostr لتوقيع المعاملة
+            if (typeof window.nostr === 'undefined') {
+                alert("لم يتم العثور على إضافة Nostr في المتصفح.\nيرجى استخدام متصفح يدعم إضافة Alby أو Nos2x للنشر الآمن بدون كلمة سر.");
+                return;
+            }
+
+            try {
+                // 1. جلب المفتاح العام للمستخدم من الإضافة
+                const pubkey = await window.nostr.getPublicKey();
+
+                // 2. تجهيز الحدث وتضمين هاشتاج #كلمات
+                const unsignedEvent = {
+                    kind: 1,
+                    created_at: Math.floor(Date.now() / 1000),
+                    tags: [["t", "كلمات"]],
+                    content: text,
+                    pubkey: pubkey
+                };
+
+                // 3. توقيع المنشور عبر الإضافة
+                const signedEvent = await window.nostr.signEvent(unsignedEvent);
+
+                // 4. إرسال المنشور الموقّع إلى الـ Relay
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify(["EVENT", signedEvent]));
+                    alert("تم نشر مشاركتك بنجاح على منصة كلمات شبكة Nostr!");
+                    contentInput.value = '';
+                    
+                    // عرض المنشور فوراً في القائمة
+                    displayEvent(signedEvent);
+                } else {
+                    alert("الخادم غير متصل حالياً، يرجى إعادة تحديث الصفحة.");
+                }
+
+            } catch (err) {
+                console.error("فشل النشر:", err);
+                alert("تم إلغاء عملية النشر أو حدث خطأ أثناء التوقيع.");
+            }
+        }
+
         function escapeHtml(str) {
             return str
                 .replace(/&/g, "&amp;")
