@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة كلمات | Kalimat</title>
+    <!-- مكتبة لتشفير وتوقيع الأحداث في الجوال تلقائياً -->
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <style>
         :root {
             --bg-color: #121212;
@@ -16,7 +18,7 @@
         }
 
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             padding: 15px;
@@ -27,56 +29,36 @@
 
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
+            padding-bottom: 10px;
         }
 
-        h1 {
-            color: #ffffff;
-            margin: 0 0 5px 0;
-            font-size: 1.8rem;
-        }
+        h1 { color: #ffffff; margin: 0 0 5px 0; font-size: 1.8rem; }
+        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
 
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        .publish-box {
+        .publish-box, .key-box {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
-        textarea {
+        textarea, input[type="text"], input[type="password"] {
             width: 100%;
-            height: 90px;
             background: #151515;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: #fff;
             padding: 10px;
             box-sizing: border-box;
-            resize: vertical;
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .action-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
+        textarea { height: 90px; resize: vertical; }
 
         .btn {
             padding: 10px 20px;
@@ -87,28 +69,12 @@
             cursor: pointer;
             font-weight: bold;
             font-size: 0.95rem;
-            transition: background 0.2s;
+            width: 100%;
         }
 
-        .btn:hover {
-            background: var(--primary-hover);
-        }
+        .btn:hover { background: var(--primary-hover); }
 
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: #fff;
-            font-size: 0.9rem;
-        }
+        .controls { display: flex; gap: 10px; margin-bottom: 15px; }
 
         #status {
             margin-bottom: 15px;
@@ -125,29 +91,16 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 15px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             word-break: break-word;
         }
 
         .event-header {
             font-size: 0.8rem;
             color: var(--text-muted);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
-        }
-
-        .event-content {
-            font-size: 1.05rem;
-            white-space: pre-wrap;
-        }
-
-        .tag-badge {
-            background: #2a2a2a;
-            color: #bb86fc;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -155,43 +108,53 @@
 
     <header>
         <h1>منصة كلمات</h1>
-        <p class="subtitle">شبكة تواصل حرة ومفتوحة عبر بروتوكول Nostr</p>
+        <p class="subtitle">شبكة تواصل حرة ومفتوحة عبر Nostr</p>
     </header>
 
-    <!-- صندوق النشر السريع -->
+    <!-- قسم إدخال المفتاح للجوال -->
+    <div class="key-box">
+        <label style="font-size:0.85rem; color:#aaa; display:block; margin-bottom:5px;">
+            مفتاحك الخاص (nsec) للنشر من الجوال (يُحفظ في هاتفك فقط):
+        </label>
+        <input type="password" id="nsecKey" placeholder="nsec1..." onchange="saveKey()">
+    </div>
+
+    <!-- صندوق النشر -->
     <div class="publish-box">
         <textarea id="postContent" placeholder="ماذا يدور في ذهنك؟ (سيُضاف هاشتاج #كلمات تلقائياً)..."></textarea>
-        <div class="action-bar">
-            <span style="font-size: 0.8rem; color: var(--text-muted);">النشر يتطلب إضافة Nostr مثبتة (مثل Alby)</span>
-            <button class="btn" onclick="publishPost()">نشر الآن</button>
-        </div>
+        <button class="btn" onclick="publishPost()">نشر الآن</button>
     </div>
 
-    <!-- التحكم بالخادم والجلب -->
+    <!-- التحكم بالخوادم -->
     <div class="controls">
-        <input type="text" id="relayUrl" value="wss://relay.damus.io" placeholder="رابط الـ Relay">
-        <button class="btn" onclick="connectAndFetch()">تحديث الخلاصة</button>
+        <input type="text" id="relayUrl" value="wss://relay.primal.net" placeholder="رابط الـ Relay">
+        <button class="btn" style="width: auto;" onclick="connectAndFetch()">تحديث</button>
     </div>
 
-    <div id="status">الحالة: جاري إعداد الاتصال...</div>
+    <div id="status">الحالة: جاري الاتصال...</div>
     <div id="eventsContainer"></div>
 
     <script>
         let ws = null;
 
-        // الاتصال التلقائي عند فتح الصفحة
+        // تحميل المفتاح المحفوظ سابقاً في الهاتف إن وجد
         window.addEventListener('load', () => {
+            const savedKey = localStorage.getItem('kalimat_nsec');
+            if (savedKey) document.getElementById('nsecKey').value = savedKey;
             connectAndFetch();
         });
+
+        function saveKey() {
+            const key = document.getElementById('nsecKey').value.trim();
+            if (key) localStorage.setItem('kalimat_nsec', key);
+        }
 
         function connectAndFetch() {
             const relayUrl = document.getElementById('relayUrl').value.trim();
             const statusDiv = document.getElementById('status');
             const container = document.getElementById('eventsContainer');
 
-            if (ws) {
-                ws.close();
-            }
+            if (ws) ws.close();
 
             container.innerHTML = '';
             statusDiv.textContent = 'جاري الاتصال بـ ' + relayUrl + '...';
@@ -200,51 +163,34 @@
                 ws = new WebSocket(relayUrl);
 
                 ws.onopen = () => {
-                    statusDiv.textContent = 'تم الاتصال بنجاح! جاري جلب منشورات #كلمات...';
-
-                    // طلب جلب المنشورات التي تحوي هاشتاج #كلمات فقط
-                    const subscriptionId = "sub_kalimat_" + Math.random().toString(36).substring(7);
-                    const reqMessage = [
-                        "REQ",
-                        subscriptionId,
-                        {
-                            kinds: [1], // منشورات نصية
-                            "#t": ["كلمات"], // فلترة المنشورات الخاصة بـ كلمات
-                            limit: 25
-                        }
-                    ];
-
-                    ws.send(JSON.stringify(reqMessage));
+                    statusDiv.textContent = 'تم الاتصال! جاري جلب منشورات #كلمات...';
+                    const subId = "sub_" + Math.random().toString(36).substring(7);
+                    
+                    // جلب المنشورات العامة أو المنشورات بـ هاشتاج #كلمات
+                    const req = ["REQ", subId, { kinds: [1], "#t": ["كلمات"], limit: 20 }];
+                    ws.send(JSON.stringify(req));
                 };
 
                 ws.onmessage = (event) => {
                     const data = JSON.parse(event.data);
-                    const messageType = data[0];
-
-                    if (messageType === "EVENT") {
-                        const eventData = data[2];
-                        displayEvent(eventData);
-                    } else if (messageType === "EOSE") {
-                        statusDiv.textContent = 'اكتمل جلب أحدث المنشورات.';
+                    if (data[0] === "EVENT") {
+                        displayEvent(data[2]);
+                    } else if (data[0] === "EOSE") {
+                        statusDiv.textContent = 'تم جلب أحدث المنشورات.';
                     }
                 };
 
-                ws.onerror = (error) => {
-                    statusDiv.textContent = 'حدث خطأ أثناء الاتصال بالخادم.';
-                    console.error("WebSocket Error:", error);
+                ws.onerror = () => {
+                    statusDiv.textContent = 'فشل الاتصال بهذا الخادم، جرب خادم wss://relay.primal.net أو wss://nos.lol';
                 };
 
             } catch (err) {
-                statusDiv.textContent = 'رابط الخادم غير صالح.';
-                console.error(err);
+                statusDiv.textContent = 'الرابط غير صالح.';
             }
         }
 
-        // دالة عرض المنشورات
         function displayEvent(eventData) {
             const container = document.getElementById('eventsContainer');
-
-            // منع تكرار عرض نفس المنشور
             if (document.getElementById("evt-" + eventData.id)) return;
 
             const card = document.createElement('div');
@@ -252,76 +198,83 @@
             card.id = "evt-" + eventData.id;
 
             const date = new Date(eventData.created_at * 1000).toLocaleString('ar-EG');
-            const pubkeyShort = eventData.pubkey.substring(0, 8) + "..." + eventData.pubkey.substring(eventData.pubkey.length - 6);
+            const pubShort = eventData.pubkey.substring(0, 8) + "...";
 
             card.innerHTML = `
                 <div class="event-header">
-                    <span><strong>الناشر:</strong> ${pubkeyShort}</span>
+                    <span><strong>الناشر:</strong> ${pubShort}</span>
                     <span>${date}</span>
                 </div>
-                <div class="event-content">${escapeHtml(eventData.content)}</div>
+                <div>${escapeHtml(eventData.content)}</div>
             `;
-
             container.appendChild(card);
         }
 
-        // دالة النشر التلقائي بدون كلمة سر
         async function publishPost() {
-            const contentInput = document.getElementById('postContent');
-            const text = contentInput.value.trim();
+            const text = document.getElementById('postContent').value.trim();
+            const nsec = document.getElementById('nsecKey').value.trim();
 
-            if (!text) {
-                alert("يرجى كتابة نص المنشور أولاً.");
-                return;
-            }
+            if (!text) return alert("اكتب شيئاً للنشر!");
 
-            // التحقق من وجود إضافة Nostr لتوقيع المعاملة
-            if (typeof window.nostr === 'undefined') {
-                alert("لم يتم العثور على إضافة Nostr في المتصفح.\nيرجى استخدام متصفح يدعم إضافة Alby أو Nos2x للنشر الآمن بدون كلمة سر.");
-                return;
-            }
+            let signedEvent = null;
 
-            try {
-                // 1. جلب المفتاح العام للمستخدم من الإضافة
-                const pubkey = await window.nostr.getPublicKey();
-
-                // 2. تجهيز الحدث وتضمين هاشتاج #كلمات
-                const unsignedEvent = {
-                    kind: 1,
-                    created_at: Math.floor(Date.now() / 1000),
-                    tags: [["t", "كلمات"]],
-                    content: text,
-                    pubkey: pubkey
-                };
-
-                // 3. توقيع المنشور عبر الإضافة
-                const signedEvent = await window.nostr.signEvent(unsignedEvent);
-
-                // 4. إرسال المنشور الموقّع إلى الـ Relay
-                if (ws && ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify(["EVENT", signedEvent]));
-                    alert("تم نشر مشاركتك بنجاح على منصة كلمات شبكة Nostr!");
-                    contentInput.value = '';
+            // 1. تجربة النشر بالمفتاح الخاص (للجوال)
+            if (nsec) {
+                try {
+                    let sk = nsec;
+                    if (nsec.startsWith('nsec')) {
+                        let { type, data } = NostrTools.nip19.decode(nsec);
+                        sk = data;
+                    }
+                    const pk = NostrTools.getPublicKey(sk);
                     
-                    // عرض المنشور فوراً في القائمة
-                    displayEvent(signedEvent);
-                } else {
-                    alert("الخادم غير متصل حالياً، يرجى إعادة تحديث الصفحة.");
-                }
+                    let event = {
+                        kind: 1,
+                        created_at: Math.floor(Date.now() / 1000),
+                        tags: [["t", "كلمات"]],
+                        content: text,
+                        pubkey: pk
+                    };
 
-            } catch (err) {
-                console.error("فشل النشر:", err);
-                alert("تم إلغاء عملية النشر أو حدث خطأ أثناء التوقيع.");
+                    event.id = NostrTools.getEventHash(event);
+                    event.sig = NostrTools.signEvent(event, sk);
+                    signedEvent = event;
+                } catch (e) {
+                    return alert("المفتاح الخاص (nsec) غير صحيح!");
+                }
+            } 
+            // 2. تجربة النشر بإضافة المتصفح (للحواسيب)
+            else if (typeof window.nostr !== 'undefined') {
+                try {
+                    const pubkey = await window.nostr.getPublicKey();
+                    const event = {
+                        kind: 1,
+                        created_at: Math.floor(Date.now() / 1000),
+                        tags: [["t", "كلمات"]],
+                        content: text,
+                        pubkey: pubkey
+                    };
+                    signedEvent = await window.nostr.signEvent(event);
+                } catch (e) {
+                    return alert("تم إلغاء التوقيع من الإضافة.");
+                }
+            } else {
+                return alert("يرجى إدخال مفتاحك الخاص (nsec) في الصندوق العلوي للنشر من الجوال!");
+            }
+
+            // إرسال المنشور الموقّع
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify(["EVENT", signedEvent]));
+                alert("تم النشر بنجاح!");
+                document.getElementById('postContent').value = '';
+                displayEvent(signedEvent);
+            } else {
+                alert("الخادم غير متصل حالياً.");
             }
         }
 
         function escapeHtml(str) {
-            return str
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
     </script>
 </body>
