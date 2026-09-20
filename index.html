@@ -1,7 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كلمات - Kalimat</title>
+    <style>
+        :root {
+            --bg-color: #0f0c1b;
+            --card-bg: #18132a;
+            --input-bg: #221b3b;
+            --primary: #8b5cf6;
+            --text-color: #ffffff;
+            --text-muted: #a0a0b8;
+            --border-color: #2e264a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        input, textarea {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- إدارة الحساب والمفاتيح -->
+    <div class="card">
+        <div class="section-title">
+            🔑 إدارة الحساب والمفاتيح
+        </div>
+        
+        <div class="form-group">
+            <label>المفتاح العام (Public Key - npub):</label>
+            <input type="text" id="publicKeyInput" readonly placeholder="سيظهر المفتاح العام هنا...">
+        </div>
+
+        <div class="form-group">
+            <label>المفتاح الخاص (Private Key - nsec):</label>
+            <input type="password" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+        </div>
+
+        <button type="button" class="btn-primary" id="btnGenerate">توليد حساب جديد ✨</button>
+        <button type="button" class="btn-secondary" id="btnLogin">تسجيل الدخول بالمفتاح</button>
+    </div>
+
+    <!-- تعديل الملف الشخصي -->
+    <div class="card">
+        <div class="section-title">
+            👤 تعديل الملف الشخصي
+        </div>
+
+        <div class="form-group">
+            <label>اسم العرض:</label>
+            <input type="text" id="displayNameInput" placeholder="أدخل اسم العرض">
+        </div>
+
+        <div class="form-group">
+            <label>اسم المستخدم (Handle):</label>
+            <input type="text" id="handleInput" placeholder="username">
+        </div>
+
+        <div class="form-group">
+            <label>رابط الصورة الشخصية (Picture URL):</label>
+            <input type="url" id="pictureUrlInput" placeholder="https://example.com/avatar.jpg">
+        </div>
+
+        <div class="form-group">
+            <label>نبذة شخصية (Bio):</label>
+            <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
+        </div>
+
+        <button type="button" class="btn-primary" id="btnSave">حفظ التغيرات</button>
+    </div>
+
+</div>
+
 <script type="module">
   import { generateSecretKey, getPublicKey, nip19 } from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
 
-  // تحويل النص السداسي عشر (Hex) إلى Uint8Array
   function hexToBytes(hex) {
     let bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
@@ -10,56 +169,48 @@
     return bytes;
   }
 
-  // 1. بند توليد حساب جديد (مفتاح خاص nsec + مفتاح عام npub)
+  // 1. بند توليد حساب جديد
   document.getElementById('btnGenerate').addEventListener('click', () => {
     try {
-      // توليد مفتاح خاص عشوائي بأسلوب Nostr الحديث
       const skBytes = generateSecretKey(); 
       const pkHex = getPublicKey(skBytes);  
 
-      // تحويل المفاتيح إلى الصيغ القياسية npub1 و nsec1
       const nsec = nip19.nsecEncode(skBytes);
       const npub = nip19.npubEncode(pkHex);
 
-      // حفظ المفاتيح في ذاكرة المتصفح
       localStorage.setItem('nostr_nsec', nsec);
       localStorage.setItem('nostr_npub', npub);
 
-      // عرض النتائج في الحقول
       document.getElementById('publicKeyInput').value = npub;
       document.getElementById('privateKeyInput').value = nsec;
 
-      alert('تم توليد المفاتيح بنجاح! يبدأ المفتاح العام بـ npub1 والخاص بـ nsec1');
+      alert('تم توليد المفاتيح بنجاح!');
     } catch (error) {
       console.error(error);
       alert('خطأ في توليد المفاتيح: ' + error.message);
     }
   });
 
-  // 2. بند تسجيل الدخول باستخدام المفتاح الخاص (nsec)
+  // 2. بند تسجيل الدخول بالمفتاح الخاص
   document.getElementById('btnLogin').addEventListener('click', () => {
     try {
       const privInput = document.getElementById('privateKeyInput').value.trim();
 
       if (!privInput) {
-        alert('يرجى أدخل المفتاح الخاص أولاً (nsec1...)');
+        alert('يرجى إدخال المفتاح الخاص أولاً (nsec1...)');
         return;
       }
 
       let skBytes;
-
-      // إذا كان المفتاح يبدأ بـ nsec1 نقوم بفك تشفيره
       if (privInput.startsWith('nsec1')) {
         const decoded = nip19.decode(privInput);
         if (decoded.type === 'nsec') {
           skBytes = decoded.data;
         }
       } else {
-        // في حال تم إدخال المفتاح بصيغة Hex المباشرة
         skBytes = hexToBytes(privInput);
       }
 
-      // استخراج المفتاح العام وحفظ الجلسة
       const pkHex = getPublicKey(skBytes);
       const npub = nip19.npubEncode(pkHex);
       const nsec = privInput.startsWith('nsec1') ? privInput : nip19.nsecEncode(skBytes);
@@ -74,3 +225,6 @@
     }
   });
 </script>
+
+</body>
+</html>
