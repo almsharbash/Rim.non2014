@@ -27,9 +27,6 @@
       font-size: 1.1rem;
       margin-top: 0;
       margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
     .field-group {
       margin-bottom: 16px;
@@ -109,21 +106,21 @@
       <div class="field-group">
         <label>المفتاح العام (Public Key - npub):</label>
         <div class="input-wrapper">
-          <input type="text" id="publicKey" placeholder="npub1... أو مفتاح Hex" />
-          <button class="btn-copy" onclick="copyToClipboard('publicKey')">نسخ</button>
+          <input type="text" id="publicKey" placeholder="npub1..." />
+          <button type="button" class="btn-copy" id="copyPubBtn">نسخ</button>
         </div>
       </div>
 
       <div class="field-group">
         <label>المفتاح الخاص (Private Key - nsec):</label>
         <div class="input-wrapper">
-          <input type="password" id="privateKey" placeholder="nsec1... أو مفتاح Hex" />
-          <button class="btn-copy" onclick="copyToClipboard('privateKey')">نسخ</button>
+          <input type="password" id="privateKey" placeholder="nsec1..." />
+          <button type="button" class="btn-copy" id="copyPrivBtn">نسخ</button>
         </div>
       </div>
 
-      <button class="btn-primary" onclick="generateNewAccount()">✨ توليد حساب جديد</button>
-      <button class="btn-secondary" onclick="loginAndNavigate()">تسجيل الدخول والدخول للمنصة</button>
+      <button type="button" class="btn-primary" id="generateBtn">✨ توليد حساب جديد</button>
+      <button type="button" class="btn-secondary" id="loginBtn">تسجيل الدخول والدخول للمنصة</button>
       <div id="statusMsg" class="status-msg"></div>
     </div>
 
@@ -149,81 +146,77 @@
   </div>
 
   <script>
-    // دالة توليد مفاتيح عشوائية معتمدة على التشفير المدمج بالمتصفح Web Crypto API
-    function generateHexKey() {
-      const array = new Uint8Array(32);
-      window.crypto.getRandomValues(array);
-      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    // دالة إنشاء سلسلة هكس 64 حرفاً بدون أخطاء مكتبات
+    function makeHexKey() {
+      var bytes = new Uint8Array(32);
+      (window.crypto || window.msCrypto).getRandomValues(bytes);
+      var hex = '';
+      for (var i = 0; i < bytes.length; i++) {
+        var b = bytes[i].toString(16);
+        hex += (b.length === 1 ? '0' : '') + b;
+      }
+      return hex;
     }
 
-    function generateNewAccount() {
+    // ربط الأحداث بأزرار الواجهة
+    document.getElementById('generateBtn').addEventListener('click', function() {
       try {
-        const privHex = generateHexKey();
-        const pubHex = generateHexKey();
-
-        const nsec = "nsec1" + privHex;
-        const npub = "npub1" + pubHex;
-
-        document.getElementById('privateKey').value = nsec;
-        document.getElementById('publicKey').value = npub;
-        
-        showMessage('تم توليد حساب جديد بنجاح!');
+        var priv = makeHexKey();
+        var pub = makeHexKey();
+        document.getElementById('privateKey').value = 'nsec1' + priv;
+        document.getElementById('publicKey').value = 'npub1' + pub;
+        showStatus('تم توليد مفاتيح الحساب بنجاح!');
       } catch (err) {
-        alert('حدث خطأ أثناء التوليد: ' + err.message);
+        alert('حدث خطأ: ' + err.message);
       }
-    }
+    });
 
-    function copyToClipboard(elementId) {
-      const input = document.getElementById(elementId);
-      if (!input.value) return alert('لا يوجد نص لنسخه');
-      
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(input.value);
-      } else {
-        input.select();
-        document.execCommand('copy');
-      }
-      showMessage('تم النسخ بنجاح!');
-    }
+    document.getElementById('loginBtn').addEventListener('click', function() {
+      var pub = document.getElementById('publicKey').value.trim();
+      var priv = document.getElementById('privateKey').value.trim();
 
-    function loginAndNavigate() {
-      const pubKey = document.getElementById('publicKey').value.trim();
-      const privKey = document.getElementById('privateKey').value.trim();
-      const name = document.getElementById('displayName').value.trim();
-      const handle = document.getElementById('handle').value.trim();
-      const avatar = document.getElementById('avatarUrl').value.trim();
-
-      if (!pubKey && !privKey) {
-        alert('يرجى إدخال المفتاح الخاص أو العام للتسجيل');
+      if (!pub && !priv) {
+        alert('يرجى إدخال المفتاح الخاص أو العام لتسجيل الدخول');
         return;
       }
 
-      if (pubKey.includes('@')) {
-        alert('المفتاح العام يجب أن يكون كود Nostr (npub1...) وليس بريداً إلكترونياً');
+      if (pub.indexOf('@') !== -1) {
+        alert('عذراً، يجب وضع مفتاح Nostr وليس بريداً إلكترونياً');
         return;
       }
 
-      const session = {
-        publicKey: pubKey,
-        privateKey: privKey,
-        displayName: name,
-        handle: handle,
-        avatar: avatar,
-        loggedInAt: new Date().toISOString()
+      var userSession = {
+        publicKey: pub,
+        privateKey: priv,
+        displayName: document.getElementById('displayName').value,
+        handle: document.getElementById('handle').value,
+        avatar: document.getElementById('avatarUrl').value
       };
 
-      localStorage.setItem('user_session', JSON.stringify(session));
-      showMessage('تم تسجيل الدخول بنجاح!');
-      
-      setTimeout(() => {
-        window.location.reload(); 
-      }, 1000);
+      localStorage.setItem('user_session', JSON.stringify(userSession));
+      showStatus('تم تسجيل الدخول وإحالة الحساب بنجاح!');
+    });
+
+    document.getElementById('copyPubBtn').addEventListener('click', function() {
+      copyInput('publicKey');
+    });
+
+    document.getElementById('copyPrivBtn').addEventListener('click', function() {
+      copyInput('privateKey');
+    });
+
+    function copyInput(id) {
+      var input = document.getElementById(id);
+      if (!input.value) return alert('لا يوجد نص لنسخه');
+      input.select();
+      document.execCommand('copy');
+      showStatus('تم النسخ إلى الحافظة!');
     }
 
-    function showMessage(msg) {
-      const statusDiv = document.getElementById('statusMsg');
-      statusDiv.innerText = msg;
-      setTimeout(() => { statusDiv.innerText = ''; }, 3000);
+    function showStatus(text) {
+      var el = document.getElementById('statusMsg');
+      el.innerText = text;
+      setTimeout(function() { el.innerText = ''; }, 3000);
     }
   </script>
 </body>
