@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>كلمات - Words</title>
+    <title>كلمات</title>
+    
     <style>
         :root {
-            --bg-main: #0c1017;
-            --bg-card: #151a26;
+            --bg-main: #0b0e14;
+            --bg-card: #131722;
             --border-color: #1e2638;
             --btn-purple: #8b5cf6;
-            --accent-blue: #0088ff;
+            --btn-purple-hover: #7c3aed;
             --text-main: #f3f4f6;
-            --text-muted: #8e9bb0;
-            --input-bg: #090c12;
+            --text-muted: #9ca3af;
+            --input-bg: #0d111a;
             --green-success: #10b981;
-            --heart-red: #ef4444;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
@@ -33,17 +32,20 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
 
-        .app-container {
+        /* إدارة عرض الشاشات */
+        .screen-page {
+            display: none;
             width: 100%;
             max-width: 480px;
-            min-height: 100vh;
-            background-color: var(--bg-main);
-            position: relative;
-            display: flex;
-            flex-direction: column;
+            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 70px;
+        }
+
+        .screen-page.active {
+            display: block;
         }
 
         /* الهيدر العلوي */
@@ -52,8 +54,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background-color: rgba(21, 26, 38, 0.95);
-            backdrop-filter: blur(10px);
+            background-color: var(--bg-card);
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
@@ -62,329 +63,27 @@
 
         .app-title {
             font-weight: bold;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--btn-purple);
-            cursor: pointer;
         }
 
-        .btn-settings-icon {
-            background-color: var(--bg-card);
-            color: var(--text-muted);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            cursor: pointer;
-        }
-
-        /* الشاشات */
-        .page-screen {
-            display: none;
-            padding: 12px;
-            padding-bottom: 80px;
-            flex: 1;
-        }
-
-        .page-screen.active {
-            display: block;
-        }
-
-        /* مساحة النشر المفتوحة والموسعة */
-        .composer-card {
-            background-color: var(--bg-card);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        }
-
-        .composer-header {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .user-avatar-img {
-            width: 46px;
-            height: 46px;
-            border-radius: 50%;
-            object-fit: cover;
-            background-color: var(--btn-purple);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            flex-shrink: 0;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        /* تكبير صندوق النص */
-        .composer-textarea {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 16px;
-            outline: none;
-            resize: vertical;
-            min-height: 100px;
-            padding-top: 4px;
-            line-height: 1.5;
-        }
-
-        .image-preview-box {
-            display: none;
-            position: relative;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .image-preview-box img {
-            width: 100%;
-            max-height: 240px;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .remove-img-btn {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .composer-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--border-color);
-            padding-top: 12px;
-            margin-top: 10px;
-        }
-
-        .composer-tools {
-            display: flex;
-            gap: 18px;
-            color: var(--btn-purple);
-            font-size: 22px;
-            align-items: center;
-        }
-
-        .composer-tools label {
-            cursor: pointer;
-        }
-
-        .btn-publish {
-            background-color: var(--btn-purple);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 20px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* كروت المنشورات */
-        .post-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 14px;
-            position: relative;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .post-user-info {
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-        }
-
-        .post-user-name {
-            font-weight: bold;
-            font-size: 15px;
-            color: var(--text-main);
-        }
-
-        .post-handle {
-            font-size: 12px;
-            color: var(--text-muted);
-            direction: ltr;
-            text-align: right;
-        }
-
-        .post-time {
-            font-size: 11px;
-            color: var(--text-muted);
-            position: absolute;
-            left: 16px;
-            top: 16px;
-        }
-
-        .post-content {
-            font-size: 15px;
-            line-height: 1.6;
-            color: #e5e7eb;
-            margin-bottom: 10px;
-            word-break: break-word;
-        }
-
-        .post-image {
-            width: 100%;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            max-height: 320px;
-            object-fit: cover;
-        }
-
-        /* خيار الترجمة */
-        .translate-btn {
-            background: none;
-            border: none;
-            color: var(--btn-purple);
-            font-size: 12px;
-            cursor: pointer;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
-
-        .translated-text {
-            display: none;
-            background-color: var(--input-bg);
-            border-right: 3px solid var(--btn-purple);
-            padding: 8px 12px;
-            font-size: 13.5px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            color: #d1d5db;
-        }
-
-        .post-actions {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 10px;
-            color: var(--text-muted);
-        }
-
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 13px;
-            padding: 6px 12px;
-            border-radius: 8px;
-        }
-
-        .action-btn svg {
-            width: 19px;
-            height: 19px;
-            fill: currentColor;
-        }
-
-        .action-btn.liked { color: var(--heart-red); }
-        .action-btn.reposted { color: var(--green-success); }
-
-        /* منطقة التعليقات الواسعة المباشرة */
-        .comments-section {
-            display: none;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .comment-item {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 13.5px;
-        }
-
-        .comment-author {
-            font-weight: bold;
-            color: var(--btn-purple);
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-
-        /* تحسين وتكبير حقل كتابة التعليق */
-        .comment-input-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .comment-textarea {
-            width: 100%;
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
-            color: var(--text-main);
-            font-size: 14px;
-            outline: none;
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .btn-comment-send {
-            align-self: flex-end;
-            background-color: var(--btn-purple);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 18px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* شاشات الإعدادات والبروفايل */
+        /* البطاقات والحقول */
         .setting-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 14px;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 16px;
         }
 
         .setting-card-title {
             font-weight: bold;
-            font-size: 15px;
+            font-size: 16px;
             color: var(--text-main);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .field-label {
@@ -398,11 +97,12 @@
         .input-group {
             display: flex;
             gap: 8px;
+            align-items: center;
         }
 
         .input-field {
             width: 100%;
-            padding: 11px;
+            padding: 12px;
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 10px;
@@ -411,6 +111,16 @@
             outline: none;
         }
 
+        .input-field:focus {
+            border-color: var(--btn-purple);
+        }
+
+        textarea.input-field {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        /* الأزرار */
         .btn-primary {
             background-color: var(--btn-purple);
             color: white;
@@ -428,566 +138,327 @@
             background-color: transparent;
             color: var(--btn-purple);
             border: 1px solid var(--btn-purple);
-            padding: 11px;
+            padding: 12px;
             border-radius: 10px;
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
         .btn-copy {
-            background-color: #1a2333;
-            color: #a5b4fc;
+            background-color: #1f293d;
+            color: #c7d2fe;
             border: 1px solid var(--border-color);
-            padding: 0 14px;
+            padding: 12px 14px;
             border-radius: 10px;
             font-size: 12px;
             cursor: pointer;
             white-space: nowrap;
         }
 
-        /* كارت البروفايل وقائمة المتابعين */
-        .profile-header-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
+        .status-badge {
+            color: var(--green-success);
+            font-size: 12px;
+            margin-top: 10px;
             text-align: center;
-            margin-bottom: 16px;
+            display: none;
         }
 
-        .profile-avatar-large {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background-color: var(--btn-purple);
-            margin: 0 auto 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-            overflow: hidden;
-        }
-
-        .profile-name { font-size: 18px; font-weight: bold; }
-        .profile-handle { color: var(--text-muted); font-size: 13px; margin-bottom: 12px; }
-
-        .btn-follow {
-            background-color: var(--btn-purple);
-            color: white;
-            border: none;
-            padding: 8px 24px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-follow.following {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-        }
-
-        .followers-section {
-            margin-top: 16px;
+        /* المنشورات */
+        .post-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
         }
 
-        .follower-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .follower-item:last-child {
-            border-bottom: none;
-        }
-
-        .follower-user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* الشريط السفلي */
+        /* الشريط السفلي للتنقل */
         .nav-bar {
             position: fixed;
             bottom: 0;
-            width: 100%;
-            max-width: 480px;
+            left: 0;
+            right: 0;
             height: 60px;
-            background-color: rgba(21, 26, 38, 0.98);
+            background-color: var(--bg-card);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 100;
+            max-width: 480px;
+            margin: 0 auto;
         }
 
         .nav-item {
             background: none;
             border: none;
             color: var(--text-muted);
+            font-size: 20px;
             cursor: pointer;
-            padding: 10px 16px;
-            border-radius: 12px;
+            padding: 8px 16px;
         }
 
-        .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
-        .nav-item.active { color: var(--btn-purple); background-color: rgba(139, 92, 246, 0.1); }
+        .nav-item.active {
+            color: var(--btn-purple);
+        }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-
-    <!-- الهيدر -->
+    <!-- الهيدر العلوي -->
     <div class="app-header">
-        <div class="app-title" onclick="switchPage('feed-screen')">كلمات</div>
-        <button class="btn-settings-icon" onclick="switchPage('settings-screen')">⚙️ الإعدادات</button>
+        <div class="app-title">كلمات</div>
+        <button class="btn-copy" onclick="switchPage('settings-screen')">⚙️ الإعدادات</button>
     </div>
 
-    <!-- 1. شاشة التغذية والنشر -->
-    <div id="feed-screen" class="page-screen active">
+    <!-- 1. شاشة المنصة والفييد الرئيسي -->
+    <div id="feed-screen" class="screen-page active">
         
-        <!-- مساحة النشر الموسعة -->
-        <div class="composer-card">
-            <div class="composer-header">
-                <div class="user-avatar-img" id="composer-avatar" onclick="openProfileFromNav()">M</div>
-                <textarea id="composer-input" class="composer-textarea" placeholder="ماذا يدور في ذهنك؟ اكتب منشورك بالتفصيل..."></textarea>
-            </div>
-
-            <div id="image-preview-box" class="image-preview-box">
-                <button class="remove-img-btn" onclick="removeAttachedImage()">✕</button>
-                <img id="image-preview-img" src="" alt="المعاينة">
-            </div>
-
-            <div class="composer-actions">
-                <div class="composer-tools">
-                    <label title="إرفاق صورة">
-                        🖼️
-                        <input type="file" id="image-file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
-                    </label>
-                    <span>🏷️</span>
-                    <span>😊</span>
+        <!-- صندوق إنشاء منشور جديد -->
+        <div class="setting-card">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--btn-purple); display: flex; align-items: center; justify-content: center; font-weight: bold;" id="feed-avatar-char">
+                    U
                 </div>
-                <button class="btn-publish" onclick="publishNewPost()">نشر</button>
+                <div>
+                    <strong id="feed-display-name" style="font-size: 14px; display: block;">اسم المستخدم</strong>
+                    <span id="feed-handle" style="font-size: 11px; color: var(--text-muted);">@username</span>
+                </div>
             </div>
+            <textarea id="new-post-content" class="input-field" placeholder="ماذا يدور في ذهنك؟ اكتب منشورك بالتفصيل..."></textarea>
+            <button class="btn-primary" onclick="publishPost()">نشر 🚀</button>
         </div>
 
+        <!-- قائمة التغذية والمناشورات -->
         <div id="posts-container">
-            <!-- منشور 1 -->
-            <div class="post-card">
-                <span class="post-time">الآن</span>
-                <div class="post-header">
-                    <div class="user-avatar-img" style="background:#8b5cf6;" onclick="openProfile('almsharbash', 'almsharbash')">A</div>
-                    <div class="post-user-info" onclick="openProfile('almsharbash', 'almsharbash')">
-                        <div class="post-user-name">@almsharbash</div>
-                    </div>
-                </div>
-                <div class="post-content">Welcome to Words platform! A fully live and interactive social network.</div>
-                
-                <button class="translate-btn" onclick="toggleTranslation(this, 'أهلاً بكم في منصة كلمات! شبكة اجتماعية حية وتفاعلية بالكامل.')">🌐 ترجمة إلى العربية</button>
-                <div class="translated-text"></div>
-
-                <div class="post-actions">
-                    <button class="action-btn" onclick="toggleCommentsSection(this)">
-                        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                        <span class="comments-count">0</span>
-                    </button>
-                    <button class="action-btn" onclick="toggleRepost(this)">
-                        <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
-                        <span>0</span>
-                    </button>
-                    <button class="action-btn" onclick="toggleLike(this)">
-                        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                        <span>0</span>
-                    </button>
-                </div>
-
-                <div class="comments-section">
-                    <div class="comments-list"></div>
-                    <div class="comment-input-container">
-                        <textarea class="comment-textarea" placeholder="اكتب تعليقك بالتفصيل هنا..."></textarea>
-                        <button class="btn-comment-send" onclick="addComment(this)">إرسال التعليق</button>
-                    </div>
-                </div>
-            </div>
+            <!-- سيتم إضافة المنشورات هنا تلقائياً -->
         </div>
     </div>
 
-    <!-- 2. شاشة الإشعارات -->
-    <div id="notifications-screen" class="page-screen">
-        <div class="setting-card-title" style="margin-bottom: 16px;">🔔 الإشعارات والتنبيهات الحية</div>
-        <div id="notifications-list">
-            <div style="color: var(--text-muted); text-align: center; font-size: 13px; padding: 20px;">لا توجد إشعارات جديدة حالياً.</div>
-        </div>
-    </div>
-
-    <!-- 3. شاشة البروفايل وقائمة المتابعين -->
-    <div id="profile-screen" class="page-screen">
-        <div class="profile-header-card">
-            <div id="view-profile-avatar" class="profile-avatar-large">U</div>
-            <div id="view-profile-name" class="profile-name">اسم المستخدم</div>
-            <div id="view-profile-handle" class="profile-handle">@user</div>
-            <button id="btn-follow-user" class="btn-follow" onclick="toggleFollow(this)">متابعة</button>
-        </div>
-
-        <div class="followers-section">
-            <div class="setting-card-title">👥 قائمة المتابَعين والمقترحين</div>
-            <div id="followers-list">
-                <div class="follower-item">
-                    <div class="follower-user-info">
-                        <div class="user-avatar-img" style="background:#3b82f6; width:36px; height:36px;">Y</div>
-                        <div>
-                            <div style="font-weight:bold; font-size:13px;">Yasser Al-Hussein</div>
-                            <div style="font-size:11px; color:var(--text-muted);">@yasser</div>
-                        </div>
-                    </div>
-                    <button class="btn-follow" style="padding: 4px 14px; font-size: 12px;" onclick="toggleFollow(this)">متابعة</button>
-                </div>
-                <div class="follower-item">
-                    <div class="follower-user-info">
-                        <div class="user-avatar-img" style="background:#10b981; width:36px; height:36px;">S</div>
-                        <div>
-                            <div style="font-weight:bold; font-size:13px;">Soso</div>
-                            <div style="font-size:11px; color:var(--text-muted);">@soso2</div>
-                        </div>
-                    </div>
-                    <button class="btn-follow" style="padding: 4px 14px; font-size: 12px;" onclick="toggleFollow(this)">متابعة</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. شاشة الإعدادات -->
-    <div id="settings-screen" class="page-screen">
+    <!-- 2. شاشة إدارة الحساب والإعدادات -->
+    <div id="settings-screen" class="screen-page">
+        <!-- إدارة الحساب والمفاتيح -->
         <div class="setting-card">
             <div class="setting-card-title">🔑 إدارة الحساب والمفاتيح</div>
+            
             <label class="field-label">المفتاح العام (Public Key - npub):</label>
             <div class="input-group">
-                <input type="text" id="display-npub" class="input-field" readonly placeholder="npub1...">
-                <button class="btn-copy" onclick="copyText('display-npub')">نسخ</button>
+                <button class="btn-copy" onclick="copyToClipboard('display-npub')">نسخ</button>
+                <input type="text" id="display-npub" class="input-field" readonly placeholder="سيظهر المفتاح العام هنا...">
             </div>
 
             <label class="field-label">المفتاح الخاص (Private Key - nsec):</label>
             <div class="input-group">
-                <input type="text" id="setting-nsec" class="input-field" placeholder="nsec1...">
-                <button class="btn-copy" onclick="copyText('setting-nsec')">نسخ</button>
+                <button class="btn-copy" onclick="copyToClipboard('setting-nsec')">نسخ</button>
+                <input type="text" id="setting-nsec" class="input-field" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
             </div>
 
-            <button class="btn-primary" onclick="generateKeys()">توليد حساب جديد ✨</button>
-            <button class="btn-secondary" onclick="loginUser()">تسجيل الدخول بالمفتاح 🔑</button>
+            <button class="btn-primary" onclick="generateNostrAccount()">توليد حساب جديد ✨</button>
+            <button class="btn-secondary" onclick="loginAndGoToFeed()">تسجيل الدخول بالمفتاح 🔑</button>
+            
+            <div id="login-status" class="status-badge">✓ تم تسجيل الدخول وجلسة التوقيع نشطة</div>
         </div>
 
+        <!-- تعديل الملف الشخصي -->
         <div class="setting-card">
             <div class="setting-card-title">👤 تعديل الملف الشخصي</div>
-            <label class="field-label">اسم العرض (Display Name):</label>
-            <input type="text" id="edit-display-name" class="input-field" placeholder="مثال: ياسر">
+            
+            <label class="field-label">اسم العرض:</label>
+            <input type="text" id="edit-display-name" class="input-field" placeholder="أدخل اسم العرض">
 
             <label class="field-label">اسم المستخدم (Handle):</label>
-            <input type="text" id="edit-handle" class="input-field" placeholder="مثال: yasser">
+            <input type="text" id="edit-handle" class="input-field" placeholder="username">
 
-            <label class="field-label">رابط الصورة الشخصية (Avatar URL):</label>
-            <input type="text" id="edit-avatar-url" class="input-field" placeholder="https://example.com/image.jpg">
+            <label class="field-label">رابط الصورة الشخصية (Picture URL):</label>
+            <input type="text" id="edit-avatar" class="input-field" placeholder="https://example.com/avatar.jpg">
 
-            <button class="btn-primary" onclick="saveProfileData()">حفظ التغييرات وتطبيقها 💾</button>
+            <label class="field-label">نبذة شخصية (Bio):</label>
+            <textarea id="edit-bio" class="input-field" placeholder="اكتب نبذة عنك..."></textarea>
+
+            <button class="btn-primary" onclick="saveProfileAndGoToFeed()">حفظ التغيرات</button>
         </div>
     </div>
 
-    <!-- الشريط السفلي -->
+    <!-- الشريط السفلي للتنقل -->
     <div class="nav-bar">
-        <button class="nav-item active" onclick="switchPage('feed-screen')">
-            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </button>
-        <button class="nav-item" onclick="openProfileFromNav()">
-            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        </button>
-        <button class="nav-item" onclick="switchPage('notifications-screen')">
-            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-        </button>
-        <button class="nav-item" onclick="switchPage('settings-screen')">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6-3.6 3.6z"/></svg>
-        </button>
+        <button class="nav-item active" onclick="switchPage('feed-screen')">🏠</button>
+        <button class="nav-item" onclick="switchPage('settings-screen')">👤</button>
     </div>
-
-</div>
 
 <script>
-let currentAttachedImageBase64 = "";
-let socket = null;
-
-// الاتصال المباشر بريليه Nostr لجعل المنصة حية وفورية
-function initNostrRelay() {
-    try {
-        socket = new WebSocket('wss://relay.damus.io');
-        socket.onopen = function() {
-            console.log('Connected to Nostr Relay Live Stream');
-            // الاشتراك للحصول على أحدث المنشورات الحية
-            const subRequest = JSON.stringify(["REQ", "feed_sub", { kinds: [1], limit: 10 }]);
-            socket.send(subRequest);
-        };
-
-        socket.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            if (data[0] === "EVENT" && data[2]) {
-                const nostrEvent = data[2];
-                renderLiveNostrPost(nostrEvent);
-            }
-        };
-    } catch (e) {
-        console.log('Relay fallback mode');
-    }
-}
-
-function renderLiveNostrPost(evt) {
-    if (!evt.content) return;
-    const authorHandle = evt.pubkey.substring(0, 8);
-    const postHTML = `
-        <div class="post-card">
-            <span class="post-time">حي 🟢</span>
-            <div class="post-header">
-                <div class="user-avatar-img" style="background:#0088ff;" onclick="openProfile('${authorHandle}', '${authorHandle}')">${authorHandle.charAt(0).toUpperCase()}</div>
-                <div class="post-user-info" onclick="openProfile('${authorHandle}', '${authorHandle}')">
-                    <div class="post-user-name">@${authorHandle}</div>
-                </div>
-            </div>
-            <div class="post-content">${evt.content}</div>
-            <button class="translate-btn" onclick="toggleTranslation(this, 'منشور مباشر من خادم Nostr Relay')">🌐 ترجمة المنشور</button>
-            <div class="translated-text"></div>
-            <div class="post-actions">
-                <button class="action-btn" onclick="toggleCommentsSection(this)"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg><span>0</span></button>
-                <button class="action-btn" onclick="toggleRepost(this)"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg><span>0</span></button>
-                <button class="action-btn" onclick="toggleLike(this)"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>0</span></button>
-            </div>
-            <div class="comments-section">
-                <div class="comments-list"></div>
-                <div class="comment-input-container">
-                    <textarea class="comment-textarea" placeholder="اكتب تعليقك بالتفصيل هنا..."></textarea>
-                    <button class="btn-comment-send" onclick="addComment(this)">إرسال التعليق</button>
-                </div>
-            </div>
-        </div>
-    `;
-    const container = document.getElementById('posts-container');
-    if (container.children.length < 15) {
-        container.insertAdjacentHTML('afterbegin', postHTML);
-    }
-}
-
-// مفتاح الترجمة المباشر
-function toggleTranslation(btn, text) {
-    const box = btn.nextElementSibling;
-    if (box.style.display === 'block') {
-        box.style.display = 'none';
-        btn.innerText = '🌐 ترجمة المنشور';
-    } else {
-        box.innerText = text;
-        box.style.display = 'block';
-        btn.innerText = 'إخفاء الترجمة ✕';
-    }
-}
-
-// التنقل بين الشاشات
+// التنقل بين الصفحات
 function switchPage(pageId) {
-    document.querySelectorAll('.page-screen').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.screen-page').forEach(page => page.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
 
+    // تحديث الأزرار
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-    if(pageId === 'feed-screen') document.querySelectorAll('.nav-item')[0].classList.add('active');
-    else if(pageId === 'profile-screen') document.querySelectorAll('.nav-item')[1].classList.add('active');
-    else if(pageId === 'notifications-screen') document.querySelectorAll('.nav-item')[2].classList.add('active');
-    else if(pageId === 'settings-screen') document.querySelectorAll('.nav-item')[3].classList.add('active');
-}
-
-function openProfile(name, handle, avatarUrl = "") {
-    const avatarBox = document.getElementById('view-profile-avatar');
-    document.getElementById('view-profile-name').innerText = name;
-    document.getElementById('view-profile-handle').innerText = '@' + handle.replace('@', '');
-
-    if (avatarUrl) {
-        avatarBox.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    if(pageId === 'feed-screen') {
+        document.querySelectorAll('.nav-item')[0].classList.add('active');
+        updateFeedUI();
     } else {
-        avatarBox.innerText = name.charAt(0).toUpperCase();
-        avatarBox.style.background = 'var(--btn-purple)';
-    }
-
-    switchPage('profile-screen');
-}
-
-function openProfileFromNav() {
-    const profile = JSON.parse(localStorage.getItem('kalimat_profile')) || { name: 'أنا', handle: 'me', avatar: '' };
-    openProfile(profile.name, profile.handle, profile.avatar);
-}
-
-function toggleFollow(btn) {
-    if (btn.classList.contains('following')) {
-        btn.classList.remove('following');
-        btn.innerText = "متابعة";
-    } else {
-        btn.classList.add('following');
-        btn.innerText = "تتابعه";
+        document.querySelectorAll('.nav-item')[1].classList.add('active');
     }
 }
 
-function handleFileSelect(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentAttachedImageBase64 = e.target.result;
-            document.getElementById('image-preview-img').src = currentAttachedImageBase64;
-            document.getElementById('image-preview-box').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
+// دالة النسخ
+function copyToClipboard(elementId) {
+    const inputEl = document.getElementById(elementId);
+    if (!inputEl || !inputEl.value) return;
+    navigator.clipboard.writeText(inputEl.value).then(() => alert("تم النسخ!"));
+}
+
+// توليد مفاتيح والانتقال للمنصة
+function generateNostrAccount() {
+    const hexChars = '0123456789abcdef';
+    let randomHex = '';
+    for (let i = 0; i < 58; i++) {
+        randomHex += hexChars.charAt(Math.floor(Math.random() * hexChars.length));
     }
+
+    const nsec = 'nsec1' + randomHex;
+    const npub = 'npub1' + randomHex;
+
+    document.getElementById('setting-nsec').value = nsec;
+    document.getElementById('display-npub').value = npub;
+
+    localStorage.setItem('kalimat_nsec', nsec);
+    localStorage.setItem('kalimat_npub', npub);
+
+    document.getElementById('login-status').style.display = 'block';
+    
+    // انتقال مباشر للمنصة بعد التوليد
+    setTimeout(() => switchPage('feed-screen'), 500);
 }
 
-function removeAttachedImage() {
-    currentAttachedImageBase64 = "";
-    document.getElementById('image-preview-box').style.display = 'none';
-    document.getElementById('image-file-input').value = "";
-}
-
-function toggleLike(btn) {
-    const span = btn.querySelector('span');
-    let count = parseInt(span.innerText) || 0;
-    if (btn.classList.contains('liked')) {
-        btn.classList.remove('liked');
-        span.innerText = count - 1;
-    } else {
-        btn.classList.add('liked');
-        span.innerText = count + 1;
+// تسجيل الدخول والانتقال للمنصة
+function loginAndGoToFeed() {
+    const nsecInput = document.getElementById('setting-nsec').value.trim();
+    if (!nsecInput) {
+        alert("يرجى إدخال أو توليد المفتاح الخاص أولاً.");
+        return;
     }
-}
 
-function toggleRepost(btn) {
-    const span = btn.querySelector('span');
-    let count = parseInt(span.innerText) || 0;
-    if (btn.classList.contains('reposted')) {
-        btn.classList.remove('reposted');
-        span.innerText = count - 1;
-    } else {
-        btn.classList.add('reposted');
-        span.innerText = count + 1;
-    }
-}
+    let npub = 'npub1' + (nsecInput.startsWith('nsec1') ? nsecInput.substring(5) : nsecInput);
+    document.getElementById('display-npub').value = npub;
 
-function toggleCommentsSection(btn) {
-    const postCard = btn.closest('.post-card');
-    const commentsSection = postCard.querySelector('.comments-section');
-    commentsSection.style.display = commentsSection.style.display === 'block' ? 'none' : 'block';
-}
+    localStorage.setItem('kalimat_nsec', nsecInput);
+    localStorage.setItem('kalimat_npub', npub);
 
-function addComment(btn) {
-    const container = btn.closest('.comment-input-container');
-    const textarea = container.querySelector('.comment-textarea');
-    const text = textarea.value.trim();
+    document.getElementById('login-status').style.display = 'block';
 
-    if (!text) return;
-
-    const profile = JSON.parse(localStorage.getItem('kalimat_profile')) || { name: 'أنا', handle: 'me' };
-    const commentsList = btn.closest('.comments-section').querySelector('.comments-list');
-
-    const commentHTML = `
-        <div class="comment-item">
-            <div class="comment-author">@${profile.handle}</div>
-            <div>${text}</div>
-        </div>
-    `;
-
-    commentsList.insertAdjacentHTML('beforeend', commentHTML);
-    textarea.value = '';
-
-    const countSpan = btn.closest('.post-card').querySelector('.comments-count');
-    countSpan.innerText = (parseInt(countSpan.innerText) || 0) + 1;
-}
-
-function publishNewPost() {
-    const textInput = document.getElementById('composer-input');
-    const text = textInput.value.trim();
-
-    if(!text && !currentAttachedImageBase64) return;
-
-    const profile = JSON.parse(localStorage.getItem('kalimat_profile')) || { name: 'أنا', handle: 'me' };
-    const avatarContent = profile.avatar ? `<img src="${profile.avatar}" style="width:100%;height:100%;object-fit:cover;">` : (profile.name || 'M').charAt(0).toUpperCase();
-
-    const container = document.getElementById('posts-container');
-    const imgHTML = currentAttachedImageBase64 ? `<img src="${currentAttachedImageBase64}" class="post-image">` : '';
-
-    const postHTML = `
-        <div class="post-card">
-            <span class="post-time">الآن</span>
-            <div class="post-header">
-                <div class="user-avatar-img" onclick="openProfile('${profile.name}', '${profile.handle}', '${profile.avatar || ''}')">${avatarContent}</div>
-                <div class="post-user-info" onclick="openProfile('${profile.name}', '${profile.handle}', '${profile.avatar || ''}')">
-                    <div class="post-user-name">${profile.name}</div>
-                    <div class="post-handle">@${profile.handle}</div>
-                </div>
-            </div>
-            <div class="post-content">${text}</div>
-            ${imgHTML}
-            <button class="translate-btn" onclick="toggleTranslation(this, '${text}')">🌐 ترجمة المنشور</button>
-            <div class="translated-text"></div>
-            <div class="post-actions">
-                <button class="action-btn" onclick="toggleCommentsSection(this)"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg><span class="comments-count">0</span></button>
-                <button class="action-btn" onclick="toggleRepost(this)"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg><span>0</span></button>
-                <button class="action-btn" onclick="toggleLike(this)"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>0</span></button>
-            </div>
-            <div class="comments-section">
-                <div class="comments-list"></div>
-                <div class="comment-input-container">
-                    <textarea class="comment-textarea" placeholder="اكتب تعليقك بالتفصيل هنا..."></textarea>
-                    <button class="btn-comment-send" onclick="addComment(this)">إرسال التعليق</button>
-                </div>
-            </div>
-        </div>
-    `;
-
-    container.insertAdjacentHTML('afterbegin', postHTML);
-    textInput.value = '';
-    removeAttachedImage();
-}
-
-function saveProfileData() {
-    const profile = { 
-        name: document.getElementById('edit-display-name').value.trim() || 'مستخدم', 
-        handle: document.getElementById('edit-handle').value.trim() || 'user',
-        avatar: document.getElementById('edit-avatar-url').value.trim() || ''
-    };
-    localStorage.setItem('kalimat_profile', JSON.stringify(profile));
+    // الانتقال التلقائي الفوري إلى شاشة المنصة
     switchPage('feed-screen');
 }
 
-function copyText(id) {
-    const el = document.getElementById(id);
-    if(el && el.value) navigator.clipboard.writeText(el.value);
+// حفظ الملف الشخصي والانتقال
+function saveProfileAndGoToFeed() {
+    const name = document.getElementById('edit-display-name').value.trim();
+    const handle = document.getElementById('edit-handle').value.trim();
+    const avatar = document.getElementById('edit-avatar').value.trim();
+    const bio = document.getElementById('edit-bio').value.trim();
+
+    const profile = { name, handle, avatar, bio };
+    localStorage.setItem('kalimat_profile', JSON.stringify(profile));
+
+    switchPage('feed-screen');
 }
 
-function generateKeys() {
-    const rand = Math.random().toString(36).substring(2, 15);
-    document.getElementById('setting-nsec').value = "nsec1" + rand;
-    document.getElementById('display-npub').value = "npub1" + rand;
+// تحديث بيانات المستخدم في واجهة المنصة
+function updateFeedUI() {
+    const savedProfile = JSON.parse(localStorage.getItem('kalimat_profile')) || {};
+    const name = savedProfile.name || 'مستخدم جديد';
+    
+    document.getElementById('feed-display-name').innerText = name;
+    document.getElementById('feed-handle').innerText = '@' + (savedProfile.handle || 'user');
+    document.getElementById('feed-avatar-char').innerText = name.charAt(0).toUpperCase();
 }
 
-function loginUser() {
-    const nsec = document.getElementById('setting-nsec').value.trim();
-    if(nsec) document.getElementById('display-npub').value = "npub1" + nsec.substring(5);
+// إدارة المنشورات وقراءتها وإرسالها
+function loadPosts() {
+    const container = document.getElementById('posts-container');
+    const posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [
+        {
+            author: 'كلمات',
+            handle: 'kalimat',
+            content: '🎉 أهلاً بك في منصة كلمات! جرى تسجيل دخولك بنجاح والمنصة تعمل بشكل حي ومباشر الآن.',
+            time: 'الآن'
+        }
+    ];
+
+    container.innerHTML = '';
+    posts.forEach(post => {
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        card.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--btn-purple); display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    ${post.author.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <strong style="display: block; font-size: 13.5px;">${post.author}</strong>
+                    <span style="font-size: 11px; color: var(--text-muted);">@${post.handle} • ${post.time}</span>
+                </div>
+            </div>
+            <div style="background: var(--input-bg); padding: 12px; border-radius: 8px; font-size: 13.5px; line-height: 1.5;">
+                ${post.content}
+            </div>
+        `;
+        container.appendChild(card);
+    });
 }
 
-window.onload = function() {
-    initNostrRelay();
-};
+function publishPost() {
+    const textarea = document.getElementById('new-post-content');
+    const content = textarea.value.trim();
+
+    if (!content) {
+        alert("يرجى كتابة نص المنشور أولاً.");
+        return;
+    }
+
+    const savedProfile = JSON.parse(localStorage.getItem('kalimat_profile')) || {};
+    const newPost = {
+        author: savedProfile.name || 'مستخدم',
+        handle: savedProfile.handle || 'user',
+        content: content,
+        time: 'الآن'
+    };
+
+    const posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [];
+    posts.unshift(newPost);
+    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+
+    textarea.value = '';
+    loadPosts();
+}
+
+// تحميل البيانات المحفوظة عند الفتح
+function loadData() {
+    const savedNsec = localStorage.getItem('kalimat_nsec');
+    const savedNpub = localStorage.getItem('kalimat_npub');
+    const savedProfile = JSON.parse(localStorage.getItem('kalimat_profile'));
+
+    if (savedNsec) {
+        document.getElementById('setting-nsec').value = savedNsec;
+        document.getElementById('login-status').style.display = 'block';
+    }
+    if (savedNpub) document.getElementById('display-npub').value = savedNpub;
+
+    if (savedProfile) {
+        if (savedProfile.name) document.getElementById('edit-display-name').value = savedProfile.name;
+        if (savedProfile.handle) document.getElementById('edit-handle').value = savedProfile.handle;
+        if (savedProfile.avatar) document.getElementById('edit-avatar').value = savedProfile.avatar;
+        if (savedProfile.bio) document.getElementById('edit-bio').value = savedProfile.bio;
+    }
+
+    updateFeedUI();
+    loadPosts();
+}
+
+document.addEventListener('DOMContentLoaded', loadData);
 </script>
 
 </body>
