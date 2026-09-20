@@ -1,44 +1,157 @@
-<!-- قسم إدارة الحساب والمفاتيح -->
-<div class="setting-card">
-    <div class="setting-card-title">🔑 إدارة الحساب والمفاتيح</div>
-    
-    <!-- المفتاح العام -->
-    <label style="font-size:12px; color:var(--text-muted); margin-top:8px; display:block;">المفتاح العام (Public Key - npub):</label>
-    <div style="display: flex; gap: 8px; margin-top: 4px;">
-        <input type="text" id="display-npub" class="input-field" readonly placeholder="سيظهر المفتاح العام هنا...">
-        <button class="btn-secondary" style="width: auto; margin:0; padding: 0 12px;" onclick="copyToClipboard('display-npub')">نسخ</button>
+<!-- تنسيق الأنماط الخاصة بقسم المفاتيح والملف الشخصي -->
+<style>
+    :root {
+        --bg-card: #151a23;
+        --border-color: #1e293b;
+        --btn-purple: #8b5cf6;
+        --btn-purple-hover: #7c3aed;
+        --text-main: #f3f4f6;
+        --text-muted: #9ca3af;
+        --input-bg: #111827;
+    }
+
+    .settings-container {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 16px;
+        background-color: #0b0e14;
+        color: var(--text-main);
+        font-family: 'Cairo', sans-serif;
+        direction: rtl;
+    }
+
+    .setting-card {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .setting-card-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--btn-purple);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .field-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 10px;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 10px 12px;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-main);
+        font-size: 13px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .input-field:focus {
+        border-color: var(--btn-purple);
+    }
+
+    .input-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .btn-primary {
+        background-color: var(--btn-purple);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--btn-purple-hover);
+    }
+
+    .btn-secondary {
+        background-color: #1f2937;
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.2s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #374151;
+    }
+
+    .btn-group-dual {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 14px;
+    }
+</style>
+
+<div class="settings-container">
+    <!-- 1. قسم إدارة الحساب والمفاتيح -->
+    <div class="setting-card">
+        <div class="setting-card-title">🔑 إدارة الحساب والمفاتيح</div>
+        
+        <!-- المفتاح العام -->
+        <label class="field-label">المفتاح العام (Public Key - npub):</label>
+        <div class="input-group">
+            <input type="text" id="display-npub" class="input-field" readonly placeholder="سيظهر المفتاح العام هنا...">
+            <button class="btn-secondary" onclick="copyToClipboard('display-npub')">نسخ 📋</button>
+        </div>
+
+        <!-- المفتاح الخاص -->
+        <label class="field-label">المفتاح الخاص (Private Key - nsec):</label>
+        <div class="input-group">
+            <input type="text" id="setting-nsec" class="input-field" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+            <button class="btn-secondary" onclick="copyToClipboard('setting-nsec')">نسخ 📋</button>
+        </div>
+
+        <!-- أزرار العمليات -->
+        <div class="btn-group-dual">
+            <button class="btn-primary" onclick="generateNostrAccount()">توليد حساب جديد ✨</button>
+            <button class="btn-secondary" onclick="loginWithNsec()">تسجيل الدخول بالمفتاح 🔑</button>
+        </div>
     </div>
 
-    <!-- المفتاح الخاص (نص واضح وليس كلمة سر لتسهيل النسخ والقراءة) -->
-    <label style="font-size:12px; color:var(--text-muted); margin-top:12px; display:block;">المفتاح الخاص (Private Key - nsec):</label>
-    <div style="display: flex; gap: 8px; margin-top: 4px;">
-        <input type="text" id="setting-nsec" class="input-field" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
-        <button class="btn-secondary" style="width: auto; margin:0; padding: 0 12px;" onclick="copyToClipboard('setting-nsec')">نسخ</button>
-    </div>
+    <!-- 2. قسم تعديل الملف الشخصي -->
+    <div class="setting-card">
+        <div class="setting-card-title">👤 تعديل الملف الشخصي</div>
+        
+        <label class="field-label">اسم العرض:</label>
+        <input type="text" id="edit-display-name" class="input-field" placeholder="أدخل اسم العرض">
 
-    <!-- أزرار التوليد والدخول -->
-    <div style="display:flex; gap:10px; margin-top:14px;">
-        <button class="btn-primary" onclick="generateNostrAccount()">توليد حساب جديد ✨</button>
-        <button class="btn-secondary" onclick="loginWithNsec()">تسجيل الدخول بالمفتاح 🔑</button>
+        <label class="field-label">اسم المستخدم (Handle):</label>
+        <input type="text" id="edit-handle" class="input-field" placeholder="username">
+
+        <button class="btn-primary" style="margin-top: 14px;" onclick="saveProfileData()">حفظ التغيرات</button>
     </div>
 </div>
 
-<!-- قسم تعديل الملف الشخصي -->
-<div class="setting-card" style="margin-top: 16px;">
-    <div class="setting-card-title">👤 تعديل الملف الشخصي</div>
-    
-    <label style="font-size:12px; color:var(--text-muted);">اسم العرض:</label>
-    <input type="text" id="edit-display-name" class="input-field" placeholder="أدخل اسم العرض">
-
-    <label style="font-size:12px; color:var(--text-muted); margin-top:10px; display:block;">اسم المستخدم (Handle):</label>
-    <input type="text" id="edit-handle" class="input-field" placeholder="username">
-
-    <button class="btn-primary" style="margin-top:14px;" onclick="saveProfileData()">حفظ التغيرات</button>
-</div>
-
-<!-- سكريبت إدارة الحساب والنسخ -->
 <script>
-// دالة نسخ النصوص للذاكرة
 function copyToClipboard(elementId) {
     const inputEl = document.getElementById(elementId);
     if (!inputEl || !inputEl.value) {
@@ -48,14 +161,12 @@ function copyToClipboard(elementId) {
     navigator.clipboard.writeText(inputEl.value).then(() => {
         alert("تم نسخ الرمز بنجاح إلى الحافظة! 📋");
     }).catch(() => {
-        // طريقة بديلة للهواتف التي لا تدعم الحافظة الحديثة
         inputEl.select();
         document.execCommand('copy');
         alert("تم نسخ الرمز بنجاح! 📋");
     });
 }
 
-// دالة توليد مفاتيح Nostr عشوائية واضحة وقابلة للنسخ
 function generateNostrAccount() {
     const hexChars = '0123456789abcdef';
     let randomHex = '';
@@ -69,14 +180,12 @@ function generateNostrAccount() {
     document.getElementById('setting-nsec').value = nsec;
     document.getElementById('display-npub').value = npub;
 
-    // حفظ في الذاكرة المحلية
     localStorage.setItem('kalimat_nsec', nsec);
     localStorage.setItem('kalimat_npub', npub);
 
-    alert("تم توليد الحساب والمفاتيح بنجاح! يمكنك الآن نسخ مفتاحك الخاص للحفاظ عليه.");
+    alert("تم توليد الحساب والمفاتيح بنجاح!");
 }
 
-// دالة تسجيل الدخول بمفتاح nsec مدخل
 function loginWithNsec() {
     const nsecInput = document.getElementById('setting-nsec').value.trim();
     if (!nsecInput) {
@@ -84,9 +193,7 @@ function loginWithNsec() {
         return;
     }
 
-    // إنشاء مفتاح عام بناءً على المدخلات
     let npub = 'npub1' + (nsecInput.startsWith('nsec1') ? nsecInput.substring(5) : nsecInput);
-    
     document.getElementById('display-npub').value = npub;
 
     localStorage.setItem('kalimat_nsec', nsecInput);
@@ -95,7 +202,6 @@ function loginWithNsec() {
     alert("تم تسجيل الدخول بنجاح بالمفتاح المدخل!");
 }
 
-// دالة حفظ بيانات الملف الشخصي
 function saveProfileData() {
     const name = document.getElementById('edit-display-name').value.trim();
     const handle = document.getElementById('edit-handle').value.trim();
@@ -111,7 +217,6 @@ function saveProfileData() {
     alert("تم حفظ بيانات الملف الشخصي بنجاح!");
 }
 
-// استرجاع البيانات المجهزة عند استدعاء الصفحة
 function loadAccountData() {
     const savedNsec = localStorage.getItem('kalimat_nsec');
     const savedNpub = localStorage.getItem('kalimat_npub');
@@ -126,6 +231,5 @@ function loadAccountData() {
     }
 }
 
-// تشغيل جلب البيانات عند التحميل
 document.addEventListener('DOMContentLoaded', loadAccountData);
 </script>
