@@ -88,12 +88,6 @@
       margin-top: 10px;
       font-size: 0.95rem;
     }
-    .status-msg {
-      margin-top: 12px;
-      font-size: 0.85rem;
-      color: #4cd964;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
@@ -106,22 +100,21 @@
       <div class="field-group">
         <label>المفتاح العام (Public Key - npub):</label>
         <div class="input-wrapper">
-          <input type="text" id="publicKey" placeholder="أدخل المفتاح العام npub1..." />
-          <button type="button" class="btn-copy" id="btnCopyPub">نسخ</button>
+          <input type="text" id="publicKey" placeholder="npub1..." />
+          <button class="btn-copy">نسخ</button>
         </div>
       </div>
 
       <div class="field-group">
         <label>المفتاح الخاص (Private Key - nsec):</label>
         <div class="input-wrapper">
-          <input type="password" id="privateKey" placeholder="أدخل المفتاح الخاص nsec1..." />
-          <button type="button" class="btn-copy" id="btnCopyPriv">نسخ</button>
+          <input type="password" id="privateKey" placeholder="nsec1..." />
+          <button class="btn-copy">نسخ</button>
         </div>
       </div>
 
-      <button type="button" class="btn-primary" id="btnGenerate">✨ توليد حساب جديد</button>
-      <button type="button" class="btn-secondary" id="btnLogin">تسجيل الدخول والدخول للمنصة</button>
-      <div id="statusMsg" class="status-msg"></div>
+      <button class="btn-primary">✨ توليد حساب جديد</button>
+      <button class="btn-secondary">تسجيل الدخول والدخول للمنصة</button>
     </div>
 
     <div class="card">
@@ -136,86 +129,9 @@
         <label>اسم المستخدم (Handle):</label>
         <input type="text" id="handle" placeholder="مثال: ahmed_12" />
       </div>
-
-      <div class="field-group">
-        <label>رابط الصورة الشخصية (Avatar URL):</label>
-        <input type="url" id="avatarUrl" placeholder="https://..." />
-      </div>
     </div>
 
   </div>
 
-  <script>
-    // دالة إنشاء كود هكس عشوائي مستقل تماماً
-    function generateRandomHex(length) {
-      var characters = '0123456789abcdef';
-      var result = '';
-      for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      return result;
-    }
-
-    // توليد مفتاحين مستقلين عند الضغط
-    document.getElementById('btnGenerate').onclick = function() {
-      var privHex = generateRandomHex(64);
-      var pubHex = generateRandomHex(64);
-
-      document.getElementById('privateKey').value = 'nsec1' + privHex.substring(0, 58);
-      document.getElementById('publicKey').value = 'npub1' + pubHex.substring(0, 58);
-
-      showStatus('تم توليد الحساب والمفاتيح بنجاح!');
-    };
-
-    // تسجيل الدخول والحفظ
-    document.getElementById('btnLogin').onclick = function() {
-      var pub = document.getElementById('publicKey').value.trim();
-      var priv = document.getElementById('privateKey').value.trim();
-
-      if (!pub && !priv) {
-        alert('يرجى إدخال المفتاح الخاص أو العام لتسجيل الدخول');
-        return;
-      }
-
-      if (pub.indexOf('@') !== -1) {
-        alert('المفتاح العام يجب أن يكون كود Nostr وليس بريداً إلكترونياً');
-        return;
-      }
-
-      var userSession = {
-        publicKey: pub,
-        privateKey: priv,
-        displayName: document.getElementById('displayName').value,
-        handle: document.getElementById('handle').value,
-        avatar: document.getElementById('avatarUrl').value
-      };
-
-      localStorage.setItem('user_session', JSON.stringify(userSession));
-      showStatus('تم الحفظ وتسجيل الدخول بنجاح!');
-    };
-
-    // معالجة أزرار النسخ
-    document.getElementById('btnCopyPub').onclick = function() {
-      copyToClipboard('publicKey');
-    };
-
-    document.getElementById('btnCopyPriv').onclick = function() {
-      copyToClipboard('privateKey');
-    };
-
-    function copyToClipboard(inputId) {
-      var input = document.getElementById(inputId);
-      if (!input.value) return alert('لا يوجد نص لنسخه');
-      input.select();
-      document.execCommand('copy');
-      showStatus('تم النسخ إلى الحافظة!');
-    }
-
-    function showStatus(text) {
-      var el = document.getElementById('statusMsg');
-      el.innerText = text;
-      setTimeout(function() { el.innerText = ''; }, 3000);
-    }
-  </script>
 </body>
 </html>
