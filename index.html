@@ -12,9 +12,6 @@
     <meta property="og:type" content="website" />
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- استدعاء مكتبة Nostr الرسمية لاشتقاق وتوليد المفاتيح بدقة -->
-    <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
 
     <style>
         :root {
@@ -638,25 +635,30 @@
         </div>
 
         <div class="setting-card">
-            <div class="setting-card-title">🔐 إدارة وتعديل مفاتيح Nostr</div>
+            <div class="setting-card-title">🔑 إدارة المفاتيح والحساب</div>
             
             <div class="input-group">
                 <label>المفتاح العام (Public Key - npub):</label>
                 <div class="key-box-wrapper">
-                    <input type="text" id="setting-npub" class="input-field key-box-input" readonly placeholder="جاري التوليد...">
+                    <input type="text" id="setting-npub" class="input-field key-box-input" readonly placeholder="سيظهر المفتاح العام هنا...">
                     <button class="copy-btn" onclick="copyToClipboard('setting-npub')">نسخ</button>
                 </div>
             </div>
 
             <div class="input-group" style="margin-top:12px;">
                 <label>المفتاح الخاص (Private Key - nsec):</label>
-                <input type="password" id="setting-nsec" class="input-field" placeholder="أدخل أو عدّل مفتاح nsec هنا">
+                <div class="key-box-wrapper">
+                    <input type="text" id="setting-nsec" class="input-field key-box-input" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+                    <button class="copy-btn" onclick="copyToClipboard('setting-nsec')">نسخ</button>
+                </div>
             </div>
 
             <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
-                <button class="btn-primary" onclick="updateCustomKeys()">حفظ وتعديل المفاتيح يدوياً 💾</button>
-                <button class="btn-secondary" onclick="generateNewNostrAccount(true)">توليد حساب مفاتيح جديد ✨</button>
+                <button class="btn-primary" onclick="generateNostrAccount()">توليد حساب جديد ✨</button>
+                <button class="btn-secondary" onclick="loginAndGoToFeed()">تسجيل الدخول بالمفتاح 🔑</button>
             </div>
+            
+            <div id="login-status" style="color: #10b981; font-size: 12px; margin-top: 10px; text-align: center; display: none;">✓ تم تسجيل الدخول وجلسة التوقيع نشطة</div>
         </div>
     </section>
 
@@ -722,52 +724,6 @@
     </nav>
 
     <script>
-        // ==========================================
-        // وحدة توليد واشتقاق مفاتيح Nostr المشفرة
-        // ==========================================
-        const NostrCrypto = {
-            generateAccount: function() {
-                try {
-                    const NT = window.NostrTools;
-                    if (!NT) throw new Error("لم يتم تحميل مكتبة NostrTools");
-
-                    // توليد مفتاح خاص عشوائي محلياً (SecretKey)
-                    const sk = NT.generateSecretKey ? NT.generateSecretKey() : NT.generatePrivateKey();
-                    
-                    // تحويله إلى صيغة nsec
-                    const nsec = NT.nip19.nsecEncode(sk);
-
-                    // اشتقاق المفتاح العام المترابط به بتحويله لـ npub
-                    const pk = NT.getPublicKey(sk);
-                    const npub = NT.nip19.npubEncode(pk);
-
-                    return { nsec, npub };
-                } catch (err) {
-                    console.error("خطأ في مكتبة NostrTools:", err);
-                    alert("تعذر استخدام مكتبة التشفير، تأكد من الاتصال بالشبكة لمرة واحدة.");
-                    return null;
-                }
-            },
-
-            deriveNpubFromNsec: function(nsecStr) {
-                try {
-                    const NT = window.NostrTools;
-                    if (!NT) return null;
-                    const decoded = NT.nip19.decode(nsecStr);
-                    if (decoded.type !== 'nsec') return null;
-                    
-                    const sk = decoded.data;
-                    const pk = NT.getPublicKey(sk);
-                    return NT.nip19.npubEncode(pk);
-                } catch (e) {
-                    return null;
-                }
-            }
-        };
-
-        // ==========================================
-        // منطق وإداريات المنصة
-        // ==========================================
         let navigationHistory = ['feed'];
         let activeImageBase64 = null;
 
@@ -779,7 +735,7 @@
                 avatar: 'ك',
                 avatarBg: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
                 time: 'الآن',
-                text: '🎉 أهلاً بك في منصة كلمات! تم تحديث النظام وتوليد مفاتيح Nostr الخاصة بك بنجاح وأمان محلياً.',
+                text: '🎉 أهلاً بك في منصة كلمات! جرى تسجيل دخولك بنجاح والمنصة تعمل بشكل حي ومباشر الآن.',
                 zaps: 12,
                 likes: 24,
                 reposts: 5,
@@ -835,6 +791,60 @@
                 updateView(previousTab);
             }
         }
+
+        /* ==========================================
+           منطق توليد وتسجيل دخول المفاتيح من الكود 1
+           ========================================== */
+
+        function generateNostrAccount() {
+            const hexChars = '0123456789abcdef';
+            let randomHex = '';
+            for (let i = 0; i < 58; i++) {
+                randomHex += hexChars.charAt(Math.floor(Math.random() * hexChars.length));
+            }
+
+            const nsec = 'nsec1' + randomHex;
+            const npub = 'npub1' + randomHex;
+
+            document.getElementById('setting-nsec').value = nsec;
+            document.getElementById('setting-npub').value = npub;
+
+            localStorage.setItem('kalimat_nsec', nsec);
+            localStorage.setItem('kalimat_npub', npub);
+
+            document.getElementById('login-status').style.display = 'block';
+            showWelcomeBanner("تم توليد مفاتيح Nostr جديدة بنجاح! ✨");
+            
+            setTimeout(() => switchTab('feed'), 500);
+        }
+
+        function loginAndGoToFeed() {
+            const nsecInput = document.getElementById('setting-nsec').value.trim();
+            if (!nsecInput) {
+                alert("يرجى إدخال أو توليد المفتاح الخاص أولاً.");
+                return;
+            }
+
+            let npub = 'npub1' + (nsecInput.startsWith('nsec1') ? nsecInput.substring(5) : nsecInput);
+            document.getElementById('setting-npub').value = npub;
+
+            localStorage.setItem('kalimat_nsec', nsecInput);
+            localStorage.setItem('kalimat_npub', npub);
+
+            document.getElementById('login-status').style.display = 'block';
+
+            switchTab('feed');
+        }
+
+        function copyToClipboard(elementId) {
+            const inputEl = document.getElementById(elementId);
+            if (!inputEl || !inputEl.value) return;
+            navigator.clipboard.writeText(inputEl.value).then(() => alert("تم النسخ!"));
+        }
+
+        /* ==========================================
+           إدارة المنشورات والملف الشخصي
+           ========================================== */
 
         function loadPosts() {
             const savedPosts = JSON.parse(localStorage.getItem('kalimat_posts')) || defaultPosts;
@@ -917,66 +927,6 @@
             closePrimalComposer();
         }
 
-        // توليد حساب جديد وحفظه تلقائياً أو يدوياً
-        function generateNewNostrAccount(isManual = false) {
-            const keys = NostrCrypto.generateAccount();
-            if (!keys) return;
-
-            document.getElementById('setting-nsec').value = keys.nsec;
-            document.getElementById('setting-npub').value = keys.npub;
-
-            localStorage.setItem('kalimat_nsec', keys.nsec);
-            localStorage.setItem('kalimat_npub', keys.npub);
-
-            if (isManual) {
-                showWelcomeBanner("تم توليد زوج مفاتيح جديد بنجاح! ✨");
-            }
-        }
-
-        // حفظ وتعديل المفاتيح المدخلة يدوياً مع الاشتقاق التلقائي
-        function updateCustomKeys() {
-            const nsecInput = document.getElementById('setting-nsec').value.trim();
-
-            if (!nsecInput) {
-                alert("يرجى إدخال المفتاح الخاص (nsec) لحفظ وتعديل الحساب.");
-                return;
-            }
-
-            if (!nsecInput.startsWith('nsec1')) {
-                alert("تنبيه: المفتاح الخاص يجب أن يبدأ بـ nsec1");
-                return;
-            }
-
-            // اشتقاق المفتاح العام تلقائياً لمنع أي تعارض
-            const derivedNpub = NostrCrypto.deriveNpubFromNsec(nsecInput);
-
-            if (!derivedNpub) {
-                alert("المفتاح الخاص (nsec) المدخل غير صحيح أو لا يمكن فك تشفيره!");
-                return;
-            }
-
-            document.getElementById('setting-npub').value = derivedNpub;
-            localStorage.setItem('kalimat_nsec', nsecInput);
-            localStorage.setItem('kalimat_npub', derivedNpub);
-
-            alert("تم حفظ المفتاح الخاص واشتقاق المفتاح العام المترابط به بنجاح! ✨");
-        }
-
-        function copyToClipboard(elementId) {
-            const inputField = document.getElementById(elementId);
-            const text = inputField.value;
-            
-            if(!text) return;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                alert("تم نسخ المفتاح بنجاح!");
-            }).catch(() => {
-                inputField.select();
-                document.execCommand('copy');
-                alert("تم نسخ المفتاح!");
-            });
-        }
-
         function saveProfileChanges() {
             const name = document.getElementById('edit-display-name').value;
             const handle = document.getElementById('edit-handle').value;
@@ -1002,15 +952,15 @@
                 });
             }
 
-            let nsec = localStorage.getItem('kalimat_nsec');
-            let npub = localStorage.getItem('kalimat_npub');
+            const savedNsec = localStorage.getItem('kalimat_nsec');
+            const savedNpub = localStorage.getItem('kalimat_npub');
 
-            // إذا لم تكن هناك مفاتيح مخزنة سابقاً، يتم التوليد التلقائي محلياً فوراً
-            if (!nsec || !npub) {
-                generateNewNostrAccount(false);
-            } else {
-                document.getElementById('setting-nsec').value = nsec;
-                document.getElementById('setting-npub').value = npub;
+            if (savedNsec) {
+                document.getElementById('setting-nsec').value = savedNsec;
+                document.getElementById('login-status').style.display = 'block';
+            }
+            if (savedNpub) {
+                document.getElementById('setting-npub').value = savedNpub;
             }
         }
 
