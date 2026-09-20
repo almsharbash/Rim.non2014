@@ -12,8 +12,23 @@
             --bg-card: #1c2331;
             --border-color: #2a3447;
             --accent-color: #8b5cf6;
+            --accent-hover: #7c3aed;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
+            --input-bg: #111827;
+        }
+
+        /* Light Theme Dynamic Class */
+        body.light-theme {
+            --bg-main: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #f1f5f9;
+            --border-color: #e2e8f0;
+            --accent-color: #7c3aed;
+            --accent-hover: #6d28d9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --input-bg: #f8fafc;
         }
 
         * {
@@ -27,19 +42,21 @@
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
-            padding-bottom: 70px; /* مساحة للشريط السفلي */
-            max-width: 500px; /* تحديد العرض ليكون مثل شاشة الهاتف تماماً */
+            padding-bottom: 70px;
+            max-width: 500px;
             margin: 0 auto;
             min-height: 100vh;
             border-left: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        /* الهيدر العلوي */
+        /* Top Header */
         .app-header {
             position: sticky;
             top: 0;
-            background-color: rgba(11, 14, 20, 0.95);
+            background-color: var(--bg-main);
+            opacity: 0.96;
             backdrop-filter: blur(10px);
             padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
@@ -58,9 +75,22 @@
             gap: 6px;
         }
 
+        .logo-placeholder {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--accent-color), #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
         .user-avatar-small {
-            width: 35px;
-            height: 35px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: var(--accent-color);
             display: flex;
@@ -68,9 +98,20 @@
             justify-content: center;
             font-weight: bold;
             font-size: 14px;
+            color: white;
+            cursor: pointer;
+            object-fit: cover;
         }
 
-        /* الشاشات / الصفحات */
+        .header-action-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Tabs Navigation */
         .tab-content {
             display: none;
         }
@@ -79,27 +120,28 @@
             display: block;
         }
 
-        /* صندوق التدوين السريع */
+        /* Quick Composer Box */
         .composer-box {
             padding: 14px;
             border-bottom: 1px solid var(--border-color);
             background-color: var(--bg-secondary);
             display: flex;
             gap: 10px;
+            align-items: flex-start;
         }
 
         .composer-box textarea {
             width: 100%;
             background: transparent;
             border: none;
-            color: white;
+            color: var(--text-main);
             font-size: 15px;
             outline: none;
             resize: none;
-            height: 50px;
+            height: 48px;
         }
 
-        /* بطاقة المنشور المخصصة للهاتف */
+        /* Feed Post Cards */
         .post-card {
             padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
@@ -137,25 +179,42 @@
         .post-text {
             font-size: 14px;
             line-height: 1.5;
-            color: #e5e7eb;
+            color: var(--text-main);
             margin: 6px 0 10px 0;
         }
 
-        .post-actions {
+        /* Post Actions (Only Icons) */
+        .post-actions-clean {
             display: flex;
             justify-content: space-between;
             color: var(--text-muted);
-            font-size: 12px;
-            padding-top: 4px;
+            padding-top: 6px;
+            max-width: 320px;
         }
 
-        .action-item {
+        .action-icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
+            font-size: 13px;
+            transition: color 0.2s;
         }
 
-        /* زر النشر العائم */
+        .action-icon-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .action-icon-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Floating Action Button (FAB) */
         .fab-btn {
             position: fixed;
             bottom: 75px;
@@ -168,14 +227,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
             box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
             border: none;
             cursor: pointer;
             z-index: 99;
         }
 
-        /* شريط الملاحة السفلي (Bottom Nav) */
+        .fab-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        /* Bottom Nav (Icon Only) */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -183,81 +247,145 @@
             right: 0;
             max-width: 500px;
             margin: 0 auto;
-            background-color: rgba(15, 20, 29, 0.98);
-            backdrop-filter: blur(10px);
+            background-color: var(--bg-main);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
+            padding: 12px 0;
             z-index: 1000;
         }
 
         .nav-button {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            color: var(--text-muted);
             background: none;
             border: none;
-            font-size: 11px;
+            color: var(--text-muted);
             cursor: pointer;
             width: 20%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: color 0.2s, transform 0.15s;
         }
 
         .nav-button.active {
             color: var(--accent-color);
-            font-weight: 700;
+            transform: scale(1.1);
         }
 
-        .nav-icon {
-            font-size: 18px;
+        .nav-button svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
         }
 
-        /* عناصر الإعدادات */
-        .setting-item {
+        /* Settings & Profile Cards */
+        .setting-card {
             padding: 16px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .setting-title {
+        .setting-card-title {
             font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 6px;
+            font-size: 15px;
+            margin-bottom: 10px;
             color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .input-field {
             width: 100%;
-            padding: 10px;
-            background: var(--bg-secondary);
+            padding: 11px;
+            background: var(--input-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            color: white;
-            font-size: 12px;
-            margin-top: 4px;
+            color: var(--text-main);
+            font-size: 13px;
+            margin-top: 6px;
             outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* Modal for Profile Edit */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
         }
     </style>
 </head>
-<body>
+<body class="dark-theme">
 
     <!-- الهيدر العلوي -->
     <header class="app-header">
         <div class="user-avatar-small" onclick="switchTab('profile')">M</div>
-        <div class="brand">⚡ كلمات</div>
-        <div style="font-size: 18px; cursor: pointer;" onclick="switchTab('settings')">⚙️</div>
+        <div class="brand">
+            <div class="logo-placeholder">ك</div>
+            <span>كلمات</span>
+        </div>
+        <button class="header-action-btn" onclick="switchTab('settings')">
+            <svg style="width:22px;height:22px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97c0-.32-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .32.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/></svg>
+        </button>
     </header>
 
     <!-- 1. الشاشة الرئيسية (Feed) -->
     <main id="tab-feed" class="tab-content active">
-        <!-- كتابة منشور سريع -->
+        <!-- صندوق التدوين السريع -->
         <div class="composer-box">
             <div class="user-avatar-small">M</div>
-            <textarea placeholder="ماذا يدور في ذهنك؟"></textarea>
+            <textarea id="quick-post-input" placeholder="ماذا يدور في ذهنك؟"></textarea>
         </div>
 
-        <!-- قائمة المنشورات -->
+        <!-- قائمة المنشورات بالرموز فقط -->
         <div class="post-card">
             <div class="user-avatar-small" style="background:#3b82f6;">A</div>
             <div class="post-content">
@@ -269,13 +397,29 @@
                     <span class="post-time">5 د</span>
                 </div>
                 <div class="post-text">
-                    أهلاً بكم في التحديث الجديد لمنصة "كلمات"! الواجهة الآن مصممة خصيصاً لتعمل بسلاسة وأناقة على شاشات الهواتف المحمولة. 🚀📱
+                    التصميم الجديد يعتمد بالكامل على الأيقونات والرموز السريعة مع إمكانية التبديل الفوري بين المظهر الداكن والمضيء! 🚀
                 </div>
-                <div class="post-actions">
-                    <span class="action-item">💬 12</span>
-                    <span class="action-item">🔄 4</span>
-                    <span class="action-item">❤️ 45</span>
-                    <span class="action-item">⚡ 100</span>
+                <div class="post-actions-clean">
+                    <!-- سهم الرد -->
+                    <button class="action-icon-btn">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 9V5l-7 7l7 7v-4.1c5 0 8.5 1.6 11 5.1c-1-5-4-10-11-11Z"/></svg>
+                        <span>12</span>
+                    </button>
+                    <!-- سهم إعادة النشر -->
+                    <button class="action-icon-btn">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 7v4H5.83l2.58-2.58L7 7l-5 5l5 5l1.41-1.41L5.83 13H21V7h-2Z"/></svg>
+                        <span>4</span>
+                    </button>
+                    <!-- رمز الإعجاب (قلب) -->
+                    <button class="action-icon-btn" onclick="toggleLike(this)">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
+                        <span class="like-count">45</span>
+                    </button>
+                    <!-- رمز البرق / الزاب -->
+                    <button class="action-icon-btn">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v11h3v9l7-12h-4l4-8H7Z"/></svg>
+                        <span>100</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -291,13 +435,25 @@
                     <span class="post-time">ساعة</span>
                 </div>
                 <div class="post-text">
-                    التصميم المخصص للهاتف يجعل تصفح شبكة Nostr أسرع وأسهل بكثير دون أي تداخل في عناصر الشاشة! ✨
+                    تمت إضافة إعدادات التحكم بالألوان، مولد المفاتيح لتسجيل الدخول، وتعديل بيانات الملف الشخصي بنجاح. ⚡✨
                 </div>
-                <div class="post-actions">
-                    <span class="action-item">💬 5</span>
-                    <span class="action-item">🔄 2</span>
-                    <span class="action-item">❤️ 28</span>
-                    <span class="action-item">⚡ 50</span>
+                <div class="post-actions-clean">
+                    <button class="action-icon-btn">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 9V5l-7 7l7 7v-4.1c5 0 8.5 1.6 11 5.1c-1-5-4-10-11-11Z"/></svg>
+                        <span>3</span>
+                    </button>
+                    <button class="action-icon-btn">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 7v4H5.83l2.58-2.58L7 7l-5 5l5 5l1.41-1.41L5.83 13H21V7h-2Z"/></svg>
+                        <span>1</span>
+                    </button>
+                    <button class="action-icon-btn" onclick="toggleLike(this)">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
+                        <span class="like-count">28</span>
+                    </button>
+                    <button class="action-icon-btn">
+                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v11h3v9l7-12h-4l4-8H7Z"/></svg>
+                        <span>50</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -306,86 +462,203 @@
     <!-- 2. شاشة الإشعارات -->
     <section id="tab-notifications" class="tab-content">
         <div style="padding: 40px 20px; text-align: center; color: var(--text-muted);">
-            🔔 لا توجد إشعارات جديدة حتى الآن.
+            لا توجد إشعارات جديدة حالياً.
         </div>
     </section>
 
     <!-- 3. شاشة الرسائل -->
     <section id="tab-messages" class="tab-content">
         <div style="padding: 40px 20px; text-align: center; color: var(--text-muted);">
-            💬 الرسائل المشفرة ستظهر هنا.
+            المحادثات الخاصة المشفرة ستظهر هنا.
         </div>
     </section>
 
     <!-- 4. شاشة الملف الشخصي -->
     <section id="tab-profile" class="tab-content">
-        <div style="height: 100px; background: linear-gradient(90deg, #8b5cf6, #3b82f6);"></div>
+        <div style="height: 110px; background: linear-gradient(90deg, var(--accent-color), #3b82f6);"></div>
         <div style="padding: 0 16px; position: relative;">
-            <div class="user-avatar-small" style="width: 60px; height: 60px; font-size: 24px; border: 3px solid var(--bg-main); position: absolute; top: -30px;">M</div>
-            <div style="padding-top: 35px;">
-                <h3>المشاربش</h3>
-                <span style="color: var(--text-muted); font-size: 12px;">npub1...almsharbash</span>
-                <p style="margin-top: 8px; font-size: 13px;">مطور ومحاضر مهتم بالتقنيات الحديثة والحرية الرقمية. ⚡</p>
+            <div id="profile-avatar-display" class="user-avatar-small" style="width: 64px; height: 64px; font-size: 26px; border: 3px solid var(--bg-main); position: absolute; top: -32px;">M</div>
+            <div style="text-align: left; padding-top: 10px;">
+                <button class="btn-secondary" style="width: auto; padding: 6px 14px; font-size: 12px;" onclick="openEditProfileModal()">تعديل الملف الشخصي</button>
+            </div>
+            <div style="margin-top: 10px;">
+                <h3 id="profile-name-display">المشاربش</h3>
+                <span id="profile-handle-display" style="color: var(--text-muted); font-size: 12px;">@almsharbash</span>
+                <p id="profile-bio-display" style="margin-top: 8px; font-size: 13px; color: var(--text-main);">مطور ومحاضر مهتم بالتقنيات الحديثة والحرية الرقمية. ⚡</p>
             </div>
         </div>
     </section>
 
-    <!-- 5. شاشة الإعدادات -->
+    <!-- 5. شاشة الإعدادات المحدثة بالكامل -->
     <section id="tab-settings" class="tab-content">
-        <div class="setting-item">
-            <div class="setting-title">🔑 المفتاح العام (Public Key)</div>
-            <input type="text" class="input-field" value="npub1almsharbash..." readonly>
+        
+        <!-- التحكم بالمظهر والألوان -->
+        <div class="setting-card">
+            <div class="setting-card-title">☀️ 🌙 مظهر الشاشة والإضاءة</div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn-secondary" style="flex:1;" onclick="setTheme('dark')">الوضع الداكن 🌙</button>
+                <button class="btn-secondary" style="flex:1;" onclick="setTheme('light')">الوضع المضيء ☀️</button>
+            </div>
         </div>
-        <div class="setting-item">
-            <div class="setting-title">🌐 خوادم الترحيل (Relays)</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">• wss://relay.damus.io (متصل)</div>
-            <div style="font-size: 12px; color: var(--text-muted);">• wss://nos.lol (متصل)</div>
+
+        <!-- إنشاء حساب / توليد مفاتيح تسجيل الدخول -->
+        <div class="setting-card">
+            <div class="setting-card-title">🔐 الحساب والمفاتيح الرقمية (Nostr Keys)</div>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">استخدم مفاتيحك الحالية أو قم بتوليد حساب جديد تماماً:</p>
+            
+            <label style="font-size:11px; color:var(--text-muted);">المفتاح العام (Public Key - npub):</label>
+            <input type="text" id="setting-npub" class="input-field" value="npub1almsharbash..." readonly>
+
+            <label style="font-size:11px; color:var(--text-muted); margin-top:8px; display:block;">المفتاح الخاص (Private Key - nsec):</label>
+            <input type="password" id="setting-nsec" class="input-field" value="nsec1234567890abcdef..." readonly>
+
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
+                <button class="btn-secondary" onclick="loginWithNsec()">تسجيل دخول مفتاح 🔑</button>
+            </div>
+        </div>
+
+        <!-- خوادم الترحيل Relays -->
+        <div class="setting-card">
+            <div class="setting-card-title">🌐 خوادم الترحيل (Relays)</div>
+            <div style="font-size: 12px; color: var(--text-muted);">• wss://relay.damus.io <span style="color:#10b981;">(متصل)</span></div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://nos.lol <span style="color:#10b981;">(متصل)</span></div>
         </div>
     </section>
 
-    <!-- زر النشر العائم -->
-    <button class="fab-btn">✍️</button>
+    <!-- نافذة تعديل الملف الشخصي (Modal) -->
+    <div id="edit-profile-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-bottom:12px; color:var(--accent-color);">تعديل البيانات الشخصية</h3>
+            
+            <label style="font-size:12px;">اسم المستخدم:</label>
+            <input type="text" id="edit-name-input" class="input-field" value="المشاربش">
 
-    <!-- شريط التنقل السفلي -->
+            <label style="font-size:12px; margin-top:8px; display:block;">المعرف (@handle):</label>
+            <input type="text" id="edit-handle-input" class="input-field" value="almsharbash">
+
+            <label style="font-size:12px; margin-top:8px; display:block;">النبذة الشخصية (Bio):</label>
+            <textarea id="edit-bio-input" class="input-field" style="height:60px; resize:none;">مطور ومحاضر مهتم بالتقنيات الحديثة والحرية الرقمية. ⚡</textarea>
+
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="btn-primary" style="flex:1;" onclick="saveProfileChanges()">حفظ التعديلات</button>
+                <button class="btn-secondary" style="flex:1;" onclick="closeEditProfileModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- زر النشر العائم -->
+    <button class="fab-btn">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83l3.75 3.75l1.83-1.83z"/></svg>
+    </button>
+
+    <!-- شريط التنقل السفلي بالرموز والأيقونات فقط (Icon Only) -->
     <nav class="bottom-nav">
+        <!-- الرئيسية -->
         <button class="nav-button active" onclick="switchTab('feed', this)">
-            <span class="nav-icon">🏠</span>
-            <span>الرئيسية</span>
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8h5z"/></svg>
         </button>
+        <!-- الإشعارات -->
         <button class="nav-button" onclick="switchTab('notifications', this)">
-            <span class="nav-icon">🔔</span>
-            <span>الإشعارات</span>
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         </button>
+        <!-- الرسائل -->
         <button class="nav-button" onclick="switchTab('messages', this)">
-            <span class="nav-icon">💬</span>
-            <span>الرسائل</span>
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
         </button>
+        <!-- الملف الشخصي -->
         <button class="nav-button" onclick="switchTab('profile', this)">
-            <span class="nav-icon">👤</span>
-            <span>حسابي</span>
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         </button>
+        <!-- الإعدادات -->
         <button class="nav-button" onclick="switchTab('settings', this)">
-            <span class="nav-icon">⚙️</span>
-            <span>الإعدادات</span>
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94c0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6s-1.62 3.6-3.6 3.6z"/></svg>
         </button>
     </nav>
 
     <script>
+        // 1. التنقل بين الشاشات
         function switchTab(tabId, btnElement) {
-            // إخفاء كافة الشاشات
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            // إزالة التحديد عن الأزرار
-            document.querySelectorAll('.nav-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
 
-            // تفعيل الشاشة المطلوبة
             document.getElementById('tab-' + tabId).classList.add('active');
-            if (btnElement) {
-                btnElement.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
+        }
+
+        // 2. التحكم بإضاءة الشاشة (Theme Switcher)
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+                document.body.classList.add('dark-theme');
             }
+        }
+
+        // 3. مفتاح الإعجاب والتفاعل المحلي
+        function toggleLike(btn) {
+            const countSpan = btn.querySelector('.like-count');
+            let count = parseInt(countSpan.textContent);
+            if (btn.style.color === 'rgb(239, 68, 68)') {
+                btn.style.color = 'var(--text-muted)';
+                countSpan.textContent = count - 1;
+            } else {
+                btn.style.color = '#ef4444';
+                countSpan.textContent = count + 1;
+            }
+        }
+
+        // 4. توليد حساب جديد وخلق مفاتيح Nostr عشوائية
+        function generateNewAccount() {
+            const randomHex = () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            const newNpub = 'npub1' + randomHex();
+            const newNsec = 'nsec1' + randomHex() + randomHex();
+
+            document.getElementById('setting-npub').value = newNpub;
+            document.getElementById('setting-nsec').value = newNsec;
+            alert('تم توليد مفاتيح حساب جديد بنجاح! احفظ مفتاحك الخاص (nsec) في مكان آمن.');
+        }
+
+        // 5. تسجيل الدخول بالمفتاح الخاص
+        function loginWithNsec() {
+            const userNsec = prompt('أدخل المفتاح الخاص بك (nsec):');
+            if (userNsec && userNsec.startsWith('nsec')) {
+                document.getElementById('setting-nsec').value = userNsec;
+                alert('تم تسجيل الدخول بالمفتاح بنجاح!');
+            } else if (userNsec) {
+                alert('المفتاح الخاص غير صحيح. يجب أن يبدأ بـ nsec');
+            }
+        }
+
+        // 6. إدارة نافذة وتعديل بيانات الملف الشخصي
+        function openEditProfileModal() {
+            document.getElementById('edit-profile-modal').classList.add('active');
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('edit-profile-modal').classList.remove('active');
+        }
+
+        function saveProfileChanges() {
+            const newName = document.getElementById('edit-name-input').value;
+            const newHandle = document.getElementById('edit-handle-input').value;
+            const newBio = document.getElementById('edit-bio-input').value;
+
+            document.getElementById('profile-name-display').textContent = newName;
+            document.getElementById('profile-handle-display').textContent = '@' + newHandle;
+            document.getElementById('profile-bio-display').textContent = newBio;
+            
+            // تحديث الحرف الأول في الصورة
+            if (newName.length > 0) {
+                document.querySelectorAll('.user-avatar-small').forEach(av => {
+                    av.textContent = newName.charAt(0).toUpperCase();
+                });
+            }
+
+            closeEditProfileModal();
+            alert('تم حفظ البيانات الشخصية بنجاح!');
         }
     </script>
 </body>
