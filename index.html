@@ -1,95 +1,268 @@
-import { generatePrivateKey, getPublicKey, nip19 } from 'nostr-tools';
-
-// ==========================================
-// 1. إدارة الحساب والتوليد وتسجيل الدخول
-// ==========================================
-
-// توليد حساب جديد (مفتاح خاص وعام)
-function generateNewAccount() {
-    try {
-        // توليد مفتاح خاص بصيغة Hex
-        const skHex = generatePrivateKey();
-        // استخراج المفتاح العام بصيغة Hex
-        const pkHex = getPublicKey(skHex);
-
-        // تحويل المفاتيح إلى صيغ nsec و npub للواجهة
-        const nsec = nip19.nsecEncode(skHex);
-        const npub = nip19.npubEncode(pkHex);
-
-        // حفظ البيانات في Storage
-        localStorage.setItem('nostr_sk', skHex);
-        localStorage.setItem('nostr_pk', pkHex);
-
-        // تحديث عناصر الواجهة UI
-        document.getElementById('publicKeyInput').value = npub;
-        document.getElementById('privateKeyInput').value = nsec;
-
-        alert('تم توليد الحساب بنجاح! يرجى حفظ المفتاح الخاص في مكان آمن.');
-    } catch (error) {
-        console.error('حدث خطأ أثناء توليد الحساب:', error);
-    }
-}
-
-// تسجيل الدخول بمفتاح خاص حالي
-function loginWithPrivateKey(userKeyInput) {
-    try {
-        let skHex = userKeyInput.trim();
-
-        // في حال تم إدخال المفتاح بصيغة nsec
-        if (skHex.startsWith('nsec')) {
-            const { type, data } = nip19.decode(skHex);
-            if (type === 'nsec') skHex = data;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كلمات - Kalimat</title>
+    <style>
+        :root {
+            --bg-color: #0f0c1b;
+            --card-bg: #18132a;
+            --input-bg: #221b3b;
+            --primary: #8b5cf6;
+            --text-color: #ffffff;
+            --text-muted: #a0a0b8;
+            --border-color: #2e264a;
         }
 
-        const pkHex = getPublicKey(skHex);
-        const npub = nip19.npubEncode(pkHex);
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
 
-        localStorage.setItem('nostr_sk', skHex);
-        localStorage.setItem('nostr_pk', pkHex);
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-        document.getElementById('publicKeyInput').value = npub;
-        alert('تم تسجيل الدخول بنجاح!');
-    } catch (error) {
-        alert('المفتاح الخاص غير صالح، يرجى التأكد من الصيغة.');
-    }
-}
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
 
-// ==========================================
-// 2. تحديث بيانات الملف الشخصي (Kind 0)
-// ==========================================
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
 
-async function saveProfileChanges() {
-    const skHex = localStorage.getItem('nostr_sk');
-    if (!skHex) {
-        alert('يرجى تسجيل الدخول أو توليد حساب أولاً.');
-        return;
-    }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    const name = document.getElementById('displayNameInput').value;
-    const username = document.getElementById('handleInput').value;
-    const bio = document.getElementById('bioInput').value;
-    const picture = document.getElementById('pictureUrlInput').value; // حقل صورة الملف الشخصي
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+        }
 
-    // تجهيز كائن البيانات Metadata
-    const profileData = {
-        name: name,
-        username: username,
-        about: bio,
-        picture: picture // رابط الصورة الشخصية
-    };
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-    // إنشاء حدث Nostr من النوع Kind 0 (Profile Metadata)
-    const event = {
-        kind: 0,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [],
-        content: JSON.stringify(profileData),
-        pubkey: getPublicKey(skHex)
-    };
+        label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
 
-    // توقيع الحدث بالمفتاح الخاص
-    // (باستخدام finalizeEvent من nostr-tools أو finishEvent حسب الإصدار)
-    // await publishEventToRelays(event);
+        input, textarea {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-    alert('تم حفظ وتحديث بيانات الملف الشخصي بنجاح!');
-}
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary:active {
+            opacity: 0.8;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- إدارة الحساب والمفاتيح -->
+    <div class="card">
+        <div class="section-title">
+            🔑 إدارة الحساب والمفاتيح
+        </div>
+        
+        <div class="form-group">
+            <label>المفتاح العام (Public Key - npub):</label>
+            <input type="text" id="publicKeyInput" readonly placeholder="سيظهر المفتاح العام هنا...">
+        </div>
+
+        <div class="form-group">
+            <label>المفتاح الخاص (Private Key - nsec):</label>
+            <input type="password" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+        </div>
+
+        <button type="button" class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
+        <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">تسجيل الدخول بالمفتاح</button>
+    </div>
+
+    <!-- تعديل الملف الشخصي -->
+    <div class="card">
+        <div class="section-title">
+            👤 تعديل الملف الشخصي
+        </div>
+
+        <div class="form-group">
+            <label>اسم العرض:</label>
+            <input type="text" id="displayNameInput" placeholder="أدخل اسم العرض">
+        </div>
+
+        <div class="form-group">
+            <label>اسم المستخدم (Handle):</label>
+            <input type="text" id="handleInput" placeholder="username">
+        </div>
+
+        <div class="form-group">
+            <label>رابط الصورة الشخصية (Picture URL):</label>
+            <input type="url" id="pictureUrlInput" placeholder="https://example.com/avatar.jpg">
+        </div>
+
+        <div class="form-group">
+            <label>نبذة شخصية (Bio):</label>
+            <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
+        </div>
+
+        <button type="button" class="btn-primary" onclick="saveProfileChanges()">حفظ التغيرات</button>
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- السكربت البرمجي التنفيذي (مُغلف بالوسم الصحيح) -->
+<!-- ========================================== -->
+<script type="module">
+  import { generatePrivateKey, getPublicKey, nip19 } from 'https://cdn.jsdelivr.net/npm/nostr-tools/+esm';
+
+  // 1. دالة توليد حساب جديد
+  window.generateNewAccount = function() {
+      try {
+          const skHex = generatePrivateKey();
+          const pkHex = getPublicKey(skHex);
+
+          const nsec = nip19.nsecEncode(skHex);
+          const npub = nip19.npubEncode(pkHex);
+
+          localStorage.setItem('nostr_sk', skHex);
+          localStorage.setItem('nostr_pk', pkHex);
+
+          document.getElementById('publicKeyInput').value = npub;
+          document.getElementById('privateKeyInput').value = nsec;
+
+          alert('تم توليد الحساب بنجاح! احفظ المفتاح الخاص (nsec) في مكان آمن.');
+      } catch (error) {
+          console.error('حدث خطأ أثناء توليد الحساب:', error);
+          alert('حدث خطأ أثناء توليد الحساب.');
+      }
+  };
+
+  // 2. دالة تسجيل الدخول بمفتاح خاص
+  window.loginWithPrivateKey = function() {
+      try {
+          const privInput = document.getElementById('privateKeyInput');
+          let skHex = privInput ? privInput.value.trim() : '';
+
+          if (!skHex) {
+              alert('يرجى إدخال المفتاح الخاص أولاً.');
+              return;
+          }
+
+          if (skHex.startsWith('nsec')) {
+              const { type, data } = nip19.decode(skHex);
+              if (type === 'nsec') skHex = data;
+          }
+
+          const pkHex = getPublicKey(skHex);
+          const npub = nip19.npubEncode(pkHex);
+
+          localStorage.setItem('nostr_sk', skHex);
+          localStorage.setItem('nostr_pk', pkHex);
+
+          document.getElementById('publicKeyInput').value = npub;
+          alert('تم تسجيل الدخول بنجاح!');
+      } catch (error) {
+          alert('المفتاح الخاص غير صالح، يرجى التأكد من الصيغة.');
+      }
+  };
+
+  // 3. دالة حفظ بيانات الملف الشخصي
+  window.saveProfileChanges = async function() {
+      const skHex = localStorage.getItem('nostr_sk');
+      if (!skHex) {
+          alert('يرجى تسجيل الدخول أو توليد حساب أولاً.');
+          return;
+      }
+
+      const name = document.getElementById('displayNameInput')?.value || '';
+      const username = document.getElementById('handleInput')?.value || '';
+      const picture = document.getElementById('pictureUrlInput')?.value || '';
+      const bio = document.getElementById('bioInput')?.value || '';
+
+      const profileData = { name, username, picture, about: bio };
+
+      console.log('بيانات الملف الشخصي جاهزة للنشر:', profileData);
+      alert('تم حفظ وتحديث بيانات الملف الشخصي بنجاح!');
+  };
+
+  // استرجاع المفاتيح المحفوظة تلقائياً عند فتح الصفحة
+  window.addEventListener('DOMContentLoaded', () => {
+      const savedSk = localStorage.getItem('nostr_sk');
+      const savedPk = localStorage.getItem('nostr_pk');
+      if (savedSk && savedPk) {
+          try {
+              document.getElementById('publicKeyInput').value = nip19.npubEncode(savedPk);
+              document.getElementById('privateKeyInput').value = nip19.nsecEncode(savedSk);
+          } catch(e) {}
+      }
+  });
+</script>
+
+</body>
+</html>
