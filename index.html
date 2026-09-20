@@ -6,15 +6,16 @@
     <title>كلمات</title>
     <style>
         :root {
-            --bg-dark: #0e0e17;
-            --card-dark: #161624;
-            --input-dark: #1c1c2e;
-            --accent-purple: #7c3aed;
+            --bg-color: #0d0f17;
+            --card-bg: #151824;
+            --input-bg: #1c2030;
+            --purple-main: #7c3aed;
+            --purple-light: #8b5cf6;
             --text-main: #ffffff;
-            --text-muted: #9ca3af;
+            --text-sub: #9ca3af;
             --border-color: rgba(255, 255, 255, 0.08);
-            --danger-color: #ef4444;
-            --success-color: #10b981;
+            --red-color: #ef4444;
+            --green-color: #10b981;
         }
 
         * {
@@ -25,36 +26,51 @@
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
             justify-content: center;
             min-height: 100vh;
-            padding-bottom: 70px;
+            padding-bottom: 75px;
         }
 
         .app-container {
             width: 100%;
             max-width: 480px;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Header / Top Bar */
+        /* Top Bar */
         .top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
-            background-color: var(--bg-dark);
+            padding: 14px 16px;
+            background-color: var(--bg-color);
         }
 
-        .top-left, .top-right {
+        .top-bar-title {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--purple-light);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--purple-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
         }
 
         .icon-btn {
@@ -65,29 +81,8 @@
             cursor: pointer;
         }
 
-        .top-title {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--accent-purple);
-        }
-
-        .user-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background-color: #7c3aed;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #fff;
-        }
-
-        /* Theme Selector */
-        .theme-selector {
+        /* Theme Cards */
+        .theme-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
@@ -95,72 +90,59 @@
         }
 
         .theme-card {
-            background-color: var(--card-dark);
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 16px;
             text-align: center;
-            cursor: pointer;
-            color: var(--text-main);
         }
 
         .theme-card.active {
             border-color: #6366f1;
         }
 
-        .theme-card-icon {
-            margin-top: 8px;
+        .theme-icon {
+            margin-top: 6px;
             font-size: 18px;
         }
 
-        /* Settings / Key Management Card */
-        .setting-card {
-            background-color: var(--card-dark);
+        /* Main Card */
+        .settings-card {
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             margin: 8px 16px;
-            padding: 16px;
+            padding: 18px;
         }
 
-        .setting-card-title {
-            font-weight: bold;
+        .card-title {
+            text-align: center;
             font-size: 16px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            font-weight: bold;
+            margin-bottom: 16px;
         }
 
-        .input-group label {
+        .input-block {
+            margin-bottom: 14px;
+        }
+
+        .input-block label {
             display: block;
             font-size: 12px;
-            color: var(--text-muted);
+            color: var(--text-sub);
             margin-bottom: 6px;
-            text-align: right;
         }
 
-        .key-box-wrapper {
+        .key-input-group {
             display: flex;
-            background-color: var(--input-dark);
+            background-color: var(--input-bg);
             border-radius: 8px;
             overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
-        .key-box-input {
-            width: 100%;
-            background: none;
-            border: none;
-            padding: 10px;
-            color: var(--text-muted);
-            font-size: 13px;
-            outline: none;
-            text-align: left;
-            direction: ltr;
-        }
-
-        .copy-btn {
-            background: rgba(124, 58, 237, 0.2);
+        .copy-button {
+            background: rgba(124, 58, 237, 0.25);
             border: none;
             color: #a78bfa;
             padding: 0 16px;
@@ -168,68 +150,80 @@
             font-size: 13px;
         }
 
-        .btn-primary {
+        .key-input {
             width: 100%;
-            background-color: var(--accent-purple);
-            color: #fff;
+            background: none;
             border: none;
             padding: 12px;
-            border-radius: 10px;
+            color: #d1d5db;
+            font-size: 13px;
+            outline: none;
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* Action Buttons */
+        .btn-gen {
+            width: 100%;
+            background-color: var(--purple-main);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
+            margin-top: 6px;
         }
 
-        .btn-secondary {
+        .btn-login {
             width: 100%;
             background: transparent;
             color: var(--text-main);
             border: 1px solid var(--border-color);
             padding: 12px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 14px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         .btn-logout {
             width: 100%;
             background: transparent;
-            color: var(--danger-color);
+            color: var(--red-color);
             border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 10px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 14px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
-        .status-badge {
-            color: var(--success-color);
+        .login-status-msg {
+            color: var(--green-color);
             font-size: 12px;
-            margin-top: 12px;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            margin-top: 14px;
         }
 
         /* FAB Button */
-        .fab-btn {
+        .fab {
             position: fixed;
             bottom: 75px;
-            right: 20px;
+            left: 20px;
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            background-color: var(--accent-purple);
+            background-color: var(--purple-main);
             color: #fff;
             border: none;
+            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
 
         /* Bottom Nav */
@@ -238,186 +232,156 @@
             bottom: 0;
             width: 100%;
             max-width: 480px;
-            background-color: var(--bg-dark);
+            background-color: var(--bg-color);
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             padding: 12px 0;
-            z-index: 10;
         }
 
-        .nav-item {
+        .nav-btn {
             background: none;
             border: none;
-            color: var(--text-muted);
+            color: var(--text-sub);
             font-size: 20px;
             cursor: pointer;
+        }
+
+        .nav-btn.active {
+            color: var(--text-main);
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Top Navigation Bar -->
+        <!-- Top Bar -->
         <header class="top-bar">
-            <div class="top-left">
-                <button type="button" class="icon-btn">⚙️</button>
-            </div>
-
-            <div class="top-title">
-                كلمات 🪶
-            </div>
-
-            <div class="top-right">
+            <button class="icon-btn" type="button">⚙️</button>
+            <div class="top-bar-title">كلمات 🪶</div>
+            <div style="display:flex; align-items:center; gap:10px;">
                 <div class="user-avatar">K</div>
-                <button type="button" class="icon-btn">←</button>
+                <button class="icon-btn" type="button">←</button>
             </div>
         </header>
 
-        <!-- Main Cards -->
-        <main>
-            <!-- Theme Cards -->
-            <section class="theme-selector">
-                <div class="theme-card">
-                    <div>الوضع المضيء</div>
-                    <div class="theme-card-icon">☀️</div>
-                </div>
-                <div class="theme-card active">
-                    <div>الوضع الداكن</div>
-                    <div class="theme-card-icon">🌙</div>
-                </div>
-            </section>
+        <!-- Theme Selector -->
+        <div class="theme-grid">
+            <div class="theme-card">
+                <div>الوضع المضيء</div>
+                <div class="theme-icon">☀️</div>
+            </div>
+            <div class="theme-card active">
+                <div>الوضع الداكن</div>
+                <div class="theme-icon">🌙</div>
+            </div>
+        </div>
 
-            <!-- Key Management Card -->
-            <section class="setting-card">
-                <div class="setting-card-title">🔑 إدارة المفاتيح والحساب</div>
+        <!-- Account / Key Section -->
+        <div class="settings-card">
+            <div class="card-title">🔑 إدارة المفاتيح والحساب</div>
 
-                <div class="input-group">
-                    <label>المفتاح العام (Public Key - npub):</label>
-                    <div class="key-box-wrapper">
-                        <button type="button" class="copy-btn" onclick="copyToClipboard('setting-npub')">نسخ</button>
-                        <input type="text" id="setting-npub" class="key-box-input" readonly placeholder="620394eb473fd93d15f0cac1dfb5d1">
-                    </div>
+            <div class="input-block">
+                <label>:المفتاح العام (Public Key - npub)</label>
+                <div class="key-input-group">
+                    <button class="copy-button" type="button" onclick="copyKey('pub-key')">نسخ</button>
+                    <input type="text" id="pub-key" class="key-input" readonly placeholder="سيظهر المفتاح العام هنا...">
                 </div>
+            </div>
 
-                <div class="input-group" style="margin-top:12px;">
-                    <label>المفتاح الخاص (Private Key - nsec):</label>
-                    <div class="key-box-wrapper">
-                        <button type="button" class="copy-btn" onclick="copyToClipboard('setting-nsec')">نسخ</button>
-                        <input type="text" id="setting-nsec" class="key-box-input" placeholder="620394eb473fd93d15f0cac1dfb5d1">
-                    </div>
+            <div class="input-block">
+                <label>:المفتاح الخاص (Private Key - nsec)</label>
+                <div class="key-input-group">
+                    <button class="copy-button" type="button" onclick="copyKey('priv-key')">نسخ</button>
+                    <input type="text" id="priv-key" class="key-input" placeholder="أدخل المفتاح الخاص هنا...">
                 </div>
+            </div>
 
-                <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
-                    <button type="button" class="btn-primary" onclick="generateNostrAccount(event)">توليد حساب جديد ✨</button>
-                    <button type="button" class="btn-secondary" onclick="loginAndSaveKeys(event)">تسجيل الدخول بالمفتاح 🔑</button>
-                    <button type="button" id="btn-logout" class="btn-logout" onclick="logoutNostrAccount(event)" style="display:none;">تسجيل الخروج 🚪</button>
-                </div>
+            <button class="btn-gen" type="button" onclick="handleGenerate(event)">توليد حساب جديد ✨</button>
+            <button class="btn-login" type="button" onclick="handleLogin(event)">تسجيل الدخول بالمفتاح 🔑</button>
+            <button class="btn-logout" id="logout-btn" type="button" onclick="handleLogout(event)" style="display:none;">تسجيل الخروج 🚪</button>
 
-                <div id="login-status" class="status-badge" style="display:none;">
-                    ✓ تم تسجيل الدخول وجلسة التوقيع نشطة
-                </div>
-            </section>
-        </main>
+            <div class="login-status-msg" id="status-text" style="display:none;">
+                ✓ تم تسجيل الدخول وجلسة التوقيع نشطة
+            </div>
+        </div>
 
-        <!-- FAB Button -->
-        <button type="button" class="fab-btn">✏️</button>
+        <!-- Floating Button -->
+        <button class="fab" type="button">✏️</button>
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <button type="button" class="nav-item">👤</button>
-            <button type="button" class="nav-item">👥</button>
-            <button type="button" class="nav-item">🔔</button>
-            <button type="button" class="nav-item">💬</button>
-            <button type="button" class="nav-item">🏠</button>
+            <button class="nav-btn active" type="button">🏠</button>
+
+            <button class="nav-btn" type="button">💬</button>
+            <button class="nav-btn" type="button">🔔</button>
+            <button class="nav-btn" type="button">👥</button>
+            <button class="nav-btn" type="button">👤</button>
         </nav>
     </div>
 
-    <!-- Script Block -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedNsec = localStorage.getItem('kalimat_nsec');
-            const savedNpub = localStorage.getItem('kalimat_npub');
-
-            if (savedNsec && savedNpub) {
-                document.getElementById('setting-nsec').value = savedNsec;
-                document.getElementById('setting-npub').value = savedNpub;
-                updateLoginUI(true);
+        // Check saved status on load
+        window.addEventListener('load', () => {
+            const savedPriv = localStorage.getItem('kalimat_priv');
+            const savedPub = localStorage.getItem('kalimat_pub');
+            if (savedPriv && savedPub) {
+                document.getElementById('priv-key').value = savedPriv;
+                document.getElementById('pub-key').value = savedPub;
+                setLoggedInState(true);
             }
         });
 
-        function generateNostrAccount(e) {
-            if (e) e.preventDefault();
+        function handleGenerate(e) {
+            e.preventDefault();
+            const hex = [...Array(64)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+            
+            document.getElementById('priv-key').value = hex;
+            document.getElementById('pub-key').value = hex;
 
-            const hexChars = '0123456789abcdef';
-            let randomHex = '';
-            for (let i = 0; i < 58; i++) {
-                randomHex += hexChars.charAt(Math.floor(Math.random() * hexChars.length));
-            }
+            localStorage.setItem('kalimat_priv', hex);
+            localStorage.setItem('kalimat_pub', hex);
 
-            const nsec = randomHex;
-            const npub = randomHex;
-
-            document.getElementById('setting-nsec').value = nsec;
-            document.getElementById('setting-npub').value = npub;
-
-            localStorage.setItem('kalimat_nsec', nsec);
-            localStorage.setItem('kalimat_npub', npub);
-
-            updateLoginUI(true);
+            setLoggedInState(true);
         }
 
-        function loginAndSaveKeys(e) {
-            if (e) e.preventDefault();
-
-            const nsecInput = document.getElementById('setting-nsec').value.trim();
-            if (!nsecInput) {
-                alert("يرجى إدخال المفتاح الخاص أولاً.");
+        function handleLogin(e) {
+            e.preventDefault();
+            const val = document.getElementById('priv-key').value.trim();
+            if (!val) {
+                alert("يرجى إدخال المفتاح أولاً.");
                 return;
             }
 
-            document.getElementById('setting-npub').value = nsecInput;
+            document.getElementById('pub-key').value = val;
+            localStorage.setItem('kalimat_priv', val);
+            localStorage.setItem('kalimat_pub', val);
 
-            localStorage.setItem('kalimat_nsec', nsecInput);
-            localStorage.setItem('kalimat_npub', nsecInput);
-
-            updateLoginUI(true);
+            setLoggedInState(true);
         }
 
-        function logoutNostrAccount(e) {
-            if (e) e.preventDefault();
+        function handleLogout(e) {
+            e.preventDefault();
+            localStorage.removeItem('kalimat_priv');
+            localStorage.removeItem('kalimat_pub');
 
-            localStorage.removeItem('kalimat_nsec');
-            localStorage.removeItem('kalimat_npub');
+            document.getElementById('priv-key').value = '';
+            document.getElementById('pub-key').value = '';
 
-            document.getElementById('setting-nsec').value = '';
-            document.getElementById('setting-npub').value = '';
-
-            updateLoginUI(false);
+            setLoggedInState(false);
         }
 
-        function updateLoginUI(isLoggedIn) {
-            const statusEl = document.getElementById('login-status');
-            const logoutBtn = document.getElementById('btn-logout');
+        function setLoggedInState(isLogged) {
+            document.getElementById('status-text').style.display = isLogged ? 'block' : 'none';
+            document.getElementById('logout-btn').style.display = isLogged ? 'block' : 'none';
+        }
 
-            if (isLoggedIn) {
-                if (statusEl) statusEl.style.display = 'flex';
-                if (logoutBtn) logoutBtn.style.display = 'block';
-            } else {
-                if (statusEl) statusEl.style.display = 'none';
-                if (logoutBtn) logoutBtn.style.display = 'none';
+        function copyKey(id) {
+            const el = document.getElementById(id);
+            if(el && el.value) {
+                navigator.clipboard.writeText(el.value);
+                alert("تم النسخ!");
             }
-        }
-
-        function copyToClipboard(inputId) {
-            const inputEl = document.getElementById(inputId);
-            if (!inputEl || !inputEl.value) return;
-
-            navigator.clipboard.writeText(inputEl.value).then(() => {
-                alert("تم النسخ إلى الحافظة بنجاح!");
-            }).catch(err => {
-                console.error("خطأ أثناء النسخ: ", err);
-            });
         }
     </script>
 </body>
