@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>كلمات | Kalimat</title>
+
+    <!-- أيقونة الموقع (Favicon) -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/99VxKqb7/1789866824772.png">
+
+    <!-- وسوم المشاركة للشبكات الاجتماعية (Open Graph) -->
+    <meta property="og:title" content="منصة كلمات - Kalimat" />
+    <meta property="og:description" content="منصة تواصل حر ومستقل عبر بروتوكول Nostr." />
+    <meta property="og:image" content="https://i.ibb.co/99VxKqb7/1789866824772.png" />
+    <meta property="og:type" content="website" />
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -72,20 +82,14 @@
             color: var(--accent-color);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        .logo-placeholder {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, var(--accent-color), #3b82f6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
+        .feather-logo-img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(139, 92, 246, 0.3));
         }
 
         .user-avatar-small {
@@ -369,7 +373,7 @@
     <header class="app-header">
         <div class="user-avatar-small" onclick="switchTab('profile')">M</div>
         <div class="brand">
-            <div class="logo-placeholder">ك</div>
+            <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="شعار كلمات" class="feather-logo-img">
             <span>كلمات</span>
         </div>
         <button class="header-action-btn" onclick="switchTab('settings')">
@@ -507,7 +511,7 @@
             <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">استخدم مفاتيحك الحالية أو قم بتوليد حساب جديد تماماً:</p>
             
             <label style="font-size:11px; color:var(--text-muted);">المفتاح العام (Public Key - npub):</label>
-            <input type="text" id="setting-npub" class="input-field" value="npub1almsharbash..." readonly>
+            <input type="text" id="setting-npub" class="input-field" value="Npub16igdj6u75o49wgm66oqs8g" readonly>
 
             <label style="font-size:11px; color:var(--text-muted); margin-top:8px; display:block;">المفتاح الخاص (Private Key - nsec):</label>
             <input type="password" id="setting-nsec" class="input-field" value="nsec1234567890abcdef..." readonly>
@@ -521,8 +525,11 @@
         <!-- خوادم الترحيل Relays -->
         <div class="setting-card">
             <div class="setting-card-title">🌐 خوادم الترحيل (Relays)</div>
-            <div style="font-size: 12px; color: var(--text-muted);">• wss://relay.damus.io <span style="color:#10b981;">(متصل)</span></div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://nos.lol <span style="color:#10b981;">(متصل)</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">• wss://yabu.me/ <span style="color:#10b981;">(متصل)</span></div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://directory.yabu.me/ <span style="color:#10b981;">(متصل)</span></div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://indexer.coracle.social/ <span style="color:#10b981;">(متصل)</span></div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://relay.noswhere.com/ <span style="color:#10b981;">(متصل)</span></div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://relay.damus.io <span style="color:#10b981;">(متصل)</span></div>
         </div>
     </section>
 
@@ -577,6 +584,15 @@
     </nav>
 
     <script>
+        // مصفوفة الخوادم المعتمدة لمنصة كلمات
+        const DEFAULT_RELAYS = [
+            "wss://yabu.me/",
+            "wss://directory.yabu.me/",
+            "wss://indexer.coracle.social/",
+            "wss://relay.noswhere.com/",
+            "wss://relay.damus.io"
+        ];
+
         // 1. التنقل بين الشاشات
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
