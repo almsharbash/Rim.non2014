@@ -13,7 +13,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- إضافة مكتبة Nostr الرسمية للتشفير وإدارة المفاتيح -->
+    <!-- مكتبة Nostr الرسمية -->
     <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
 
     <style>
@@ -66,7 +66,6 @@
             position: relative;
         }
 
-        /* الهيدر العلوي */
         .app-header {
             position: sticky;
             top: 0;
@@ -130,17 +129,9 @@
             flex-shrink: 0;
         }
 
-        .user-avatar-small img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* التبويبات */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* صندوق إنشاء منشور علوي */
         .composer-trigger-box {
             padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
@@ -157,7 +148,6 @@
             flex: 1;
         }
 
-        /* كارت المنشور */
         .post-card {
             padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
@@ -241,7 +231,6 @@
             gap: 4px;
         }
 
-        /* زر الإضافة العائم */
         .fab-btn {
             position: fixed;
             bottom: 75px;
@@ -266,7 +255,6 @@
 
         .fab-btn svg { width: 22px; height: 22px; fill: white; }
 
-        /* شريط التنقل السفلي */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -294,7 +282,6 @@
         .nav-button.active { color: var(--btn-purple); }
         .nav-button svg { width: 22px; height: 22px; fill: currentColor; }
 
-        /* نافذة كتابة المنشور */
         .primal-composer-modal {
             display: none;
             position: fixed;
@@ -402,7 +389,6 @@
 
         .composer-tool-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
-        /* بطاقات الإعدادات والمفاتيح */
         .setting-card { padding: 16px; border-bottom: 1px solid var(--border-color); }
         .setting-card-title { font-weight: 700; font-size: 15px; margin-bottom: 10px; color: var(--btn-purple); }
 
@@ -515,7 +501,6 @@
 
     <div id="welcome-toast" class="welcome-toast">أهلاً بك في منصة كلمات الحرّة! ✨</div>
 
-    <!-- الهيدر -->
     <header class="app-header">
         <div class="header-left">
             <button id="back-btn" class="back-btn" onclick="goBack()" aria-label="رجوع">
@@ -536,19 +521,15 @@
         </button>
     </header>
 
-    <!-- 1. الرئيسية -->
     <main id="tab-feed" class="tab-content active">
         <div class="composer-trigger-box" onclick="openPrimalComposer()">
             <div class="user-avatar-small global-avatar"><span class="avatar-text">M</span></div>
-            <div class="composer-trigger-placeholder">What's on your mind?</div>
+            <div class="composer-trigger-placeholder">ماذا يدور في ذهنك؟</div>
         </div>
 
-        <div id="posts-container">
-            <!-- المنشورات تظهر هنا -->
-        </div>
+        <div id="posts-container"></div>
     </main>
 
-    <!-- 2. شاشة الملف الشخصي -->
     <section id="tab-profile" class="tab-content">
         <div class="setting-card">
             <div class="setting-card-title">👤 إعدادات الملف الشخصي</div>
@@ -565,7 +546,6 @@
         </div>
     </section>
 
-    <!-- نافذة كتابة المنشور -->
     <div id="primal-composer" class="primal-composer-modal">
         <div class="composer-header">
             <button class="composer-close-btn" onclick="closePrimalComposer()">✕</button>
@@ -589,7 +569,6 @@
         </div>
     </div>
 
-    <!-- باقي التبويبات -->
     <section id="tab-friends" class="tab-content">
         <div style="padding: 30px; text-align:center; color:var(--text-muted);">👥 قائمة الأصدقاء والمتابعين</div>
     </section>
@@ -602,7 +581,6 @@
         <div style="padding: 40px; text-align: center; color: var(--text-muted);">المحادثات الخاصة المشفرة.</div>
     </section>
 
-    <!-- 3. الإعدادات وإدارة المفاتيح -->
     <section id="tab-settings" class="tab-content">
         <div class="setting-card">
             <div class="setting-card-title">☀️ 🌙 مظهر الشاشة</div>
@@ -637,12 +615,10 @@
         </div>
     </section>
 
-    <!-- زر القلم العائم -->
     <button class="fab-btn" onclick="openPrimalComposer()" aria-label="منشور جديد">
         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83l3.75 3.75l1.83-1.83z"/></svg>
     </button>
 
-    <!-- شريط التنقل السفلي -->
     <nav class="bottom-nav">
         <button data-tab="feed" class="nav-button active" onclick="switchTab('feed', this)" aria-label="الرئيسية">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -664,6 +640,13 @@
     <script>
         let navigationHistory = ['feed'];
         let activeImageBase64 = null;
+        
+        // خوادم التتابع العامة الافتراضية
+        const defaultRelays = [
+            'wss://relay.damus.io',
+            'wss://nos.lol',
+            'wss://relay.primal.net'
+        ];
 
         const defaultPosts = [
             {
@@ -690,6 +673,7 @@
         };
 
         function escapeHtml(text) {
+            if(!text) return '';
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
@@ -797,12 +781,43 @@
             }
         }
 
-        function publishPostPrimal() {
+        async function publishPostPrimal() {
             const textInput = document.getElementById('primal-text-input').value.trim();
             if (!textInput && !activeImageBase64) return;
 
             const name = document.getElementById('edit-display-name').value || "المشاربش";
             const handle = document.getElementById('edit-handle').value || "almsharbash";
+            const skHex = localStorage.getItem('kalimat_sk_hex');
+
+            let contentText = textInput;
+            
+            // إرسال الحدث لشبكة Nostr الحقيقية في حال توفر مفتاح التوقيع
+            if (skHex && window.NostrTools) {
+                try {
+                    const event = {
+                        kind: 1,
+                        created_at: Math.floor(Date.now() / 1000),
+                        tags: [],
+                        content: contentText,
+                        pubkey: window.NostrTools.getPublicKey(skHex)
+                    };
+                    event.id = window.NostrTools.getEventHash(event);
+                    event.sig = window.NostrTools.signEvent(event, skHex);
+
+                    // بث لشبكات التتابع
+                    defaultRelays.forEach(relayUrl => {
+                        try {
+                            const ws = new WebSocket(relayUrl);
+                            ws.onopen = () => {
+                                ws.send(JSON.stringify(["EVENT", event]));
+                                setTimeout(() => ws.close(), 2000);
+                            };
+                        } catch(e) {}
+                    });
+                } catch (e) {
+                    console.log("خطأ بالنشر المباشر عبر Nostr:", e);
+                }
+            }
 
             const newPost = {
                 id: Date.now().toString(),
@@ -811,7 +826,7 @@
                 avatar: name.charAt(0).toUpperCase(),
                 avatarBg: '#7c3aed',
                 time: 'الآن',
-                text: textInput,
+                text: contentText,
                 image: activeImageBase64,
                 zaps: 0,
                 likes: 0,
@@ -827,7 +842,6 @@
             closePrimalComposer();
         }
 
-        /* ---------------- وظائف إدارة مفاتيح Nostr مع مكتبة nostr-tools ---------------- */
         function loadSavedKeys() {
             const savedPriv = localStorage.getItem('kalimat_priv') || localStorage.getItem('kalimat_nsec');
             const savedPub = localStorage.getItem('kalimat_pub') || localStorage.getItem('kalimat_npub');
@@ -838,28 +852,22 @@
             }
         }
 
-        // توليد مفاتيح Nostr رسمية وحقيقية 100% باستخدام nostr-tools
         function handleGenerate() {
             try {
-                // 1. توليد مفتاح خاص عشوائي (Hex)
                 const sk = window.NostrTools.generatePrivateKey();
-                // 2. اشتقاق المفتاح العام (Hex)
                 const pk = window.NostrTools.getPublicKey(sk);
 
-                // 3. ترميزهما إلى صيغ Bech32 الرسمية (nsec1... / npub1...)
                 const nsec = window.NostrTools.nip19.nsecEncode(sk);
                 const npub = window.NostrTools.nip19.npubEncode(pk);
 
-                // 4. عرض النتائج في الواجهة
                 document.getElementById('priv-key').value = nsec;
                 document.getElementById('pub-key').value = npub;
 
-                // 5. حفظ الصيغ في التخزين المحلي
                 localStorage.setItem('kalimat_priv', nsec);
                 localStorage.setItem('kalimat_pub', npub);
                 localStorage.setItem('kalimat_nsec', nsec);
                 localStorage.setItem('kalimat_npub', npub);
-                localStorage.setItem('kalimat_sk_hex', sk); // حفظ Hex أيضاً لاستخدامه لاحقاً في التوقيع
+                localStorage.setItem('kalimat_sk_hex', sk);
                 localStorage.setItem('kalimat_pk_hex', pk);
 
                 updateKeyUI(true);
@@ -870,7 +878,6 @@
             }
         }
 
-        // تسجيل الدخول بمفتاح موجود وإشتقاق المفتاح العام منه تلقائياً
         function handleLogin() {
             const inputVal = document.getElementById('priv-key').value.trim();
             if (!inputVal) {
@@ -882,18 +889,15 @@
                 let skHex = inputVal;
                 let nsecStr = inputVal;
 
-                // إذا أدخل المستخدم صيغة nsec1 يتم فك تشفيرها إلى Hex
                 if (inputVal.startsWith('nsec1')) {
                     const decoded = window.NostrTools.nip19.decode(inputVal);
                     if (decoded.type === 'nsec') {
                         skHex = decoded.data;
                     }
                 } else {
-                    // إذا أدخل Hex مباشر يتم تحويله إلى nsec1
                     nsecStr = window.NostrTools.nip19.nsecEncode(inputVal);
                 }
 
-                // اشتقاق المفتاح العام الحقيقي وترميزه لـ npub1
                 const pkHex = window.NostrTools.getPublicKey(skHex);
                 const npubStr = window.NostrTools.nip19.npubEncode(pkHex);
 
@@ -942,7 +946,6 @@
                 alert("تم نسخ المفتاح بنجاح!");
             }
         }
-        /* ----------------------------------------------------------- */
 
         function saveProfileChanges() {
             const name = document.getElementById('edit-display-name').value;
