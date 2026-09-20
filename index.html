@@ -101,6 +101,13 @@
             width: 100%;
             margin-top: 8px;
         }
+
+        .status {
+            font-size: 0.85rem;
+            color: #10b981;
+            margin-top: 8px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -109,9 +116,7 @@
 
     <!-- إدارة الحساب والمفاتيح -->
     <div class="card">
-        <div class="section-title">
-            🔑 إدارة الحساب والمفاتيح
-        </div>
+        <div class="section-title">🔑 إدارة الحساب والمفاتيح</div>
         
         <div class="form-group">
             <label>المفتاح العام (Public Key - npub):</label>
@@ -125,13 +130,12 @@
 
         <button type="button" class="btn-primary" id="btnGenerate">توليد حساب جديد ✨</button>
         <button type="button" class="btn-secondary" id="btnLogin">تسجيل الدخول بالمفتاح</button>
+        <div class="status" id="loginStatus"></div>
     </div>
 
     <!-- تعديل الملف الشخصي -->
     <div class="card">
-        <div class="section-title">
-            👤 تعديل الملف الشخصي
-        </div>
+        <div class="section-title">👤 تعديل الملف الشخصي</div>
 
         <div class="form-group">
             <label>اسم العرض:</label>
@@ -153,7 +157,7 @@
             <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
         </div>
 
-        <button type="button" class="btn-primary" id="btnSave">حفظ التغيرات</button>
+        <button type="button" class="btn-primary" id="btnSave">حفظ ونشر التغيرات على الشبكة 🚀</button>
     </div>
 
 </div>
@@ -161,11 +165,14 @@
 <script type="module">
   import * as NostrTools from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
 
+  // سيرفرات Nostr النشطة
   const RELAYS = [
     'wss://relay.damus.io',
     'wss://nos.lol',
     'wss://relay.nostr.band'
   ];
+
+  let currentSecretKeyBytes = null;
 
   function hexToBytes(hex) {
     let bytes = new Uint8Array(hex.length / 2);
@@ -175,100 +182,118 @@
     return bytes;
   }
 
-  // جلب البيانات من شبكة Nostr
-  async function fetchProfile(pubkeyHex) {
-    try {
-      const pool = new NostrTools.SimplePool();
-      const event = await pool.get(RELAYS, {
-        kinds: [0],
-        authors: [pubkeyHex]
-      });
-
-      if (event && event.content) {
-        const metadata = JSON.parse(event.content);
-        document.getElementById('displayNameInput').value = metadata.display_name || metadata.name || '';
-        document.getElementById('handleInput').value = metadata.username || metadata.name || '';
-        document.getElementById('pictureUrlInput').value = metadata.picture || '';
-        document.getElementById('bioInput').value = metadata.about || '';
-      }
-      pool.close(RELAYS);
-    } catch (e) {
-      console.warn('تعذر جلب البيانات:', e);
-    }
-  }
-
-  // تسجيل الدخول الحقيقي
-  async function performLogin(privInput) {
+  // 1. تسجيل الدخول واسترجاع بيانات البروفايل الفعلية
+  async function performLogin(nsecOrHex) {
     let skBytes;
 
-    if (privInput.startsWith('nsec1')) {
-      const decoded = NostrTools.nip19.decode(privInput);
+    if (nsecOrHex.startsWith('nsec1')) {
+      const decoded = NostrTools.nip19.decode(nsecOrHex);
       if (decoded.type === 'nsec') {
         skBytes = decoded.data;
       }
     } else {
-      skBytes = hexToBytes(privInput);
+      skBytes = hexToBytes(nsecOrHex);
     }
 
+    currentSecretKeyBytes = skBytes;
     const pkHex = NostrTools.getPublicKey(skBytes);
     const npub = NostrTools.nip19.npubEncode(pkHex);
-    const nsec = privInput.startsWith('nsec1') ? privInput : NostrTools.nip19.nsecEncode(skBytes);
+    const nsec = NostrTools.nip19.nsecEncode(skBytes);
 
-    // حفظ البيانات في المتصفح
     localStorage.setItem('kalimat_nsec', nsec);
-    localStorage.setItem('kalimat_npub', npub);
-    localStorage.setItem('kalimat_pk_hex', pkHex);
 
-    // تحديث الواجهة
     document.getElementById('publicKeyInput').value = npub;
     document.getElementById('privateKeyInput').value = nsec;
+    document.getElementById('loginStatus').innerText = 'تم تسجيل الدخول وجلسة التوقيع نشطة ✓';
 
-    // استرجاع البروفايل من السيرفرات
-    await fetchProfile(pkHex);
+    // جلب البيانات المسجلة على Nostr
+    const pool = new NostrTools.SimplePool();
+    try {
+      const event = await pool.get(RELAYS, { kinds: [0], authors: [pkHex] });
+      if (event && event.content) {
+        const meta = JSON.parse(event.content);
+        document.getElementById('displayNameInput').value = meta.display_name || meta.name || '';
+        document.getElementById('handleInput').value = meta.username || meta.name || '';
+        document.getElementById('pictureUrlInput').value = meta.picture || '';
+        document.getElementById('bioInput').value = meta.about || '';
+      }
+    } catch (e) {
+      console.log('لم يتم العثور على بروفايل سابق');
+    } finally {
+      pool.close(RELAYS);
+    }
   }
 
-  // التوليد والتسجيل
+  // 2. زر توليد حساب
   document.getElementById('btnGenerate').addEventListener('click', async () => {
+    const skBytes = NostrTools.generateSecretKey();
+    const nsec = NostrTools.nip19.nsecEncode(skBytes);
+    await performLogin(nsec);
+    alert('تم توليد مفاتيح جديدة بنجاح!');
+  });
+
+  // 3. زر تسجيل الدخول
+  document.getElementById('btnLogin').addEventListener('click', async () => {
+    const input = document.getElementById('privateKeyInput').value.trim();
+    if (!input) {
+      alert('يرجى أدخل المفتاح الخاص nsec1...');
+      return;
+    }
     try {
-      const skBytes = NostrTools.generateSecretKey();
-      const nsec = NostrTools.nip19.nsecEncode(skBytes);
-      await performLogin(nsec);
-      alert('تم توليد حساب جديد وتسجيل الدخول بنجاح!');
+      await performLogin(input);
+      alert('تم تسجيل الدخول بنجاح!');
     } catch (e) {
-      alert('خطأ في التوليد: ' + e.message);
+      alert('المفتاح الخاص غير صحيح');
     }
   });
 
-  document.getElementById('btnLogin').addEventListener('click', async () => {
-    const btn = document.getElementById('btnLogin');
-    const input = document.getElementById('privateKeyInput').value.trim();
-
-    if (!input) {
-      alert('يرجى كتابة أو لصق المفتاح الخاص (nsec1...) أولاً');
+  // 4. حفظ ونشر التغييرات (توقيع الحدث الفعلي ونشره)
+  document.getElementById('btnSave').addEventListener('click', async () => {
+    if (!currentSecretKeyBytes) {
+      alert('يرجى تسجيل الدخول أو توليد حساب أولاً لتتمكن من التوقيع والنشر!');
       return;
     }
 
+    const btn = document.getElementById('btnSave');
+    btn.innerText = 'جاري التوقيع والنشر على الشبكة...';
+    btn.disabled = true;
+
     try {
-      btn.innerText = 'جاري التحقق والجلب...';
-      btn.disabled = true;
+      const profileData = {
+        name: document.getElementById('handleInput').value,
+        display_name: document.getElementById('displayNameInput').value,
+        picture: document.getElementById('pictureUrlInput').value,
+        about: document.getElementById('bioInput').value
+      };
 
-      await performLogin(input);
+      // إنشاء وتوقيع حدث Nostr من النوع Kind 0
+      const eventTemplate = {
+        kind: 0,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [],
+        content: JSON.stringify(profileData)
+      };
 
-      alert('تم تسجيل الدخول بنجاح!');
+      const signedEvent = NostrTools.finalizeEvent(eventTemplate, currentSecretKeyBytes);
+
+      // نشر الحدث على الـ Relays
+      const pool = new NostrTools.SimplePool();
+      await Promise.any(pool.publish(RELAYS, signedEvent));
+
+      alert('تم نشر وتحديث ملفك الشخصي بنجاح على شبكة Nostr!');
+      pool.close(RELAYS);
     } catch (e) {
-      alert('المفتاح الخاص غير صحيح، يرجى التأكد منه.');
+      alert('حدث خطأ أثناء النشر: ' + e.message);
     } finally {
-      btn.innerText = 'تسجيل الدخول بالمفتاح';
+      btn.innerText = 'حفظ ونشر التغيرات على الشبكة 🚀';
       btn.disabled = false;
     }
   });
 
-  // استعادة الجلسة فور فتح الصفحة
-  window.addEventListener('DOMContentLoaded', async () => {
+  // استعادة الجلسة
+  window.addEventListener('DOMContentLoaded', () => {
     const saved = localStorage.getItem('kalimat_nsec');
-    if (saved) {
-      await performLogin(saved);
-    }
+    if (saved) performLogin(saved);
   });
 </script>
 
