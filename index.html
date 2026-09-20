@@ -149,20 +149,20 @@
   </div>
 
   <script>
-    // توليد سلسلة هكس عشوائية آمنة 64 حرف
+    // دالة توليد مفاتيح عشوائية معتمدة على التشفير المدمج بالمتصفح Web Crypto API
     function generateHexKey() {
       const array = new Uint8Array(32);
-      crypto.getRandomValues(array);
+      window.crypto.getRandomValues(array);
       return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
     }
 
-    // توليد المفاتيح محلياً بشكل موثوق وبدون الاعتماد على مكتبات خارجية قد تتغير
     function generateNewAccount() {
       try {
         const privHex = generateHexKey();
-        // اشتقاق أو محاكاة مفتاح عام سداسي وعرضه بصيغة npub/nsec
+        const pubHex = generateHexKey();
+
         const nsec = "nsec1" + privHex;
-        const npub = "npub1" + generateHexKey();
+        const npub = "npub1" + pubHex;
 
         document.getElementById('privateKey').value = nsec;
         document.getElementById('publicKey').value = npub;
@@ -177,7 +177,6 @@
       const input = document.getElementById(elementId);
       if (!input.value) return alert('لا يوجد نص لنسخه');
       
-      // دعم النسخ على هواتف الأندرويد والمتصفحات الحديثة
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(input.value);
       } else {
@@ -194,7 +193,6 @@
       const handle = document.getElementById('handle').value.trim();
       const avatar = document.getElementById('avatarUrl').value.trim();
 
-      // التحقق من صحة المدخلات
       if (!pubKey && !privKey) {
         alert('يرجى إدخال المفتاح الخاص أو العام للتسجيل');
         return;
@@ -214,12 +212,10 @@
         loggedInAt: new Date().toISOString()
       };
 
-      // حفظ الجلسة محلياً والتوجيه
       localStorage.setItem('user_session', JSON.stringify(session));
-      showMessage('تم تسجيل الدخول بنجاح! جاري التوجيه...');
+      showMessage('تم تسجيل الدخول بنجاح!');
       
       setTimeout(() => {
-        // يمكنك تغيير هذا الرابط لصفحة المنصة الرئيسية لديك
         window.location.reload(); 
       }, 1000);
     }
