@@ -429,12 +429,12 @@
         </div>
 
         <div class="post-card">
-            <div class="user-avatar-small" style="background:#3b82f6;">A</div>
+            <div class="user-avatar-small" style="background:#3b82f6;">Y</div>
             <div class="post-content">
                 <div class="post-header">
                     <div>
-                        <span class="author-name">أحمد العمر</span>
-                        <span class="author-handle">@ahmed</span>
+                        <span class="author-name">ياسر الحسين</span>
+                        <span class="author-handle">@yasser</span>
                     </div>
                     <span class="post-time">5 د</span>
                 </div>
@@ -470,10 +470,10 @@
         </div>
         <div class="friend-item">
             <div style="display:flex; align-items:center; gap:10px;">
-                <div class="user-avatar-small" style="background:#3b82f6;">A</div>
+                <div class="user-avatar-small" style="background:#3b82f6;">Y</div>
                 <div>
-                    <div style="font-weight:700; font-size:14px;">أحمد العمر</div>
-                    <div style="font-size:11px; color:var(--text-muted);">@ahmed</div>
+                    <div style="font-weight:700; font-size:14px;">ياسر الحسين</div>
+                    <div style="font-size:11px; color:var(--text-muted);">@yasser</div>
                 </div>
             </div>
             <button class="btn-secondary" style="width:auto; padding:4px 12px; font-size:12px; margin:0;">يتابعك</button>
@@ -525,12 +525,19 @@
             <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">استخدم مفاتيحك الحالية أو قم بتوليد حساب جديد تماماً:</p>
             
             <label style="font-size:11px; color:var(--text-muted);">المفتاح العام (Public Key - npub):</label>
-            <input type="text" id="setting-npub" class="input-field" readonly placeholder="اضغط على زر التوليد أدناه">
+
+            <div style="display:flex; gap:6px;">
+                <input type="text" id="setting-npub" class="input-field" readonly placeholder="اضغط على زر التوليد أدناه">
+                <button class="btn-secondary" style="width:auto; margin-top:6px; padding:0 12px;" onclick="copyInputText('setting-npub')">نسخ</button>
+            </div>
 
             <label style="font-size:11px; color:var(--text-muted); margin-top:8px; display:block;">المفتاح الخاص (Private Key - nsec):</label>
-            <input type="password" id="setting-nsec" class="input-field" readonly placeholder="اضغط على زر التوليد أدناه">
+            <div style="display:flex; gap:6px;">
+                <input type="text" id="setting-nsec" class="input-field" readonly placeholder="اضغط على زر التوليد أدناه">
+                <button class="btn-secondary" style="width:auto; margin-top:6px; padding:0 12px;" onclick="copyInputText('setting-nsec')">نسخ</button>
+            </div>
 
-            <div style="display:flex; gap:10px; margin-top:10px;">
+            <div style="display:flex; gap:10px; margin-top:12px;">
                 <button class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
                 <button class="btn-secondary" onclick="loginWithNsec()">تسجيل دخول مفتاح 🔑</button>
             </div>
@@ -593,7 +600,7 @@
     </nav>
 
     <script>
-        // دالة توليد أحرف عشوائية صريحة لنظام التشفير دون الاعتماد على مكتبات خارجية
+        // دالة توليد أحرف عشوائية صريحة لنظام Bech32
         function generateRandomBech32(prefix) {
             const charset = 'qpzry9x8gf2vh3456789abcdef023456789mnpwrz';
             let result = prefix + '1';
@@ -603,7 +610,7 @@
             return result;
         }
 
-        // 1. توليد حساب جديد يضمن الـ nsec1 و npub1 مباشرة
+        // 1. توليد حساب جديد ونسخ المفتاح الخاص تلقائياً للحافظة
         function generateNewAccount() {
             const newNsec = generateRandomBech32('nsec');
             const newNpub = generateRandomBech32('npub');
@@ -614,10 +621,28 @@
             localStorage.setItem('nostr_nsec', newNsec);
             localStorage.setItem('nostr_npub', newNpub);
 
-            alert('تم توليد مفاتيح Nostr بنجاح!\n' + newNsec);
+            // نسخ المفتاح الخاص للذاكرة الحافظة فورياً
+            navigator.clipboard.writeText(newNsec).then(() => {
+                alert('تم توليد مفاتيح Nostr بنجاح!\nتم نسخ المفتاح الخاص (nsec) تلقائياً للحافظة لتتمكن من لصقه وحفظه.');
+            }).catch(() => {
+                alert('تم توليد مفاتيح Nostr بنجاح!\nيمكنك الآن الضغط على زر "نسخ" بجانب الخانة في شاشة الإعدادات.');
+            });
         }
 
-        // 2. تسجيل الدخول والتحقق الفوري المضمون
+        // 2. دالة النسخ بنقرة واحدة من خانات الإدخال
+        function copyInputText(inputId) {
+            const inputEl = document.getElementById(inputId);
+            if (!inputEl.value) {
+                alert('يرجى توليد مفتاح أولاً!');
+                return;
+            }
+            inputEl.select();
+            inputEl.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(inputEl.value);
+            alert('تم النسخ بنجاح!');
+        }
+
+        // 3. تسجيل الدخول والتحقق الفوري المضمون
         function loginWithNsec() {
             const userNsec = prompt('أدخل المفتاح الخاص بك (يجب أن يبدأ بـ nsec1):');
             if (userNsec && userNsec.trim().startsWith('nsec1')) {
@@ -634,7 +659,7 @@
             }
         }
 
-        // 3. التنقل بين الشاشات
+        // 4. التنقل بين الشاشات
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
@@ -644,7 +669,7 @@
             if (btnElement) btnElement.classList.add('active');
         }
 
-        // 4. تغيير الثيم
+        // 5. تغيير الثيم
         function setTheme(theme) {
             if (theme === 'light') {
                 document.body.classList.remove('dark-theme');
@@ -655,7 +680,7 @@
             }
         }
 
-        // 5. التفاعل الإعجاب
+        // 6. التفاعل الإعجاب
         function toggleLike(btn) {
             const countSpan = btn.querySelector('.like-count');
             let count = parseInt(countSpan.textContent);
@@ -668,14 +693,14 @@
             }
         }
 
-        // 6. التنبيه الترحيبي
+        // 7. التنبيه الترحيبي
         function triggerWelcomeToast() {
             const toast = document.getElementById('welcome-toast');
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // 7. إدارة الملف الشخصي
+        // 8. إدارة الملف الشخصي
         function openEditProfileModal() {
             document.getElementById('edit-profile-modal').classList.add('active');
         }
