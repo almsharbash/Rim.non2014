@@ -90,10 +90,6 @@
             transition: opacity 0.2s;
         }
 
-        .btn-primary:active {
-            opacity: 0.8;
-        }
-
         .btn-secondary {
             background-color: transparent;
             border: 1px solid var(--primary);
@@ -163,9 +159,16 @@
 </div>
 
 <script type="module">
-  import { generateSecretKey, getPublicKey, nip19 } from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
+  import { generateSecretKey, getPublicKey, nip19, SimplePool } from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
 
-  // دالة تحويل Hex إلى Uint8Array
+  const RELAYS = [
+    'wss://relay.damus.io',
+    'wss://nos.lol',
+    'wss://relay.nostr.band'
+  ];
+
+  const pool = new SimplePool();
+
   function hexToBytes(hex) {
     let bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
@@ -174,57 +177,100 @@
     return bytes;
   }
 
-  // 1. بند توليد حساب جديد
-  document.getElementById('btnGenerate').addEventListener('click', () => {
+  // دالة لجلب بيانات البروفايل الفردية من الشبكة
+  async function fetchProfile(pubkeyHex) {
+    try {
+      const event = await pool.get(RELAYS, {
+        kinds: [0],
+        authors: [pubkeyHex]
+      });
+
+      if (event && event.content) {
+        const metadata = JSON.parse(event.content);
+        document.getElementById('displayNameInput').value = metadata.display_name || metadata.name || '';
+        document.getElementById('handleInput').value = metadata.username || metadata.name || '';
+        document.getElementById('pictureUrlInput').value = metadata.picture || '';
+        document.getElementById('bioInput').value = metadata.about || '';
+      }
+    } catch (e) {
+      console.warn('تعذر جلب بيانات الملف الشخصي:', e);
+    }
+  }
+
+  // تسجيل الدخول الفعلي
+  async function loginWithKey(privInput) {
+    let skBytes;
+    let pkHex;
+
+    if (privInput.startsWith('nsec1')) {
+      const decoded = nip19.decode(privInput);
+      if (decoded.type === 'nsec') {
+        skBytes = decoded.data;
+      }
+    } else {
+      skBytes = hexToBytes(privInput);
+    }
+
+    pkHex = getPublicKey(skBytes);
+    const npub = nip19.npubEncode(pkHex);
+    const nsec = privInput.startsWith('nsec1') ? privInput : nip19.nsecEncode(skBytes);
+
+    localStorage.setItem('kalimat_nsec', nsec);
+    localStorage.setItem('kalimat_npub', npub);
+    localStorage.setItem('kalimat_pk_hex', pkHex);
+
+    document.getElementById('publicKeyInput').value = npub;
+    document.getElementById('privateKeyInput').value = nsec;
+
+    // جلب البيانات الفعلية للحساب المسجل
+    await fetchProfile(pkHex);
+  }
+
+  // عند تحميل الصفحة - التحقق من وجود جلسة سابقة
+  window.addEventListener('DOMContentLoaded', async () => {
+    const savedNsec = localStorage.getItem('kalimat_nsec');
+    if (savedNsec) {
+      await loginWithKey(savedNsec);
+    }
+  });
+
+  // 1. زر توليد حساب جديد
+  document.getElementById('btnGenerate').addEventListener('click', async () => {
     try {
       const skBytes = generateSecretKey();
       const pkHex = getPublicKey(skBytes);
-
       const nsec = nip19.nsecEncode(skBytes);
-      const npub = nip19.npubEncode(pkHex);
 
-      document.getElementById('publicKeyInput').value = npub;
-      document.getElementById('privateKeyInput').value = nsec;
-
-      alert('تم توليد الحساب بنجاح!');
+      await loginWithKey(nsec);
+      alert('تم إنشاء الحساب وتكويت الجلسة بنجاح!');
     } catch (error) {
       alert('حدث خطأ في التوليد: ' + error.message);
     }
   });
 
-  // 2. بند تسجيل الدخول بالمفتاح الخاص
-  document.getElementById('btnLogin').addEventListener('click', () => {
-    try {
-      const privInput = document.getElementById('privateKeyInput').value.trim();
+  // 2. زر تسجيل الدخول بالمفتاح الخاص
+  document.getElementById('btnLogin').addEventListener('click', async () => {
+    const btn = document.getElementById('btnLogin');
+    const privInput = document.getElementById('privateKeyInput').value.trim();
 
-      if (!privInput) {
-        alert('يرجى إدخال المفتاح الخاص أولاً');
-        return;
-      }
-
-      let skBytes;
-      if (privInput.startsWith('nsec1')) {
-        const decoded = nip19.decode(privInput);
-        if (decoded.type === 'nsec') {
-          skBytes = decoded.data;
-        }
-      } else {
-        skBytes = hexToBytes(privInput);
-      }
-
-      const pkHex = getPublicKey(skBytes);
-      const npub = nip19.npubEncode(pkHex);
-
-      document.getElementById('publicKeyInput').value = npub;
-      alert('تم تسجيل الدخول بنجاح!');
-    } catch (error) {
-      alert('المفتاح الخاص غير صالح، تأكد من الصيغة.');
+    if (!privInput) {
+      alert('يرجى إدخال المفتاح الخاص أولاً (nsec1...)');
+      return;
     }
-  });
 
-  // 3. بند حفظ التغييرات
-  document.getElementById('btnSave').addEventListener('click', () => {
-    alert('تم حفظ البيانات محلياً!');
+    try {
+      btn.innerText = 'جاري تسجيل الدخول...';
+      btn.disabled = true;
+
+      await loginWithKey(privInput);
+
+      alert('تم تسجيل الدخول واسترجاع البيانات بنجاح!');
+    } catch (error) {
+      alert('المفتاح الخاص غير صالح، تأكد من إدخال nsec بشكل صحيح.');
+    } finally {
+      btn.innerText = 'تسجيل الدخول بالمفتاح';
+      btn.disabled = false;
+    }
   });
 </script>
 
