@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كلمات - Kalimat</title>
-    <!-- استدعات مكتبة التشفير لـ Nostr بشكل مضمون -->
-    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
     <style>
         :root {
             --bg-color: #0f0c1b;
@@ -63,6 +61,11 @@
             color: var(--text-muted);
         }
 
+        .input-wrapper {
+            display: flex;
+            gap: 6px;
+        }
+
         input, textarea {
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
@@ -77,6 +80,17 @@
 
         input:focus, textarea:focus {
             border-color: var(--primary);
+        }
+
+        .btn-copy {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 0 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.85rem;
         }
 
         .btn-primary {
@@ -121,16 +135,22 @@
         
         <div class="form-group">
             <label>المفتاح العام (Public Key - npub):</label>
-            <input type="text" id="publicKeyInput" readonly placeholder="سيظهر المفتاح العام هنا...">
+            <div class="input-wrapper">
+                <input type="text" id="publicKeyInput" placeholder="سيظهر المفتاح العام هنا...">
+                <button type="button" class="btn-copy" onclick="copyField('publicKeyInput')">نسخ</button>
+            </div>
         </div>
 
         <div class="form-group">
             <label>المفتاح الخاص (Private Key - nsec):</label>
-            <input type="password" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+            <div class="input-wrapper">
+                <input type="text" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+                <button type="button" class="btn-copy" onclick="copyField('privateKeyInput')">نسخ</button>
+            </div>
         </div>
 
         <button type="button" class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
-        <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">تسجيل الدخول بالمفتاح</button>
+        <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">تسجيل الدخول والدخول للمنصة</button>
     </div>
 
     <!-- تعديل الملف الشخصي -->
@@ -165,25 +185,33 @@
 </div>
 
 <script>
-  // دالة تحويل سلسلة النص إلى Hex
   function bufToHex(buffer) {
       return Array.from(new Uint8Array(buffer))
           .map(b => b.toString(16).padStart(2, '0'))
           .join('');
   }
 
-  // 1. توليد حساب جديد مع مفاتيح رسمية وعشوائية
+  // دالة نسخ النص إلى الحافظة
+  function copyField(elementId) {
+      const input = document.getElementById(elementId);
+      if (!input || !input.value) {
+          alert('لا يوجد نص لنسخه!');
+          return;
+      }
+      navigator.clipboard.writeText(input.value).then(() => {
+          alert('تم النسخ إلى الحافظة بنجاح!');
+      }).catch(() => {
+          input.select();
+          document.execCommand('copy');
+          alert('تم النسخ بنجاح!');
+      });
+  }
+
+  // 1. توليد حساب جديد
   function generateNewAccount() {
       try {
-          // توليد 32 بايت عشوائية آمنة للمفتاح الخاص
-          const array = new Uint8Array(32);
-          window.crypto.getRandomValues(array);
-          const skHex = bufToHex(array);
-          
-          // توليد مفتاح عام مبسط متوافق مع الواجهة
-          const pkArray = new Uint8Array(32);
-          window.crypto.getRandomValues(pkArray);
-          const pkHex = bufToHex(pkArray);
+          const skHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
+          const pkHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
 
           const nsec = 'nsec1' + skHex;
           const npub = 'npub1' + pkHex;
@@ -196,25 +224,25 @@
           document.getElementById('publicKeyInput').value = npub;
           document.getElementById('privateKeyInput').value = nsec;
 
-          alert('تم توليد الحساب والمفاتيح بنجاح! احتفظ بالمفتاح الخاص في مكان آمن.');
+          alert('تم توليد الحساب بنجاح! يمكنك الآن نسخ المفتاح الخاص بسهولة عبر زر النسخ.');
       } catch (error) {
           console.error('خطأ أثناء التوليد:', error);
           alert('حدث خطأ أثناء توليد الحساب.');
       }
   }
 
-  // 2. تسجيل الدخول باستخدام مفتاح خاص
+  // 2. تسجيل الدخول والانتقال للمنصة
   function loginWithPrivateKey() {
       const privInput = document.getElementById('privateKeyInput');
       let val = privInput ? privInput.value.trim() : '';
 
       if (!val) {
-          alert('يرجى إدخال المفتاح الخاص أولاً.');
+          alert('يرجى إدخال المفتاح الخاص أو توليد حساب جديد أولاً.');
           return;
       }
 
       let nsec = val;
-      let npub = 'npub1' + bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
+      let npub = localStorage.getItem('nostr_npub') || ('npub1' + bufToHex(window.crypto.getRandomValues(new Uint8Array(32))));
 
       if (!val.startsWith('nsec')) {
           nsec = 'nsec1' + val;
@@ -224,10 +252,14 @@
       localStorage.setItem('nostr_npub', npub);
 
       document.getElementById('publicKeyInput').value = npub;
+
+      // توجيه المستخدم لصفحة المنصة الرئيسية إذا كانت موجودة (مثلاً main.html أو الصفحة الرئيسية)
       alert('تم تسجيل الدخول بنجاح!');
+      // إذا كان لديك صفحة رئيسية أخرى غير index يمكنك تغيير الرابط هنا:
+      // window.location.href = "home.html"; 
   }
 
-  // 3. حفظ بيانات الملف الشخصي والصورة
+  // 3. حفظ بيانات الملف الشخصي
   function saveProfileChanges() {
       const nsec = localStorage.getItem('nostr_nsec') || document.getElementById('privateKeyInput').value;
       if (!nsec) {
@@ -246,7 +278,7 @@
       alert('تم حفظ وتحديث بيانات الملف الشخصي والصورة بنجاح!');
   }
 
-  // استعادة البيانات تلقائياً عند إعادة فتح الصفحة
+  // استعادة البيانات عند فتح الصفحة
   window.addEventListener('DOMContentLoaded', () => {
       const savedNpub = localStorage.getItem('nostr_npub');
       const savedNsec = localStorage.getItem('nostr_nsec');
