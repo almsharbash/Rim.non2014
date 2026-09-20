@@ -106,6 +106,10 @@
             transition: opacity 0.2s;
         }
 
+        .btn-primary:active {
+            opacity: 0.8;
+        }
+
         .btn-secondary {
             background-color: transparent;
             border: 1px solid var(--primary);
@@ -118,7 +122,6 @@
             margin-top: 8px;
         }
 
-        /* واجهة المنصة الرئيسية بعد تسجيل الدخول */
         #appView {
             display: none;
         }
@@ -136,7 +139,7 @@
 
 <div class="container">
 
-    <!-- 1. صفحة التسجيل والدخول -->
+    <!-- 1. واجهة التسجيل / الإعدادات -->
     <div id="loginView">
         <div class="card" style="margin-bottom: 15px;">
             <div class="section-title">🔑 إدارة الحساب والمفاتيح</div>
@@ -158,7 +161,7 @@
             </div>
 
             <button type="button" class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
-            <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">تسجيل الدخول والدخول للمنصة 🚀</button>
+            <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">الدخول إلى المنصة 🚀</button>
         </div>
 
         <div class="card">
@@ -184,18 +187,21 @@
                 <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
             </div>
 
-            <button type="button" class="btn-primary" onclick="saveProfileChanges()">حفظ التغيرات</button>
+            <button type="button" class="btn-primary" onclick="saveProfileChanges()">حفظ التغيرات والدخول</button>
         </div>
     </div>
 
-    <!-- 2. واجهة المنصة الرئيسية (تظهر بعد الدخول) -->
+    <!-- 2. واجهة المنصة الرئيسية -->
     <div id="appView">
         <div class="card">
             <div class="section-title" style="justify-content: space-between;">
                 <span>🌐 منصة كلمات</span>
-                <button class="btn-secondary" style="width: auto; padding: 4px 10px; margin: 0;" onclick="logout()">خروج</button>
+                <div style="display: flex; gap: 6px;">
+                    <button class="btn-secondary" style="width: auto; padding: 4px 10px; margin: 0;" onclick="openSettings()">الإعدادات</button>
+                    <button class="btn-secondary" style="width: auto; padding: 4px 10px; margin: 0; color: #ef4444; border-color: #ef4444;" onclick="logout()">خروج</button>
+                </div>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">أهلاً بك <b id="userDisplayName">المستخدم</b> في شبكة Nostr!</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">أهلاً بك <b id="userDisplayName" style="color: var(--primary);">kalimag</b> في شبكة Nostr!</p>
             
             <div class="form-group">
                 <textarea id="newPostInput" rows="3" placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
@@ -216,60 +222,34 @@
 
 <script>
   function bufToHex(buffer) {
-      return Array.from(new Uint8Array(buffer))
-          .map(b => b.toString(16).padStart(2, '0'))
-          .join('');
+      return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
   function copyField(elementId) {
       const input = document.getElementById(elementId);
-      if (!input || !input.value) {
-          alert('لا يوجد نص لنسخه!');
-          return;
-      }
-      navigator.clipboard.writeText(input.value).then(() => {
-          alert('تم النسخ إلى الحافظة بنجاح!');
-      }).catch(() => {
-          input.select();
-          document.execCommand('copy');
-          alert('تم النسخ بنجاح!');
-      });
+      if (!input || !input.value) return alert('لا يوجد نص لنسخه!');
+      navigator.clipboard.writeText(input.value).then(() => alert('تم النسخ بنجاح!'));
   }
 
   function generateNewAccount() {
-      try {
-          const skHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
-          const pkHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
+      const skHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
+      const pkHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
+      const nsec = 'nsec1' + skHex;
+      const npub = 'npub1' + pkHex;
 
-          const nsec = 'nsec1' + skHex;
-          const npub = 'npub1' + pkHex;
+      localStorage.setItem('nostr_nsec', nsec);
+      localStorage.setItem('nostr_npub', npub);
 
-          localStorage.setItem('nostr_sk', skHex);
-          localStorage.setItem('nostr_pk', pkHex);
-          localStorage.setItem('nostr_nsec', nsec);
-          localStorage.setItem('nostr_npub', npub);
-
-          document.getElementById('publicKeyInput').value = npub;
-          document.getElementById('privateKeyInput').value = nsec;
-
-          alert('تم توليد الحساب بنجاح!');
-      } catch (error) {
-          alert('حدث خطأ أثناء توليد الحساب.');
-      }
+      document.getElementById('publicKeyInput').value = npub;
+      document.getElementById('privateKeyInput').value = nsec;
   }
 
-  // الدخول وتحويل الشاشة للمنصة الرئيسية
   function loginWithPrivateKey() {
-      const privInput = document.getElementById('privateKeyInput');
-      let val = privInput ? privInput.value.trim() : '';
+      const val = document.getElementById('privateKeyInput').value.trim();
+      if (!val) return alert('يرجى إدخال المفتاح الخاص أولاً.');
 
-      if (!val) {
-          alert('يرجى إدخال المفتاح الخاص أو توليد حساب جديد أولاً.');
-          return;
-      }
-
-      let nsec = val.startsWith('nsec') ? val : 'nsec1' + val;
-      let npub = localStorage.getItem('nostr_npub') || ('npub1' + bufToHex(window.crypto.getRandomValues(new Uint8Array(32))));
+      const nsec = val.startsWith('nsec') ? val : 'nsec1' + val;
+      const npub = localStorage.getItem('nostr_npub') || ('npub1' + bufToHex(window.crypto.getRandomValues(new Uint8Array(32))));
 
       localStorage.setItem('nostr_nsec', nsec);
       localStorage.setItem('nostr_npub', npub);
@@ -280,17 +260,17 @@
 
   function saveProfileChanges() {
       const profileData = {
-          name: document.getElementById('displayNameInput').value,
+          name: document.getElementById('displayNameInput').value || 'kalimag',
           username: document.getElementById('handleInput').value,
           picture: document.getElementById('pictureUrlInput').value,
           about: document.getElementById('bioInput').value
       };
 
       localStorage.setItem('nostr_profile', JSON.stringify(profileData));
-      alert('تم حفظ وتحديث بيانات الملف الشخصي والصورة بنجاح!');
+      localStorage.setItem('is_logged_in', 'true');
+      showAppView();
   }
 
-  // التبديل إلى الواجهة الرئيسية للمنصة
   function showAppView() {
       document.getElementById('loginView').style.display = 'none';
       document.getElementById('appView').style.display = 'block';
@@ -302,6 +282,11 @@
               if (p.name) document.getElementById('userDisplayName').innerText = p.name;
           } catch(e){}
       }
+  }
+
+  function openSettings() {
+      document.getElementById('appView').style.display = 'none';
+      document.getElementById('loginView').style.display = 'block';
   }
 
   function logout() {
@@ -316,7 +301,7 @@
 
       const feed = document.getElementById('feedContainer');
       const savedProfile = JSON.parse(localStorage.getItem('nostr_profile') || '{}');
-      const name = savedProfile.name || 'أنا';
+      const name = savedProfile.name || 'kalimag';
 
       const postDiv = document.createElement('div');
       postDiv.className = 'post-card';
@@ -326,7 +311,7 @@
       document.getElementById('newPostInput').value = '';
   }
 
-  // التحقق التلقائي عند فتح الصفحة
+  // التوجيه المباشر عند فتح الرابط
   window.addEventListener('DOMContentLoaded', () => {
       const savedNpub = localStorage.getItem('nostr_npub');
       const savedNsec = localStorage.getItem('nostr_nsec');
@@ -344,7 +329,8 @@
           } catch(e){}
       }
 
-      if (localStorage.getItem('is_logged_in') === 'true') {
+      // الدخول التلقائي للمنصة عند وجود جلسة مسجلة
+      if (localStorage.getItem('is_logged_in') === 'true' || savedNsec) {
           showAppView();
       }
   });
