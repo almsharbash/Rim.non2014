@@ -66,6 +66,7 @@
             font-size: 20px;
             color: var(--btn-purple);
             letter-spacing: 0.5px;
+            cursor: pointer;
         }
 
         .btn-settings-icon {
@@ -122,6 +123,7 @@
             color: white;
             flex-shrink: 0;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .composer-textarea {
@@ -225,6 +227,7 @@
         .post-user-info {
             display: flex;
             flex-direction: column;
+            cursor: pointer;
         }
 
         .post-user-name {
@@ -304,6 +307,63 @@
 
         .action-btn.reposted {
             color: var(--green-success);
+        }
+
+        /* منطقة التعليقات المباشرة داخل المنشور */
+        .comments-section {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .comment-item {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: var(--btn-purple);
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 8px;
+        }
+
+        .comment-input {
+            flex: 1;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 14px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+        }
+
+        .btn-comment-send {
+            background-color: var(--btn-purple);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         /* الإعدادات والبروفايل */
@@ -398,6 +458,72 @@
             display: none;
         }
 
+        /* كارت الملف الشخصي المعروض */
+        .profile-header-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .profile-avatar-large {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: var(--btn-purple);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            overflow: hidden;
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .profile-handle {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .btn-follow {
+            background-color: var(--btn-purple);
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-follow.following {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* عناصر الإشعارات */
+        .notification-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+        }
+
         /* شريط التنقل السفلي */
         .nav-bar {
             position: fixed;
@@ -444,7 +570,7 @@
 
     <!-- الهيدر العلوي -->
     <div class="app-header">
-        <div class="app-title">كلمات</div>
+        <div class="app-title" onclick="switchPage('feed-screen')">كلمات</div>
         <button class="btn-settings-icon" onclick="switchPage('settings-screen')">⚙️ الإعدادات</button>
     </div>
 
@@ -454,7 +580,7 @@
         <!-- مساحة النشر المباشرة المفتوحة -->
         <div class="composer-card">
             <div class="composer-header">
-                <div class="user-avatar-img" id="composer-avatar">M</div>
+                <div class="user-avatar-img" id="composer-avatar" onclick="openProfile('أنا', 'me')">M</div>
                 <textarea id="composer-input" class="composer-textarea" placeholder="ماذا يدور في ذهنك؟"></textarea>
             </div>
 
@@ -466,7 +592,6 @@
 
             <div class="composer-actions">
                 <div class="composer-tools">
-                    <!-- رفع صورة مباشرة من الجهاز بدون prompt -->
                     <label title="إرفاق صورة">
                         🖼️
                         <input type="file" id="image-file-input" accept="image/*" style="display: none;" onchange="handleFileSelect(event)">
@@ -485,16 +610,16 @@
             <div class="post-card">
                 <span class="post-time">الآن</span>
                 <div class="post-header">
-                    <div class="user-avatar-img" style="background:#8b5cf6;">A</div>
-                    <div class="post-user-info">
+                    <div class="user-avatar-img" style="background:#8b5cf6;" onclick="openProfile('almsharbash', 'almsharbash')">A</div>
+                    <div class="post-user-info" onclick="openProfile('almsharbash', 'almsharbash')">
                         <div class="post-user-name">@almsharbash</div>
                     </div>
                 </div>
                 <div class="post-content">أهلاً بكم في المنصة المحدثة بحلتها التفاعلية الحية! 🚀</div>
                 <div class="post-actions">
-                    <button class="action-btn" onclick="toggleComment(this)">
+                    <button class="action-btn" onclick="toggleCommentsSection(this)">
                         <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                        <span>0</span>
+                        <span class="comments-count">0</span>
                     </button>
                     <button class="action-btn" onclick="toggleRepost(this)">
                         <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
@@ -505,23 +630,32 @@
                         <span>0</span>
                     </button>
                 </div>
+
+                <!-- مساحة التعليقات المباشرة المدمجة -->
+                <div class="comments-section">
+                    <div class="comments-list"></div>
+                    <div class="comment-input-box">
+                        <input type="text" class="comment-input" placeholder="اكتب تعليقك هنا...">
+                        <button class="btn-comment-send" onclick="addComment(this)">إرسال</button>
+                    </div>
+                </div>
             </div>
 
             <!-- منشور 2 -->
             <div class="post-card">
                 <span class="post-time">منذ يومين</span>
                 <div class="post-header">
-                    <div class="user-avatar-img" style="background:#3b82f6;">Y</div>
-                    <div class="post-user-info">
+                    <div class="user-avatar-img" style="background:#3b82f6;" onclick="openProfile('Yasser Al-Hussein', 'yasser')">Y</div>
+                    <div class="post-user-info" onclick="openProfile('Yasser Al-Hussein', 'yasser')">
                         <div class="post-user-name">Yasser Al-Hussein</div>
                         <div class="post-handle">@yasser</div>
                     </div>
                 </div>
                 <div class="post-content">التصميم الجديد يعمل بمرونة وسرعة فائقة مع إمكانية التفاعل والمشاركة الفورية! 🚀</div>
                 <div class="post-actions">
-                    <button class="action-btn" onclick="toggleComment(this)">
+                    <button class="action-btn" onclick="toggleCommentsSection(this)">
                         <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                        <span>12</span>
+                        <span class="comments-count">1</span>
                     </button>
                     <button class="action-btn" onclick="toggleRepost(this)">
                         <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
@@ -532,12 +666,59 @@
                         <span>45</span>
                     </button>
                 </div>
+
+                <!-- مساحة التعليقات المباشرة المدمجة -->
+                <div class="comments-section">
+                    <div class="comments-list">
+                        <div class="comment-item">
+                            <div class="comment-author">@almsharbash</div>
+                            <div>تصميم ممتاز جداً وتجربة سلسة!</div>
+                        </div>
+                    </div>
+                    <div class="comment-input-box">
+                        <input type="text" class="comment-input" placeholder="اكتب تعليقك هنا...">
+                        <button class="btn-comment-send" onclick="addComment(this)">إرسال</button>
+                    </div>
+                </div>
             </div>
 
         </div>
     </div>
 
-    <!-- 2. شاشة الإعدادات والبروفايل الحية -->
+    <!-- 2. شاشة الإشعارات -->
+    <div id="notifications-screen" class="page-screen">
+        <div class="setting-card-title" style="margin-bottom: 16px;">🔔 الإشعارات والتنبيهات</div>
+        
+        <div class="notification-card">
+            <span>❤️</span>
+            <div>قام <b>@yasser</b> بالإعجاب بمنشورك.</div>
+        </div>
+        <div class="notification-card">
+            <span>💬</span>
+            <div>علق <b>@almsharbash</b> على منشورك: "تصميم ممتاز جداً..."</div>
+        </div>
+        <div class="notification-card">
+            <span>🔄</span>
+            <div>قام <b>@yasser</b> بإعادة نشر منشورك.</div>
+        </div>
+    </div>
+
+    <!-- 3. شاشة الملف الشخصي المباشرة -->
+    <div id="profile-screen" class="page-screen">
+        <div class="profile-header-card">
+            <div id="view-profile-avatar" class="profile-avatar-large">U</div>
+            <div id="view-profile-name" class="profile-name">اسم المستخدم</div>
+            <div id="view-profile-handle" class="profile-handle">@user</div>
+            <button id="btn-follow-user" class="btn-follow" onclick="toggleFollow(this)">متابعة</button>
+        </div>
+        
+        <div class="setting-card-title">📌 منشورات المستخدم</div>
+        <div id="user-posts-container">
+            <div style="color: var(--text-muted); text-align: center; font-size: 13px; padding: 20px;">لا توجد منشورات إضافية لهذا المستخدم حالياً.</div>
+        </div>
+    </div>
+
+    <!-- 4. شاشة الإعدادات والبروفايل الحية -->
     <div id="settings-screen" class="page-screen">
         
         <!-- إدارة المفاتيح -->
@@ -574,7 +755,7 @@
             <label class="field-label">رابط الصورة الشخصية (Avatar URL):</label>
             <input type="text" id="edit-avatar-url" class="input-field" placeholder="https://example.com/image.jpg">
 
-            <button class="btn-primary" onclick="saveProfileData()">حفظ التغيرات وتطبيقها 💾</button>
+            <button class="btn-primary" onclick="saveProfileData()">حفظ التغييرات وتطبيقها 💾</button>
         </div>
     </div>
 
@@ -583,10 +764,10 @@
         <button class="nav-item active" onclick="switchPage('feed-screen')">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </button>
-        <button class="nav-item" onclick="switchPage('settings-screen')">
+        <button class="nav-item" onclick="openProfileFromNav()">
             <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         </button>
-        <button class="nav-item" onclick="switchPage('feed-screen')">
+        <button class="nav-item" onclick="switchPage('notifications-screen')">
             <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         </button>
         <button class="nav-item" onclick="switchPage('settings-screen')">
@@ -605,14 +786,54 @@ function switchPage(pageId) {
     document.getElementById(pageId).classList.add('active');
 
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+    
     if(pageId === 'feed-screen') {
         document.querySelectorAll('.nav-item')[0].classList.add('active');
-    } else {
+    } else if(pageId === 'profile-screen') {
         document.querySelectorAll('.nav-item')[1].classList.add('active');
+    } else if(pageId === 'notifications-screen') {
+        document.querySelectorAll('.nav-item')[2].classList.add('active');
+    } else if(pageId === 'settings-screen') {
+        document.querySelectorAll('.nav-item')[3].classList.add('active');
     }
 }
 
-// التعامل مع اختيار صورة من الجهاز بدون prompt
+// فتح الملف الشخصي مباشرة لأي مستخدم
+function openProfile(name, handle, avatarUrl = "") {
+    const avatarBox = document.getElementById('view-profile-avatar');
+    const nameBox = document.getElementById('view-profile-name');
+    const handleBox = document.getElementById('view-profile-handle');
+
+    nameBox.innerText = name;
+    handleBox.innerText = '@' + handle.replace('@', '');
+
+    if (avatarUrl) {
+        avatarBox.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+        avatarBox.innerText = name.charAt(0).toUpperCase();
+        avatarBox.style.background = 'var(--btn-purple)';
+    }
+
+    switchPage('profile-screen');
+}
+
+function openProfileFromNav() {
+    const profile = JSON.parse(localStorage.getItem('kalimat_profile')) || { name: 'أنا', handle: 'me', avatar: '' };
+    openProfile(profile.name, profile.handle, profile.avatar);
+}
+
+// تبديل زر المتابعة
+function toggleFollow(btn) {
+    if (btn.classList.contains('following')) {
+        btn.classList.remove('following');
+        btn.innerText = "متابعة";
+    } else {
+        btn.classList.add('following');
+        btn.innerText = "تتابعه";
+    }
+}
+
+// التعامل مع اختيار صورة من الجهاز
 function handleFileSelect(event) {
     const file = event.target.files[0];
     if (file) {
@@ -659,14 +880,46 @@ function toggleRepost(btn) {
     }
 }
 
-// تفاعل التعليق
-function toggleComment(btn) {
-    const span = btn.querySelector('span');
-    let count = parseInt(span.innerText) || 0;
-    span.innerText = count + 1;
+// إظهار/إخفاء صندوق التعليقات مباشرة داخل الكرت
+function toggleCommentsSection(btn) {
+    const postCard = btn.closest('.post-card');
+    const commentsSection = postCard.querySelector('.comments-section');
+    if (commentsSection.style.display === 'block') {
+        commentsSection.style.display = 'none';
+    } else {
+        commentsSection.style.display = 'block';
+    }
 }
 
-// نشر منشور جديد من المساحة الواسعة
+// إضافة تعليق جديد فورياً داخل المنشور
+function addComment(btn) {
+    const commentsSection = btn.closest('.comments-section');
+    const input = commentsSection.querySelector('.comment-input');
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    const profile = JSON.parse(localStorage.getItem('kalimat_profile')) || { name: 'أنا', handle: 'me' };
+    const commentsList = commentsSection.querySelector('.comments-list');
+
+    const commentHTML = `
+        <div class="comment-item">
+            <div class="comment-author">@${profile.handle}</div>
+            <div>${text}</div>
+        </div>
+    `;
+
+    commentsList.insertAdjacentHTML('beforeend', commentHTML);
+    input.value = '';
+
+    // تحديث العداد
+    const postCard = btn.closest('.post-card');
+    const countSpan = postCard.querySelector('.comments-count');
+    let count = parseInt(countSpan.innerText) || 0;
+    countSpan.innerText = count + 1;
+}
+
+// نشر منشور جديد من المساحة المباشرة
 function publishNewPost() {
     const textInput = document.getElementById('composer-input');
     const text = textInput.value.trim();
@@ -686,8 +939,8 @@ function publishNewPost() {
         <div class="post-card">
             <span class="post-time">الآن</span>
             <div class="post-header">
-                <div class="user-avatar-img">${avatarContent}</div>
-                <div class="post-user-info">
+                <div class="user-avatar-img" onclick="openProfile('${profile.name}', '${profile.handle}', '${profile.avatar || ''}')">${avatarContent}</div>
+                <div class="post-user-info" onclick="openProfile('${profile.name}', '${profile.handle}', '${profile.avatar || ''}')">
                     <div class="post-user-name">${profile.name}</div>
                     <div class="post-handle">@${profile.handle}</div>
                 </div>
@@ -695,9 +948,9 @@ function publishNewPost() {
             <div class="post-content">${text}</div>
             ${imgHTML}
             <div class="post-actions">
-                <button class="action-btn" onclick="toggleComment(this)">
+                <button class="action-btn" onclick="toggleCommentsSection(this)">
                     <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                    <span>0</span>
+                    <span class="comments-count">0</span>
                 </button>
                 <button class="action-btn" onclick="toggleRepost(this)">
                     <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
@@ -707,6 +960,13 @@ function publishNewPost() {
                     <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                     <span>0</span>
                 </button>
+            </div>
+            <div class="comments-section">
+                <div class="comments-list"></div>
+                <div class="comment-input-box">
+                    <input type="text" class="comment-input" placeholder="اكتب تعليقك هنا...">
+                    <button class="btn-comment-send" onclick="addComment(this)">إرسال</button>
+                </div>
             </div>
         </div>
     `;
