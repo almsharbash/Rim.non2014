@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كلمات - منصة التواصل</title>
+    <title>كلمات</title>
     <style>
         :root {
-            --bg-dark: #0f111a;
-            --card-dark: #181b29;
-            --input-dark: #111422;
-            --accent-purple: #8b5cf6;
-            --accent-hover: #7c3aed;
-            --text-main: #f3f4f6;
+            --bg-dark: #0e0e17;
+            --card-dark: #161624;
+            --input-dark: #1c1c2e;
+            --accent-purple: #7c3aed;
+            --text-main: #ffffff;
             --text-muted: #9ca3af;
             --border-color: rgba(255, 255, 255, 0.08);
             --danger-color: #ef4444;
@@ -22,7 +21,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         body {
@@ -43,39 +42,19 @@
             flex-direction: column;
         }
 
-        /* Top Bar */
+        /* Header / Top Bar */
         .top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            background-color: rgba(15, 17, 26, 0.95);
-            backdrop-filter: blur(8px);
-            z-index: 10;
+            padding: 12px 16px;
+            background-color: var(--bg-dark);
         }
 
-        .top-title {
+        .top-left, .top-right {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--accent-purple);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: var(--accent-purple);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #fff;
+            gap: 12px;
         }
 
         .icon-btn {
@@ -86,12 +65,33 @@
             cursor: pointer;
         }
 
+        .top-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent-purple);
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #7c3aed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
+        }
+
         /* Theme Selector */
         .theme-selector {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
-            padding: 16px;
+            padding: 12px 16px;
         }
 
         .theme-card {
@@ -101,25 +101,25 @@
             padding: 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            color: var(--text-main);
         }
 
         .theme-card.active {
-            border-color: var(--accent-purple);
+            border-color: #6366f1;
         }
 
         .theme-card-icon {
-            font-size: 20px;
-            margin-top: 6px;
+            margin-top: 8px;
+            font-size: 18px;
         }
 
-        /* Settings Card */
+        /* Settings / Key Management Card */
         .setting-card {
             background-color: var(--card-dark);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            margin: 12px 16px;
-            padding: 18px;
+            margin: 8px 16px;
+            padding: 16px;
         }
 
         .setting-card-title {
@@ -128,6 +128,7 @@
             margin-bottom: 14px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
         }
 
@@ -136,12 +137,12 @@
             font-size: 12px;
             color: var(--text-muted);
             margin-bottom: 6px;
+            text-align: right;
         }
 
         .key-box-wrapper {
             display: flex;
             background-color: var(--input-dark);
-            border: 1px solid var(--border-color);
             border-radius: 8px;
             overflow: hidden;
         }
@@ -151,19 +152,20 @@
             background: none;
             border: none;
             padding: 10px;
-            color: var(--text-main);
+            color: var(--text-muted);
             font-size: 13px;
             outline: none;
+            text-align: left;
+            direction: ltr;
         }
 
         .copy-btn {
-            background: rgba(139, 92, 246, 0.2);
+            background: rgba(124, 58, 237, 0.2);
             border: none;
-            color: var(--accent-purple);
-            padding: 0 14px;
+            color: #a78bfa;
+            padding: 0 16px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: 500;
         }
 
         .btn-primary {
@@ -176,11 +178,6 @@
             font-size: 15px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
         }
 
         .btn-secondary {
@@ -188,18 +185,13 @@
             background: transparent;
             color: var(--text-main);
             border: 1px solid var(--border-color);
-            padding: 10px;
+            padding: 12px;
             border-radius: 10px;
             font-size: 14px;
             cursor: pointer;
-            transition: background 0.2s ease;
         }
 
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .btn-danger {
+        .btn-logout {
             width: 100%;
             background: transparent;
             color: var(--danger-color);
@@ -208,10 +200,6 @@
             border-radius: 10px;
             font-size: 14px;
             cursor: pointer;
-        }
-
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.1);
         }
 
         .status-badge {
@@ -225,11 +213,11 @@
             gap: 4px;
         }
 
-        /* Floating Action Button */
+        /* FAB Button */
         .fab-btn {
             position: fixed;
             bottom: 75px;
-            left: 20px;
+            right: 20px;
             width: 52px;
             height: 52px;
             border-radius: 50%;
@@ -239,8 +227,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
             cursor: pointer;
         }
 
@@ -254,7 +242,7 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 12px 0;
             z-index: 10;
         }
 
@@ -265,31 +253,30 @@
             font-size: 20px;
             cursor: pointer;
         }
-
-        .nav-item.active {
-            color: var(--accent-purple);
-        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Top Bar -->
+        <!-- Top Navigation Bar -->
         <header class="top-bar">
-            <button type="button" class="icon-btn">⚙️</button>
+            <div class="top-left">
+                <button type="button" class="icon-btn">⚙️</button>
+            </div>
+
             <div class="top-title">
                 كلمات 🪶
             </div>
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div class="user-avatar" id="header-avatar">K</div>
+
+            <div class="top-right">
+                <div class="user-avatar">K</div>
                 <button type="button" class="icon-btn">←</button>
             </div>
         </header>
 
-        <!-- Main Content Area -->
-        <main id="main-content">
-            
-            <!-- Theme Mode Cards -->
+        <!-- Main Cards -->
+        <main>
+            <!-- Theme Cards -->
             <section class="theme-selector">
                 <div class="theme-card">
                     <div>الوضع المضيء</div>
@@ -301,55 +288,53 @@
                 </div>
             </section>
 
-            <!-- Key & Account Management Section -->
+            <!-- Key Management Card -->
             <section class="setting-card">
                 <div class="setting-card-title">🔑 إدارة المفاتيح والحساب</div>
 
                 <div class="input-group">
                     <label>المفتاح العام (Public Key - npub):</label>
                     <div class="key-box-wrapper">
-                        <input type="text" id="setting-npub" class="key-box-input" readonly placeholder="سيظهر المفتاح العام هنا...">
                         <button type="button" class="copy-btn" onclick="copyToClipboard('setting-npub')">نسخ</button>
+                        <input type="text" id="setting-npub" class="key-box-input" readonly placeholder="620394eb473fd93d15f0cac1dfb5d1">
                     </div>
                 </div>
 
                 <div class="input-group" style="margin-top:12px;">
                     <label>المفتاح الخاص (Private Key - nsec):</label>
                     <div class="key-box-wrapper">
-                        <input type="password" id="setting-nsec" class="key-box-input" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
                         <button type="button" class="copy-btn" onclick="copyToClipboard('setting-nsec')">نسخ</button>
+                        <input type="text" id="setting-nsec" class="key-box-input" placeholder="620394eb473fd93d15f0cac1dfb5d1">
                     </div>
                 </div>
 
                 <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
                     <button type="button" class="btn-primary" onclick="generateNostrAccount(event)">توليد حساب جديد ✨</button>
                     <button type="button" class="btn-secondary" onclick="loginAndSaveKeys(event)">تسجيل الدخول بالمفتاح 🔑</button>
-                    <button type="button" id="btn-logout" class="btn-danger" onclick="logoutNostrAccount(event)" style="display:none;">تسجيل الخروج 🚪</button>
+                    <button type="button" id="btn-logout" class="btn-logout" onclick="logoutNostrAccount(event)" style="display:none;">تسجيل الخروج 🚪</button>
                 </div>
 
                 <div id="login-status" class="status-badge" style="display:none;">
                     ✓ تم تسجيل الدخول وجلسة التوقيع نشطة
                 </div>
             </section>
-
         </main>
 
-        <!-- Floating Action Button -->
+        <!-- FAB Button -->
         <button type="button" class="fab-btn">✏️</button>
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <button type="button" class="nav-item">🏠</button>
-            <button type="button" class="nav-item">💬</button>
-            <button type="button" class="nav-item">🔔</button>
+            <button type="button" class="nav-item">👤</button>
             <button type="button" class="nav-item">👥</button>
-            <button type="button" class="nav-item active">👤</button>
+            <button type="button" class="nav-item">🔔</button>
+            <button type="button" class="nav-item">💬</button>
+            <button type="button" class="nav-item">🏠</button>
         </nav>
     </div>
 
-    <!-- Application Script -->
+    <!-- Script Block -->
     <script>
-        // Check local storage on initial load
         document.addEventListener('DOMContentLoaded', () => {
             const savedNsec = localStorage.getItem('kalimat_nsec');
             const savedNpub = localStorage.getItem('kalimat_npub');
@@ -361,7 +346,6 @@
             }
         });
 
-        // Function to generate new keypair
         function generateNostrAccount(e) {
             if (e) e.preventDefault();
 
@@ -371,8 +355,8 @@
                 randomHex += hexChars.charAt(Math.floor(Math.random() * hexChars.length));
             }
 
-            const nsec = 'nsec1' + randomHex;
-            const npub = 'npub1' + randomHex;
+            const nsec = randomHex;
+            const npub = randomHex;
 
             document.getElementById('setting-nsec').value = nsec;
             document.getElementById('setting-npub').value = npub;
@@ -381,30 +365,25 @@
             localStorage.setItem('kalimat_npub', npub);
 
             updateLoginUI(true);
-            alert("تم توليد مفاتيح Nostr جديدة وتخزينها بنجاح! ✨");
         }
 
-        // Function to login using manual key input
         function loginAndSaveKeys(e) {
             if (e) e.preventDefault();
 
             const nsecInput = document.getElementById('setting-nsec').value.trim();
             if (!nsecInput) {
-                alert("يرجى إدخال أو توليد المفتاح الخاص أولاً.");
+                alert("يرجى إدخال المفتاح الخاص أولاً.");
                 return;
             }
 
-            let npub = 'npub1' + (nsecInput.startsWith('nsec1') ? nsecInput.substring(5) : nsecInput);
-            document.getElementById('setting-npub').value = npub;
+            document.getElementById('setting-npub').value = nsecInput;
 
             localStorage.setItem('kalimat_nsec', nsecInput);
-            localStorage.setItem('kalimat_npub', npub);
+            localStorage.setItem('kalimat_npub', nsecInput);
 
             updateLoginUI(true);
-            alert("تم تسجيل الدخول بنجاح! 🔑");
         }
 
-        // Function to log out
         function logoutNostrAccount(e) {
             if (e) e.preventDefault();
 
@@ -415,10 +394,8 @@
             document.getElementById('setting-npub').value = '';
 
             updateLoginUI(false);
-            alert("تم تسجيل الخروج بنجاح.");
         }
 
-        // Toggle UI elements based on auth status
         function updateLoginUI(isLoggedIn) {
             const statusEl = document.getElementById('login-status');
             const logoutBtn = document.getElementById('btn-logout');
@@ -432,7 +409,6 @@
             }
         }
 
-        // Helper to copy key text
         function copyToClipboard(inputId) {
             const inputEl = document.getElementById(inputId);
             if (!inputEl || !inputEl.value) return;
