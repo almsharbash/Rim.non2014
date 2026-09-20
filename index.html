@@ -4,33 +4,257 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كلمات - Kalimat</title>
+    <!-- استدعاء FontAwesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0f0c1b;
-            --card-bg: #18132a;
-            --input-bg: #221b3b;
+            --bg-color: #0d0a1a;
+            --card-bg: #161129;
+            --input-bg: #1f1838;
             --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
             --text-color: #ffffff;
-            --text-muted: #a0a0b8;
-            --border-color: #2e264a;
+            --text-muted: #9ca3af;
+            --border-color: #271f45;
+            --accent-blue: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 15px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
+            min-height: 100vh;
+            padding-bottom: 70px;
         }
 
-        .container {
+        .app-container {
             width: 100%;
             max-width: 480px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            position: relative;
+        }
+
+        /* 1. الشريط العلوي Header */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background-color: var(--bg-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff;
+        }
+
+        .brand-logo img {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 2. منطقة الإدخال السريع */
+        .quick-input-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .quick-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        /* 3. التغذية الإخبارية والبطاقات Feed */
+        .feed-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-card {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .author-name {
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .author-handle {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .post-time {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-right: auto;
+        }
+
+        .post-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #ececec;
+        }
+
+        /* أزرار التفاعل أسفل البطاقة */
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 6px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .action-item:hover {
+            color: var(--primary);
+        }
+
+        /* 4. الزر العائم Floating Button */
+        .fab-btn {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        /* 5. الشريط السفلي Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            height: 60px;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        /* 6. شاشة الإعدادات والملف الشخصي (Modal) */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 10, 26, 0.95);
+            z-index: 200;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .card {
@@ -38,31 +262,13 @@
             border-radius: 12px;
             padding: 16px;
             border: 1px solid var(--border-color);
-        }
-
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-        }
-
-        label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .input-wrapper {
-            display: flex;
             gap: 6px;
         }
 
@@ -72,25 +278,7 @@
             border-radius: 8px;
             padding: 10px;
             color: #fff;
-            font-size: 0.95rem;
             outline: none;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--primary);
-        }
-
-        .btn-copy {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            color: var(--primary);
-            border-radius: 8px;
-            padding: 0 12px;
-            cursor: pointer;
-            white-space: nowrap;
-            font-size: 0.85rem;
         }
 
         .btn-primary {
@@ -98,242 +286,187 @@
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 12px;
-            font-size: 1rem;
+            padding: 10px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            transition: opacity 0.2s;
-        }
-
-        .btn-primary:active {
-            opacity: 0.8;
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 8px;
-        }
-
-        #appView {
-            display: none;
-        }
-
-        .post-card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 14px;
-            margin-top: 10px;
-            border: 1px solid var(--border-color);
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app-container">
 
-    <!-- 1. واجهة التسجيل / الإعدادات -->
-    <div id="loginView">
-        <div class="card" style="margin-bottom: 15px;">
-            <div class="section-title">🔑 إدارة الحساب والمفاتيح</div>
-            
-            <div class="form-group">
-                <label>المفتاح العام (Public Key - npub):</label>
-                <div class="input-wrapper">
-                    <input type="text" id="publicKeyInput" placeholder="سيظهر المفتاح العام هنا...">
-                    <button type="button" class="btn-copy" onclick="copyField('publicKeyInput')">نسخ</button>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>المفتاح الخاص (Private Key - nsec):</label>
-                <div class="input-wrapper">
-                    <input type="text" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
-                    <button type="button" class="btn-copy" onclick="copyField('privateKeyInput')">نسخ</button>
-                </div>
-            </div>
-
-            <button type="button" class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
-            <button type="button" class="btn-secondary" onclick="loginWithPrivateKey()">الدخول إلى المنصة 🚀</button>
+    <!-- الشريط العلوي -->
+    <div class="top-bar">
+        <button class="icon-btn" onclick="toggleSettings()"><i class="fa-solid fa-gear"></i></button>
+        <div class="brand-logo">
+            <span>كلمات</span>
+            <i class="fa-solid fa-tree" style="color: #60a5fa;"></i>
         </div>
-
-        <div class="card">
-            <div class="section-title">👤 تعديل الملف الشخصي</div>
-
-            <div class="form-group">
-                <label>اسم العرض:</label>
-                <input type="text" id="displayNameInput" placeholder="أدخل اسم العرض">
-            </div>
-
-            <div class="form-group">
-                <label>اسم المستخدم (Handle):</label>
-                <input type="text" id="handleInput" placeholder="username">
-            </div>
-
-            <div class="form-group">
-                <label>رابط الصورة الشخصية (Picture URL):</label>
-                <input type="url" id="pictureUrlInput" placeholder="https://example.com/avatar.jpg">
-            </div>
-
-            <div class="form-group">
-                <label>نبذة شخصية (Bio):</label>
-                <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
-            </div>
-
-            <button type="button" class="btn-primary" onclick="saveProfileChanges()">حفظ التغيرات والدخول</button>
-        </div>
+        <div class="avatar-circle" id="topAvatar" onclick="toggleSettings()">M</div>
     </div>
 
-    <!-- 2. واجهة المنصة الرئيسية -->
-    <div id="appView">
-        <div class="card">
-            <div class="section-title" style="justify-content: space-between;">
-                <span>🌐 منصة كلمات</span>
-                <div style="display: flex; gap: 6px;">
-                    <button class="btn-secondary" style="width: auto; padding: 4px 10px; margin: 0;" onclick="openSettings()">الإعدادات</button>
-                    <button class="btn-secondary" style="width: auto; padding: 4px 10px; margin: 0; color: #ef4444; border-color: #ef4444;" onclick="logout()">خروج</button>
+    <!-- إدخال سريع -->
+    <div class="quick-input-box">
+        <div class="avatar-circle" style="width: 30px; height: 30px; font-size: 0.8rem;" id="inputAvatar">M</div>
+        <input type="text" class="quick-input" id="quickPostText" placeholder="Hii..." onkeypress="handleEnter(event)">
+    </div>
+
+    <!-- التغذية الرئيسية (المنشورات) -->
+    <div class="feed-container" id="feedContainer">
+        
+        <!-- منشور متطابق مع النموذج الأصلي -->
+        <div class="post-card">
+            <div class="post-header">
+                <div class="avatar-circle" style="background-color: var(--accent-blue);">Y</div>
+                <div class="user-info">
+                    <div class="user-name-row">
+                        <span class="author-name">ياسر الحسين</span>
+                        <span class="author-handle">@yasser</span>
+                    </div>
                 </div>
+                <span class="post-time">5 د</span>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">أهلاً بك <b id="userDisplayName" style="color: var(--primary);">kalimag</b> في شبكة Nostr!</p>
-            
-            <div class="form-group">
-                <textarea id="newPostInput" rows="3" placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
+            <div class="post-content">
+                التصميم الجديد يعتمد بالكامل على الأيقونات والرموز السريعة مع إمكانية التبديل الفوري بين المظهر الداكن والمضيء! 🚀
             </div>
-            <button class="btn-primary" onclick="publishPost()">نشر في الشبكة ✍️</button>
+            <div class="post-actions">
+                <div class="action-item"><i class="fa-solid fa-share-nodes"></i> 12</div>
+                <div class="action-item"><i class="fa-solid fa-arrow-rotate-right"></i> 4</div>
+                <div class="action-item"><i class="fa-solid fa-heart"></i> 45</div>
+                <div class="action-item"><i class="fa-solid fa-bolt"></i> 100</div>
+            </div>
         </div>
 
-        <div class="section-title" style="margin-top: 15px;">📜 التغذية والأحداث الأخيرة</div>
-        <div id="feedContainer">
-            <div class="post-card">
-                <b>كلمات Bot 🤖</b>
-                <p style="margin: 8px 0 0 0; color: var(--text-muted);">مرحباً بك في المنصة! حسابك متصل وجاهز لنشر وتصفح المنشورات.</p>
+    </div>
+
+    <!-- زر النشر العائم -->
+    <button class="fab-btn" onclick="publishQuickPost()"><i class="fa-solid fa-pen"></i></button>
+
+    <!-- الشريط السفلي للتنقل -->
+    <div class="bottom-nav">
+        <button class="nav-item active"><i class="fa-solid fa-house"></i></button>
+        <button class="nav-item"><i class="fa-solid fa-user-group"></i></button>
+        <button class="nav-item"><i class="fa-solid fa-bell"></i></button>
+        <button class="nav-item"><i class="fa-solid fa-comment-dots"></i></button>
+        <button class="nav-item" onclick="toggleSettings()"><i class="fa-solid fa-user"></i></button>
+    </div>
+
+    <!-- شاشة الإعدادات والملف الشخصي -->
+    <div class="settings-modal" id="settingsModal">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>إعدادات الحساب والملف الشخصي</h2>
+            <button class="icon-btn" onclick="toggleSettings()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="card">
+            <h3>🔑 المفاتيح الحالية</h3>
+            <div class="form-group" style="margin-top: 10px;">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">المفتاح العام (npub):</label>
+                <input type="text" id="npubShow" readonly>
             </div>
+            <div class="form-group">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">المفتاح الخاص (nsec):</label>
+                <input type="text" id="nsecShow" readonly>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>👤 تعديل الملف الشخصي</h3>
+            <div class="form-group" style="margin-top: 10px;">
+                <label>اسم العرض:</label>
+                <input type="text" id="nameInput" value="kalimag">
+            </div>
+            <div class="form-group">
+                <label>اسم المستخدم (Handle):</label>
+                <input type="text" id="handleInput" value="Kalimat">
+            </div>
+            <div class="form-group">
+                <label>رابط الصورة الشخصية:</label>
+                <input type="url" id="picInput">
+            </div>
+            <button class="btn-primary" onclick="saveProfile()">حفظ التغيرات</button>
         </div>
     </div>
 
 </div>
 
 <script>
-  function bufToHex(buffer) {
-      return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-  }
+    function toggleSettings() {
+        const modal = document.getElementById('settingsModal');
+        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    }
 
-  function copyField(elementId) {
-      const input = document.getElementById(elementId);
-      if (!input || !input.value) return alert('لا يوجد نص لنسخه!');
-      navigator.clipboard.writeText(input.value).then(() => alert('تم النسخ بنجاح!'));
-  }
+    function handleEnter(e) {
+        if (e.key === 'Enter') publishQuickPost();
+    }
 
-  function generateNewAccount() {
-      const skHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
-      const pkHex = bufToHex(window.crypto.getRandomValues(new Uint8Array(32)));
-      const nsec = 'nsec1' + skHex;
-      const npub = 'npub1' + pkHex;
+    function publishQuickPost() {
+        const input = document.getElementById('quickPostText');
+        const txt = input.value.trim();
+        if (!txt) return;
 
-      localStorage.setItem('nostr_nsec', nsec);
-      localStorage.setItem('nostr_npub', npub);
+        const feed = document.getElementById('feedContainer');
+        const name = localStorage.getItem('user_name') || 'kalimag';
+        const handle = localStorage.getItem('user_handle') || 'Kalimat';
 
-      document.getElementById('publicKeyInput').value = npub;
-      document.getElementById('privateKeyInput').value = nsec;
-  }
+        const newCard = document.createElement('div');
+        newCard.className = 'post-card';
+        newCard.innerHTML = `
+            <div class="post-header">
+                <div class="avatar-circle" style="background-color: var(--primary);">${name.charAt(0).toUpperCase()}</div>
+                <div class="user-info">
+                    <div class="user-name-row">
+                        <span class="author-name">${name}</span>
+                        <span class="author-handle">@${handle}</span>
+                    </div>
+                </div>
+                <span class="post-time">الآن</span>
+            </div>
+            <div class="post-content">${txt}</div>
+            <div class="post-actions">
+                <div class="action-item"><i class="fa-solid fa-share-nodes"></i> 0</div>
+                <div class="action-item"><i class="fa-solid fa-arrow-rotate-right"></i> 0</div>
+                <div class="action-item"><i class="fa-solid fa-heart"></i> 0</div>
+                <div class="action-item"><i class="fa-solid fa-bolt"></i> 0</div>
+            </div>
+        `;
 
-  function loginWithPrivateKey() {
-      const val = document.getElementById('privateKeyInput').value.trim();
-      if (!val) return alert('يرجى إدخال المفتاح الخاص أولاً.');
+        feed.prepend(newCard);
+        input.value = '';
+    }
 
-      const nsec = val.startsWith('nsec') ? val : 'nsec1' + val;
-      const npub = localStorage.getItem('nostr_npub') || ('npub1' + bufToHex(window.crypto.getRandomValues(new Uint8Array(32))));
+    function saveProfile() {
+        const name = document.getElementById('nameInput').value;
+        const handle = document.getElementById('handleInput').value;
+        const pic = document.getElementById('picInput').value;
 
-      localStorage.setItem('nostr_nsec', nsec);
-      localStorage.setItem('nostr_npub', npub);
-      localStorage.setItem('is_logged_in', 'true');
+        localStorage.setItem('user_name', name);
+        localStorage.setItem('user_handle', handle);
 
-      showAppView();
-  }
+        if (name) {
+            document.getElementById('topAvatar').innerText = name.charAt(0).toUpperCase();
+            document.getElementById('inputAvatar').innerText = name.charAt(0).toUpperCase();
+        }
 
-  function saveProfileChanges() {
-      const profileData = {
-          name: document.getElementById('displayNameInput').value || 'kalimag',
-          username: document.getElementById('handleInput').value,
-          picture: document.getElementById('pictureUrlInput').value,
-          about: document.getElementById('bioInput').value
-      };
+        toggleSettings();
+    }
 
-      localStorage.setItem('nostr_profile', JSON.stringify(profileData));
-      localStorage.setItem('is_logged_in', 'true');
-      showAppView();
-  }
+    window.addEventListener('DOMContentLoaded', () => {
+        const nsec = localStorage.getItem('nostr_nsec') || 'nsec1f86ac3d0badb4d9f59a246f7026';
+        const npub = localStorage.getItem('nostr_npub') || 'npub11411f5eaf53a009c757046e87ef';
 
-  function showAppView() {
-      document.getElementById('loginView').style.display = 'none';
-      document.getElementById('appView').style.display = 'block';
+        document.getElementById('nsecShow').value = nsec;
+        document.getElementById('npubShow').value = npub;
 
-      const savedProfile = localStorage.getItem('nostr_profile');
-      if (savedProfile) {
-          try {
-              const p = JSON.parse(savedProfile);
-              if (p.name) document.getElementById('userDisplayName').innerText = p.name;
-          } catch(e){}
-      }
-  }
-
-  function openSettings() {
-      document.getElementById('appView').style.display = 'none';
-      document.getElementById('loginView').style.display = 'block';
-  }
-
-  function logout() {
-      localStorage.removeItem('is_logged_in');
-      document.getElementById('appView').style.display = 'none';
-      document.getElementById('loginView').style.display = 'block';
-  }
-
-  function publishPost() {
-      const txt = document.getElementById('newPostInput').value.trim();
-      if (!txt) return;
-
-      const feed = document.getElementById('feedContainer');
-      const savedProfile = JSON.parse(localStorage.getItem('nostr_profile') || '{}');
-      const name = savedProfile.name || 'kalimag';
-
-      const postDiv = document.createElement('div');
-      postDiv.className = 'post-card';
-      postDiv.innerHTML = `<b>${name}</b><p style="margin: 8px 0 0 0;">${txt}</p>`;
-      
-      feed.prepend(postDiv);
-      document.getElementById('newPostInput').value = '';
-  }
-
-  // التوجيه المباشر عند فتح الرابط
-  window.addEventListener('DOMContentLoaded', () => {
-      const savedNpub = localStorage.getItem('nostr_npub');
-      const savedNsec = localStorage.getItem('nostr_nsec');
-      if (savedNpub) document.getElementById('publicKeyInput').value = savedNpub;
-      if (savedNsec) document.getElementById('privateKeyInput').value = savedNsec;
-
-      const savedProfile = localStorage.getItem('nostr_profile');
-      if (savedProfile) {
-          try {
-              const p = JSON.parse(savedProfile);
-              if (p.name) document.getElementById('displayNameInput').value = p.name;
-              if (p.username) document.getElementById('handleInput').value = p.username;
-              if (p.picture) document.getElementById('pictureUrlInput').value = p.picture;
-              if (p.about) document.getElementById('bioInput').value = p.about;
-          } catch(e){}
-      }
-
-      // الدخول التلقائي للمنصة عند وجود جلسة مسجلة
-      if (localStorage.getItem('is_logged_in') === 'true' || savedNsec) {
-          showAppView();
-      }
-  });
+        const savedName = localStorage.getItem('user_name') || 'kalimag';
+        if (savedName) {
+            document.getElementById('nameInput').value = savedName;
+            document.getElementById('topAvatar').innerText = savedName.charAt(0).toUpperCase();
+            document.getElementById('inputAvatar').innerText = savedName.charAt(0).toUpperCase();
+        }
+    });
 </script>
 
 </body>
