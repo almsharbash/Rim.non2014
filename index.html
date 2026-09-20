@@ -522,19 +522,11 @@
             margin-top: 4px;
         }
 
-        .key-box {
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            padding: 10px 38px 10px 10px;
-            border-radius: 8px;
+        .key-box-input {
+            padding-left: 55px !important;
             font-family: monospace;
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-muted);
-            word-break: break-all;
-            user-select: all;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
         }
 
         .copy-btn {
@@ -542,14 +534,16 @@
             left: 8px;
             top: 50%;
             transform: translateY(-50%);
-            background: none;
+            background: var(--border-color);
             border: none;
             color: var(--btn-purple);
             cursor: pointer;
             font-size: 12px;
             font-weight: bold;
-            padding: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
         }
+        .copy-btn:active { opacity: 0.8; }
 
         .welcome-toast {
             position: fixed;
@@ -630,7 +624,7 @@
         </div>
     </section>
 
-    <!-- 3. الإعدادات وتوليد المفاتيح (Nostr Keys) -->
+    <!-- 3. الإعدادات وتوليد/تعديل المفاتيح (Nostr Keys) -->
     <section id="tab-settings" class="tab-content">
         <div class="setting-card">
             <div class="setting-card-title">☀️ 🌙 مظهر الشاشة</div>
@@ -641,24 +635,24 @@
         </div>
 
         <div class="setting-card">
-            <div class="setting-card-title">🔐 الحساب ومفاتيح Nostr</div>
+            <div class="setting-card-title">🔐 إدارة وتعديل مفاتيح Nostr</div>
             
             <div class="input-group">
                 <label>المفتاح العام (Public Key - npub):</label>
                 <div class="key-box-wrapper">
-                    <div id="display-npub" class="key-box">لم يتم الإنشاء بعد</div>
-                    <button class="copy-btn" onclick="copyToClipboard('display-npub')">نسخ</button>
+                    <input type="text" id="setting-npub" class="input-field key-box-input" placeholder="npub1..." value="لم يتم الإنشاء بعد">
+                    <button class="copy-btn" onclick="copyToClipboard('setting-npub')">نسخ</button>
                 </div>
             </div>
 
-            <div class="input-group" style="margin-top:10px;">
+            <div class="input-group" style="margin-top:12px;">
                 <label>المفتاح الخاص (Private Key - nsec):</label>
-                <input type="password" id="setting-nsec" class="input-field" placeholder="أدخل مفتاح nsec هنا لتسجيل الدخول">
+                <input type="password" id="setting-nsec" class="input-field" placeholder="أدخل أو عدّل مفتاح nsec هنا">
             </div>
 
             <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
-                <button class="btn-primary" onclick="generateNewNostrAccount()">توليد حساب مفاتيح جديد ✨</button>
-                <button class="btn-secondary" onclick="loginWithNsec()">تسجيل الدخول بالحساب الحالي 🔑</button>
+                <button class="btn-primary" onclick="updateCustomKeys()">حفظ وتعديل المفاتيح يدوياً 💾</button>
+                <button class="btn-secondary" onclick="generateNewNostrAccount()">توليد حساب مفاتيح جديد ✨</button>
             </div>
         </div>
     </section>
@@ -804,7 +798,7 @@
             return {
                 generateAccount: function() {
                     const privateHex = getRandomHex(32);
-                    const publicHex = getRandomHex(32); // توليد معرّف عام قياسي
+                    const publicHex = getRandomHex(32);
 
                     const nsec = encodeBech32('nsec', privateHex);
                     const npub = encodeBech32('npub', publicHex);
@@ -828,7 +822,7 @@
                 avatar: 'ك',
                 avatarBg: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
                 time: 'الآن',
-                text: '🎉 أهلاً بك في منصة كلمات! نظام المفاتيح يعمل الآن بشكل فوري وحقيقي 100%.',
+                text: '🎉 أهلاً بك في منصة كلمات! يمكنك الآن تعديل وإدارة المفاتيح الخاصة والعامة يدوياً بنجاح.',
                 zaps: 12,
                 likes: 24,
                 reposts: 5,
@@ -965,13 +959,13 @@
             closePrimalComposer();
         }
 
-        // توليد مفاتيح Nostr قياسية وحقيقية بدون الاعتماد على أي مكتبة خارجية
+        // توليد حساب جديد وحفظه
         function generateNewNostrAccount() {
             try {
                 const keys = NostrCrypto.generateAccount();
 
                 document.getElementById('setting-nsec').value = keys.nsec;
-                document.getElementById('display-npub').textContent = keys.npub;
+                document.getElementById('setting-npub').value = keys.npub;
 
                 localStorage.setItem('kalimat_nsec', keys.nsec);
                 localStorage.setItem('kalimat_npub', keys.npub);
@@ -983,28 +977,42 @@
             }
         }
 
-        function loginWithNsec() {
+        // حفظ وتعديل المفاتيح المدخلة يدوياً
+        function updateCustomKeys() {
             const nsecInput = document.getElementById('setting-nsec').value.trim();
+            const npubInput = document.getElementById('setting-npub').value.trim();
 
-            if (!nsecInput.startsWith('nsec1')) {
-                alert("يرجى إدخال مفتاح nsec صحيح يبدأ بـ nsec1");
+            if (!nsecInput && !npubInput) {
+                alert("يرجى إدخال مفتاح واحد على الأقل للحفظ.");
                 return;
             }
 
-            // عند تسجيل الدخول بالمفتاح الخاص
+            if (nsecInput && !nsecInput.startsWith('nsec1')) {
+                alert("تنبيه: المفتاح الخاص يبدأ عادةً بـ nsec1");
+            }
+
+            if (npubInput && !npubInput.startsWith('npub1')) {
+                alert("تنبيه: المفتاح العام يبدأ عادةً بـ npub1");
+            }
+
             localStorage.setItem('kalimat_nsec', nsecInput);
-            
-            alert("تم تسجيل الدخول بنجاح بالمفتاح الخاص!");
+            localStorage.setItem('kalimat_npub', npubInput);
+
+            alert("تم حفظ المفاتيح المعدلة بنجاح!");
         }
 
         function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).innerText;
+            const inputField = document.getElementById(elementId);
+            const text = inputField.value;
+            
             if(!text || text === "لم يتم الإنشاء بعد") return;
             
             navigator.clipboard.writeText(text).then(() => {
-                alert("تم نسخ المفتاح العام إلى الحافظة!");
-            }).catch(() => {
                 alert("تم نسخ المفتاح بنجاح!");
+            }).catch(() => {
+                inputField.select();
+                document.execCommand('copy');
+                alert("تم نسخ المفتاح!");
             });
         }
 
@@ -1036,7 +1044,7 @@
             const nsec = localStorage.getItem('kalimat_nsec');
             const npub = localStorage.getItem('kalimat_npub');
             if(nsec) document.getElementById('setting-nsec').value = nsec;
-            if(npub) document.getElementById('display-npub').textContent = npub;
+            if(npub) document.getElementById('setting-npub').value = npub;
         }
 
         function toggleLike(btn) {
