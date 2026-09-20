@@ -12,6 +12,9 @@
     <meta property="og:type" content="website" />
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- إضافة مكتبة Nostr الرسمية للتشفير وإدارة المفاتيح -->
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
 
     <style>
         :root {
@@ -599,7 +602,7 @@
         <div style="padding: 40px; text-align: center; color: var(--text-muted);">المحادثات الخاصة المشفرة.</div>
     </section>
 
-    <!-- 3. الإعدادات وإدارة المفاتيح الدمج الجديد -->
+    <!-- 3. الإعدادات وإدارة المفاتيح -->
     <section id="tab-settings" class="tab-content">
         <div class="setting-card">
             <div class="setting-card-title">☀️ 🌙 مظهر الشاشة</div>
@@ -824,7 +827,7 @@
             closePrimalComposer();
         }
 
-        /* ---------------- وظائف كود المفاتيح المدمجة ---------------- */
+        /* ---------------- وظائف إدارة مفاتيح Nostr مع مكتبة nostr-tools ---------------- */
         function loadSavedKeys() {
             const savedPriv = localStorage.getItem('kalimat_priv') || localStorage.getItem('kalimat_nsec');
             const savedPub = localStorage.getItem('kalimat_pub') || localStorage.getItem('kalimat_npub');
@@ -835,37 +838,82 @@
             }
         }
 
+        // توليد مفاتيح Nostr رسمية وحقيقية 100% باستخدام nostr-tools
         function handleGenerate() {
-            const hex = [...Array(64)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-            const priv = 'nsec1' + hex.substring(0, 30);
-            const pub = 'npub1' + hex.substring(0, 30);
+            try {
+                // 1. توليد مفتاح خاص عشوائي (Hex)
+                const sk = window.NostrTools.generatePrivateKey();
+                // 2. اشتقاق المفتاح العام (Hex)
+                const pk = window.NostrTools.getPublicKey(sk);
 
-            document.getElementById('priv-key').value = priv;
-            document.getElementById('pub-key').value = pub;
+                // 3. ترميزهما إلى صيغ Bech32 الرسمية (nsec1... / npub1...)
+                const nsec = window.NostrTools.nip19.nsecEncode(sk);
+                const npub = window.NostrTools.nip19.npubEncode(pk);
 
-            localStorage.setItem('kalimat_priv', priv);
-            localStorage.setItem('kalimat_pub', pub);
-            // مزامنة المتغيرات القديمة للسلامة
-            localStorage.setItem('kalimat_nsec', priv);
-            localStorage.setItem('kalimat_npub', pub);
+                // 4. عرض النتائج في الواجهة
+                document.getElementById('priv-key').value = nsec;
+                document.getElementById('pub-key').value = npub;
 
-            updateKeyUI(true);
+                // 5. حفظ الصيغ في التخزين المحلي
+                localStorage.setItem('kalimat_priv', nsec);
+                localStorage.setItem('kalimat_pub', npub);
+                localStorage.setItem('kalimat_nsec', nsec);
+                localStorage.setItem('kalimat_npub', npub);
+                localStorage.setItem('kalimat_sk_hex', sk); // حفظ Hex أيضاً لاستخدامه لاحقاً في التوقيع
+                localStorage.setItem('kalimat_pk_hex', pk);
+
+                updateKeyUI(true);
+                alert("تم توليد حساب Nostr حقيقي وبمواصفات قياسية بنجاح! ✨");
+            } catch (err) {
+                console.error("خطأ أثناء توليد المفاتيح:", err);
+                alert("حدث خطأ أثناء توليد المفاتيح، يرجى إعادة المحاولة.");
+            }
         }
 
+        // تسجيل الدخول بمفتاح موجود وإشتقاق المفتاح العام منه تلقائياً
         function handleLogin() {
-            const val = document.getElementById('priv-key').value.trim();
-            if (!val) return;
+            const inputVal = document.getElementById('priv-key').value.trim();
+            if (!inputVal) {
+                alert("يرجى إدخال المفتاح الخاص (nsec1...) أولاً!");
+                return;
+            }
 
-            const pub = 'npub1' + (val.startsWith('nsec1') ? val.substring(5) : val);
-            document.getElementById('pub-key').value = pub;
+            try {
+                let skHex = inputVal;
+                let nsecStr = inputVal;
 
-            localStorage.setItem('kalimat_priv', val);
-            localStorage.setItem('kalimat_pub', pub);
-            localStorage.setItem('kalimat_nsec', val);
-            localStorage.setItem('kalimat_npub', pub);
+                // إذا أدخل المستخدم صيغة nsec1 يتم فك تشفيرها إلى Hex
+                if (inputVal.startsWith('nsec1')) {
+                    const decoded = window.NostrTools.nip19.decode(inputVal);
+                    if (decoded.type === 'nsec') {
+                        skHex = decoded.data;
+                    }
+                } else {
+                    // إذا أدخل Hex مباشر يتم تحويله إلى nsec1
+                    nsecStr = window.NostrTools.nip19.nsecEncode(inputVal);
+                }
 
-            updateKeyUI(true);
-            switchTab('feed');
+                // اشتقاق المفتاح العام الحقيقي وترميزه لـ npub1
+                const pkHex = window.NostrTools.getPublicKey(skHex);
+                const npubStr = window.NostrTools.nip19.npubEncode(pkHex);
+
+                document.getElementById('priv-key').value = nsecStr;
+                document.getElementById('pub-key').value = npubStr;
+
+                localStorage.setItem('kalimat_priv', nsecStr);
+                localStorage.setItem('kalimat_pub', npubStr);
+                localStorage.setItem('kalimat_nsec', nsecStr);
+                localStorage.setItem('kalimat_npub', npubStr);
+                localStorage.setItem('kalimat_sk_hex', skHex);
+                localStorage.setItem('kalimat_pk_hex', pkHex);
+
+                updateKeyUI(true);
+                switchTab('feed');
+                alert("تم تسجيل الدخول بنجاح! 🔑");
+            } catch (err) {
+                console.error("خطأ أثناء تسجيل الدخول:", err);
+                alert("المفتاح الخاص غير صالح! يرجى التأكد من المفتاح وإعادة المحاولة.");
+            }
         }
 
         function handleLogout() {
@@ -873,6 +921,8 @@
             localStorage.removeItem('kalimat_pub');
             localStorage.removeItem('kalimat_nsec');
             localStorage.removeItem('kalimat_npub');
+            localStorage.removeItem('kalimat_sk_hex');
+            localStorage.removeItem('kalimat_pk_hex');
 
             document.getElementById('priv-key').value = '';
             document.getElementById('pub-key').value = '';
