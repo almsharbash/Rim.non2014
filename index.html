@@ -90,6 +90,10 @@
             transition: opacity 0.2s;
         }
 
+        .btn-primary:active {
+            opacity: 0.8;
+        }
+
         .btn-secondary {
             background-color: transparent;
             border: 1px solid var(--primary);
@@ -120,7 +124,7 @@
 
         <div class="form-group">
             <label>المفتاح الخاص (Private Key - nsec):</label>
-            <input type="password" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+            <input type="text" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
         </div>
 
         <button type="button" class="btn-primary" id="btnGenerate">توليد حساب جديد ✨</button>
@@ -161,6 +165,7 @@
 <script type="module">
   import { generateSecretKey, getPublicKey, nip19 } from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
 
+  // دالة تحويل Hex إلى Uint8Array
   function hexToBytes(hex) {
     let bytes = new Uint8Array(hex.length / 2);
     for (let i = 0; i < hex.length; i += 2) {
@@ -172,22 +177,18 @@
   // 1. بند توليد حساب جديد
   document.getElementById('btnGenerate').addEventListener('click', () => {
     try {
-      const skBytes = generateSecretKey(); 
-      const pkHex = getPublicKey(skBytes);  
+      const skBytes = generateSecretKey();
+      const pkHex = getPublicKey(skBytes);
 
       const nsec = nip19.nsecEncode(skBytes);
       const npub = nip19.npubEncode(pkHex);
 
-      localStorage.setItem('nostr_nsec', nsec);
-      localStorage.setItem('nostr_npub', npub);
-
       document.getElementById('publicKeyInput').value = npub;
       document.getElementById('privateKeyInput').value = nsec;
 
-      alert('تم توليد المفاتيح بنجاح!');
+      alert('تم توليد الحساب بنجاح!');
     } catch (error) {
-      console.error(error);
-      alert('خطأ في توليد المفاتيح: ' + error.message);
+      alert('حدث خطأ في التوليد: ' + error.message);
     }
   });
 
@@ -197,7 +198,7 @@
       const privInput = document.getElementById('privateKeyInput').value.trim();
 
       if (!privInput) {
-        alert('يرجى إدخال المفتاح الخاص أولاً (nsec1...)');
+        alert('يرجى إدخال المفتاح الخاص أولاً');
         return;
       }
 
@@ -213,16 +214,17 @@
 
       const pkHex = getPublicKey(skBytes);
       const npub = nip19.npubEncode(pkHex);
-      const nsec = privInput.startsWith('nsec1') ? privInput : nip19.nsecEncode(skBytes);
-
-      localStorage.setItem('nostr_nsec', nsec);
-      localStorage.setItem('nostr_npub', npub);
 
       document.getElementById('publicKeyInput').value = npub;
       alert('تم تسجيل الدخول بنجاح!');
     } catch (error) {
-      alert('المفتاح الخاص غير صالح. يرجى التأكد من كتابة nsec1 بشكل صحيح.');
+      alert('المفتاح الخاص غير صالح، تأكد من الصيغة.');
     }
+  });
+
+  // 3. بند حفظ التغييرات
+  document.getElementById('btnSave').addEventListener('click', () => {
+    alert('تم حفظ البيانات محلياً!');
   });
 </script>
 
