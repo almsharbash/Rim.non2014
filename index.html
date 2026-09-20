@@ -13,6 +13,9 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- مكتبة nostr-tools الرسمية لتوليد وتشفير مفاتيح Nostr -->
+    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
+
     <style>
         :root {
             --bg-main: #0b0e14;
@@ -870,41 +873,75 @@
             closePrimalComposer();
         }
 
-        // توليد خوارزمي متوافق لمفاتيح Nostr (Bech32 Format)
+        // توليد مفاتيح Nostr الحقيقية والمشفرة معتمدة على nostr-tools
         function generateNewNostrAccount() {
-            const hexChars = '0123456789abcdef';
-            let hexSec = '';
-            let hexPub = '';
-            for (let i = 0; i < 64; i++) {
-                hexSec += hexChars[Math.floor(Math.random() * 16)];
-                hexPub += hexChars[Math.floor(Math.random() * 16)];
+            try {
+                if (!window.NostrTools) {
+                    alert("يرجى الانتظار لحين تحميل مكتبة التشفير...");
+                    return;
+                }
+
+                const tools = window.NostrTools;
+                const generatePK = tools.generatePrivateKey || tools.generateSecretKey;
+                
+                // 1. توليد مفتاح خاص عشوائي
+                const privKeyHex = generatePK();
+                
+                // 2. استخراج المفتاح العام المقابل
+                const pubKeyHex = tools.getPublicKey(privKeyHex);
+
+                // 3. التشفير بصيغة NIP-19 القياسية (nsec / npub)
+                const nsec = tools.nip19.nsecEncode(privKeyHex);
+                const npub = tools.nip19.npubEncode(pubKeyHex);
+
+                document.getElementById('setting-nsec').value = nsec;
+                document.getElementById('display-npub').textContent = npub;
+
+                localStorage.setItem('kalimat_nsec', nsec);
+                localStorage.setItem('kalimat_npub', npub);
+
+                showWelcomeBanner();
+            } catch (error) {
+                console.error("خطأ التوليد:", error);
+                alert("حدث خطأ أثناء توليد المفاتيح. تأكد من اتصال الإنترنت.");
             }
-
-            const nsec = 'nsec1' + hexSec.substring(0, 58);
-            const npub = 'npub1' + hexPub.substring(0, 58);
-
-            document.getElementById('setting-nsec').value = nsec;
-            document.getElementById('display-npub').textContent = npub;
-
-            localStorage.setItem('kalimat_nsec', nsec);
-            localStorage.setItem('kalimat_npub', npub);
-
-            showWelcomeBanner();
         }
 
         function loginWithNsec() {
-            const nsec = document.getElementById('setting-nsec').value.trim();
-            if(!nsec.startsWith('nsec1')) {
-                alert("يرجى إدخال مفتاح nsec صحيح يبدأ بـ nsec1");
-                return;
+            try {
+                const nsecInput = document.getElementById('setting-nsec').value.trim();
+
+                if (!nsecInput.startsWith('nsec1')) {
+                    alert("يرجى إدخال مفتاح nsec صحيح يبدأ بـ nsec1");
+                    return;
+                }
+
+                if (!window.NostrTools) {
+                    alert("يرجى الانتظار لحين تحميل مكتبة التشفير...");
+                    return;
+                }
+
+                const tools = window.NostrTools;
+                // فك تشفير الـ nsec للحصول على الـ Hex
+                const decoded = tools.nip19.decode(nsecInput);
+                const privKeyHex = decoded.data;
+
+                // استخراج المفتاح العام المقابل له
+                const pubKeyHex = tools.getPublicKey(privKeyHex);
+
+                // تشفير المفتاح العام إلى npub
+                const npub = tools.nip19.npubEncode(pubKeyHex);
+
+                document.getElementById('display-npub').textContent = npub;
+
+                localStorage.setItem('kalimat_nsec', nsecInput);
+                localStorage.setItem('kalimat_npub', npub);
+
+                alert("تم تسجيل الدخول واسترجاع المفتاح العام (npub) بنجاح!");
+            } catch (error) {
+                console.error("خطأ تسجيل الدخول:", error);
+                alert("المفتاح الخاص (nsec) المدخل غير صحيح!");
             }
-            const npub = 'npub1' + nsec.substring(5);
-            document.getElementById('display-npub').textContent = npub;
-
-            localStorage.setItem('kalimat_nsec', nsec);
-            localStorage.setItem('kalimat_npub', npub);
-
-            alert("تم تسجيل الدخول واسترجاع المفاتيح بنجاح!");
         }
 
         function copyToClipboard(elementId) {
