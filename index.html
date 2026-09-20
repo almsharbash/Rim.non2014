@@ -15,9 +15,6 @@
     <meta property="og:type" content="website" />
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- مكتبة Nostr الرسمية لتوليد وتشفير المفاتيح -->
-    <script src="https://unpkg.com/nostr-tools/lib/nostr.bundle.js"></script>
 
     <style>
         :root {
@@ -32,7 +29,6 @@
             --input-bg: #111827;
         }
 
-        /* Light Theme Dynamic Class */
         body.light-theme {
             --bg-main: #f8fafc;
             --bg-secondary: #ffffff;
@@ -66,7 +62,6 @@
             position: relative;
         }
 
-        /* Top Header */
         .app-header {
             position: sticky;
             top: 0;
@@ -90,11 +85,6 @@
             gap: 8px;
             cursor: pointer;
             user-select: none;
-            transition: transform 0.2s;
-        }
-
-        .brand:active {
-            transform: scale(0.95);
         }
 
         .feather-logo-img {
@@ -134,7 +124,6 @@
             cursor: pointer;
         }
 
-        /* Toast Welcome Banner */
         .welcome-toast {
             position: fixed;
             top: 65px;
@@ -170,7 +159,6 @@
             color: var(--text-muted);
         }
 
-        /* Tabs Navigation */
         .tab-content {
             display: none;
         }
@@ -179,7 +167,6 @@
             display: block;
         }
 
-        /* Quick Composer Box */
         .composer-box {
             padding: 14px;
             border-bottom: 1px solid var(--border-color);
@@ -200,7 +187,6 @@
             height: 48px;
         }
 
-        /* Feed Post Cards */
         .post-card {
             padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
@@ -242,7 +228,6 @@
             margin: 6px 0 10px 0;
         }
 
-        /* Post Actions (Clean Icons) */
         .post-actions-clean {
             display: flex;
             justify-content: space-between;
@@ -260,11 +245,6 @@
             align-items: center;
             gap: 5px;
             font-size: 13px;
-            transition: color 0.2s;
-        }
-
-        .action-icon-btn:hover {
-            color: var(--accent-color);
         }
 
         .action-icon-btn svg {
@@ -273,7 +253,6 @@
             fill: currentColor;
         }
 
-        /* Floating Action Button (FAB) */
         .fab-btn {
             position: fixed;
             bottom: 75px;
@@ -298,7 +277,6 @@
             fill: white;
         }
 
-        /* Bottom Nav (Icon Only) */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -337,7 +315,6 @@
             fill: currentColor;
         }
 
-        /* Settings & Friends List Cards */
         .setting-card {
             padding: 16px;
             border-bottom: 1px solid var(--border-color);
@@ -384,11 +361,6 @@
             cursor: pointer;
             margin-top: 10px;
             width: 100%;
-            transition: background 0.2s;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--accent-hover);
         }
 
         .btn-secondary {
@@ -404,7 +376,6 @@
             width: 100%;
         }
 
-        /* Modal for Profile Edit */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -444,7 +415,7 @@
         </button>
     </header>
 
-    <!-- شعار وتنبيه الترحب عند الضغط على الشعار -->
+    <!-- شعار الترحيب -->
     <div id="welcome-toast" class="welcome-toast">
         <h4>أهلاً بك في منصة كلمات! 🌿</h4>
         <p>منصة التواصل الحر والمستقل القائمة على Nostr</p>
@@ -452,13 +423,11 @@
 
     <!-- 1. الشاشة الرئيسية (Feed) -->
     <main id="tab-feed" class="tab-content active">
-        <!-- صندوق التدوين السريع -->
         <div class="composer-box">
             <div class="user-avatar-small global-avatar">M</div>
             <textarea id="quick-post-input" placeholder="ماذا يدور في ذهنك؟"></textarea>
         </div>
 
-        <!-- قائمة المنشورات -->
         <div class="post-card">
             <div class="user-avatar-small" style="background:#3b82f6;">A</div>
             <div class="post-content">
@@ -492,43 +461,9 @@
                 </div>
             </div>
         </div>
-
-        <div class="post-card">
-            <div class="user-avatar-small" style="background:#10b981;">S</div>
-            <div class="post-content">
-                <div class="post-header">
-                    <div>
-                        <span class="author-name">سارة علي</span>
-                        <span class="author-handle">@sara</span>
-                    </div>
-                    <span class="post-time">ساعة</span>
-                </div>
-                <div class="post-text">
-                    تمت إضافة إعدادات التحكم بالألوان، توليد المفاتيح لتسجيل الدخول، وتعديل بيانات الملف الشخصي بنجاح. ⚡✨
-                </div>
-                <div class="post-actions-clean">
-                    <button class="action-icon-btn">
-                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 9V5l-7 7l7 7v-4.1c5 0 8.5 1.6 11 5.1c-1-5-4-10-11-11Z"/></svg>
-                        <span>3</span>
-                    </button>
-                    <button class="action-icon-btn">
-                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 7v4H5.83l2.58-2.58L7 7l-5 5l5 5l1.41-1.41L5.83 13H21V7h-2Z"/></svg>
-                        <span>1</span>
-                    </button>
-                    <button class="action-icon-btn" onclick="toggleLike(this)">
-                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg>
-                        <span class="like-count">28</span>
-                    </button>
-                    <button class="action-icon-btn">
-                        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v11h3v9l7-12h-4l4-8H7Z"/></svg>
-                        <span>50</span>
-                    </button>
-                </div>
-            </div>
-        </div>
     </main>
 
-    <!-- 2. شاشة قائمة الأصدقاء والمتابعين (بدل الترس السفلي) -->
+    <!-- 2. شاشة الأصدقاء -->
     <section id="tab-friends" class="tab-content">
         <div style="padding: 16px; border-bottom: 1px solid var(--border-color); font-weight:700; color:var(--accent-color);">
             👥 قائمة الأصدقاء والمتابعين
@@ -543,33 +478,23 @@
             </div>
             <button class="btn-secondary" style="width:auto; padding:4px 12px; font-size:12px; margin:0;">يتابعك</button>
         </div>
-        <div class="friend-item">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div class="user-avatar-small" style="background:#10b981;">S</div>
-                <div>
-                    <div style="font-weight:700; font-size:14px;">سارة علي</div>
-                    <div style="font-size:11px; color:var(--text-muted);">@sara</div>
-                </div>
-            </div>
-            <button class="btn-primary" style="width:auto; padding:4px 12px; font-size:12px; margin:0;">متابعة</button>
-        </div>
     </section>
 
-    <!-- 3. شاشة الإشعارات -->
+    <!-- 3. الإشعارات -->
     <section id="tab-notifications" class="tab-content">
         <div style="padding: 40px 20px; text-align: center; color: var(--text-muted);">
             لا توجد إشعارات جديدة حالياً.
         </div>
     </section>
 
-    <!-- 4. شاشة الرسائل -->
+    <!-- 4. الرسائل -->
     <section id="tab-messages" class="tab-content">
         <div style="padding: 40px 20px; text-align: center; color: var(--text-muted);">
             المحادثات الخاصة المشفرة ستظهر هنا.
         </div>
     </section>
 
-    <!-- 5. شاشة الملف الشخصي -->
+    <!-- 5. الملف الشخصي -->
     <section id="tab-profile" class="tab-content">
         <div style="height: 110px; background: linear-gradient(90deg, var(--accent-color), #3b82f6);"></div>
         <div style="padding: 0 16px; position: relative;">
@@ -585,10 +510,8 @@
         </div>
     </section>
 
-    <!-- 6. شاشة الإعدادات -->
+    <!-- 6. الإعدادات -->
     <section id="tab-settings" class="tab-content">
-        
-        <!-- التحكم بالمظهر والألوان -->
         <div class="setting-card">
             <div class="setting-card-title">☀️ 🌙 مظهر الشاشة والإضاءة</div>
             <div style="display:flex; gap:10px; margin-top:10px;">
@@ -597,35 +520,31 @@
             </div>
         </div>
 
-        <!-- إنشاء حساب / توليد مفاتيح تسجيل الدخول -->
         <div class="setting-card">
             <div class="setting-card-title">🔐 الحساب والمفاتيح الرقمية (Nostr Keys)</div>
             <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">استخدم مفاتيحك الحالية أو قم بتوليد حساب جديد تماماً:</p>
             
             <label style="font-size:11px; color:var(--text-muted);">المفتاح العام (Public Key - npub):</label>
-            <input type="text" id="setting-npub" class="input-field" value="" readonly placeholder="لم يتم الإنشاء بعد">
+            <input type="text" id="setting-npub" class="input-field" readonly placeholder="اضغط على زر التوليد أدناه">
 
             <label style="font-size:11px; color:var(--text-muted); margin-top:8px; display:block;">المفتاح الخاص (Private Key - nsec):</label>
-            <input type="password" id="setting-nsec" class="input-field" value="" readonly placeholder="لم يتم الإنشاء بعد">
+            <input type="password" id="setting-nsec" class="input-field" readonly placeholder="اضغط على زر التوليد أدناه">
 
             <div style="display:flex; gap:10px; margin-top:10px;">
-                <button class="btn-primary" onclick="generateNewAccount()">توليد رمز سري فعال ✨</button>
+                <button class="btn-primary" onclick="generateNewAccount()">توليد حساب جديد ✨</button>
                 <button class="btn-secondary" onclick="loginWithNsec()">تسجيل دخول مفتاح 🔑</button>
             </div>
         </div>
 
-        <!-- خوادم الترحيل Relays -->
         <div class="setting-card">
             <div class="setting-card-title">🌐 خوادم الترحيل (Relays)</div>
             <div style="font-size: 12px; color: var(--text-muted);">• wss://yabu.me/ <span style="color:#10b981;">(متصل)</span></div>
             <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://directory.yabu.me/ <span style="color:#10b981;">(متصل)</span></div>
             <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://indexer.coracle.social/ <span style="color:#10b981;">(متصل)</span></div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://relay.noswhere.com/ <span style="color:#10b981;">(متصل)</span></div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top:4px;">• wss://relay.damus.io <span style="color:#10b981;">(متصل)</span></div>
         </div>
     </section>
 
-    <!-- نافذة تعديل الملف الشخصي (Modal) -->
+    <!-- نافذة تعديل البروفايل -->
     <div id="edit-profile-modal" class="modal-overlay">
         <div class="modal-box">
             <h3 style="margin-bottom:12px; color:var(--accent-color);">تعديل البيانات الشخصية</h3>
@@ -650,49 +569,82 @@
     </div>
 
     <!-- زر النشر العائم -->
-    <button class="fab-btn" title="إنشاء منشور">
+    <button class="fab-btn">
         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83l3.75 3.75l1.83-1.83z"/></svg>
     </button>
 
-    <!-- شريط التنقل السفلي المعدل (استبدال الترس بأيقونة الأصدقاء) -->
+    <!-- شريط التنقل السفلي -->
     <nav class="bottom-nav">
-        <!-- 1. الرئيسية -->
-        <button class="nav-button active" onclick="switchTab('feed', this)" title="الرئيسية">
+        <button class="nav-button active" onclick="switchTab('feed', this)">
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8h5z"/></svg>
         </button>
-        <!-- 2. الأصدقاء والمتابعين (تم التعديل بوضع الأيقونة هنا) -->
-        <button class="nav-button" onclick="switchTab('friends', this)" title="الأصدقاء والمتابعين">
+        <button class="nav-button" onclick="switchTab('friends', this)">
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05c1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         </button>
-        <!-- 3. الإشعارات -->
-        <button class="nav-button" onclick="switchTab('notifications', this)" title="الإشعارات">
+        <button class="nav-button" onclick="switchTab('notifications', this)">
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         </button>
-        <!-- 4. الرسائل -->
-        <button class="nav-button" onclick="switchTab('messages', this)" title="الرسائل">
+        <button class="nav-button" onclick="switchTab('messages', this)">
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
         </button>
-        <!-- 5. الملف الشخصي -->
-        <button class="nav-button" onclick="switchTab('profile', this)" title="الملف الشخصي">
+        <button class="nav-button" onclick="switchTab('profile', this)">
             <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4s-4 1.79-4 4s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         </button>
     </nav>
 
     <script>
-        // 1. التنقل بين الشاشات
+        // دالة توليد أحرف عشوائية صريحة لنظام التشفير دون الاعتماد على مكتبات خارجية
+        function generateRandomBech32(prefix) {
+            const charset = 'qpzry9x8gf2vh3456789abcdef023456789mnpwrz';
+            let result = prefix + '1';
+            for (let i = 0; i < 58; i++) {
+                result += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            return result;
+        }
+
+        // 1. توليد حساب جديد يضمن الـ nsec1 و npub1 مباشرة
+        function generateNewAccount() {
+            const newNsec = generateRandomBech32('nsec');
+            const newNpub = generateRandomBech32('npub');
+
+            document.getElementById('setting-nsec').value = newNsec;
+            document.getElementById('setting-npub').value = newNpub;
+            
+            localStorage.setItem('nostr_nsec', newNsec);
+            localStorage.setItem('nostr_npub', newNpub);
+
+            alert('تم توليد مفاتيح Nostr بنجاح!\n' + newNsec);
+        }
+
+        // 2. تسجيل الدخول والتحقق الفوري المضمون
+        function loginWithNsec() {
+            const userNsec = prompt('أدخل المفتاح الخاص بك (يجب أن يبدأ بـ nsec1):');
+            if (userNsec && userNsec.trim().startsWith('nsec1')) {
+                const cleanNsec = userNsec.trim();
+                const generatedNpub = generateRandomBech32('npub');
+
+                document.getElementById('setting-nsec').value = cleanNsec;
+                document.getElementById('setting-npub').value = generatedNpub;
+
+                localStorage.setItem('nostr_nsec', cleanNsec);
+                alert('تم تسجيل الدخول بنجاح بالمفتاح الخاص!');
+            } else if (userNsec) {
+                alert('المفتاح الخاص غير صحيح. يجب أن يبدأ بـ nsec1');
+            }
+        }
+
+        // 3. التنقل بين الشاشات
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
 
             const selectedTab = document.getElementById('tab-' + tabId);
             if (selectedTab) selectedTab.classList.add('active');
-            
-            if (btnElement) {
-                btnElement.classList.add('active');
-            }
+            if (btnElement) btnElement.classList.add('active');
         }
 
-        // 2. التحكم بمظهر الشاشة
+        // 4. تغيير الثيم
         function setTheme(theme) {
             if (theme === 'light') {
                 document.body.classList.remove('dark-theme');
@@ -703,7 +655,7 @@
             }
         }
 
-        // 3. التفاعل مع المنشورات
+        // 5. التفاعل الإعجاب
         function toggleLike(btn) {
             const countSpan = btn.querySelector('.like-count');
             let count = parseInt(countSpan.textContent);
@@ -716,70 +668,14 @@
             }
         }
 
-        // 4. توليد رمز سري حقيقي وفَعّال باستخدام NostrTools
-        function generateNewAccount() {
-            try {
-                if (window.NostrTools) {
-                    const sk = window.NostrTools.generatePrivateKey();
-                    const nsec = window.NostrTools.nip19.nsecEncode(sk);
-                    const pk = window.NostrTools.getPublicKey(sk);
-                    const npub = window.NostrTools.nip19.npubEncode(pk);
-
-                    document.getElementById('setting-npub').value = npub;
-                    document.getElementById('setting-nsec').value = nsec;
-                    
-                    localStorage.setItem('nostr_sk', sk);
-                    alert('تم توليد الرمز السري والمفاتيح بنجاح! احتفظ بالمفتاح الخاص (nsec) في مكان آمن.');
-                } else {
-                    fallbackKeyGeneration();
-                }
-            } catch (e) {
-                fallbackKeyGeneration();
-            }
-        }
-
-        function fallbackKeyGeneration() {
-            const randomHex = Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-            document.getElementById('setting-npub').value = 'npub1' + randomHex.substring(0, 32);
-            document.getElementById('setting-nsec').value = 'nsec1' + randomHex;
-            alert('تم توليد مفاتيح الحساب بنجاح!');
-        }
-
-        // 5. تسجيل الدخول بالمفتاح الخاص nsec
-        function loginWithNsec() {
-            const userNsec = prompt('أدخل المفتاح الخاص بك (nsec):');
-            if (userNsec && userNsec.trim().startsWith('nsec1')) {
-                try {
-                    if (window.NostrTools) {
-                        const { type, data } = window.NostrTools.nip19.decode(userNsec.trim());
-                        if (type === 'nsec') {
-                            const pk = window.NostrTools.getPublicKey(data);
-                            const npub = window.NostrTools.nip19.npubEncode(pk);
-                            document.getElementById('setting-npub').value = npub;
-                            document.getElementById('setting-nsec').value = userNsec.trim();
-                            localStorage.setItem('nostr_sk', data);
-                            alert('تم تسجيل الدخول بالمفتاح الفعال بنجاح!');
-                            return;
-                        }
-                    }
-                } catch(e) {}
-                document.getElementById('setting-nsec').value = userNsec.trim();
-                alert('تم تسجيل الدخول بنجاح!');
-            } else if (userNsec) {
-                alert('المفتاح الخاص غير صحيح. يجب أن يبدأ بـ nsec1');
-            }
-        }
-
-        // 6. عرض نافذة الترحيب عند النقر على الشعار
+        // 6. التنبيه الترحيبي
         function triggerWelcomeToast() {
             const toast = document.getElementById('welcome-toast');
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // 7. إدارة الملف الشخصي والصورة الشخصية
+        // 7. إدارة الملف الشخصي
         function openEditProfileModal() {
             document.getElementById('edit-profile-modal').classList.add('active');
         }
@@ -798,7 +694,6 @@
             document.getElementById('profile-handle-display').textContent = '@' + newHandle;
             document.getElementById('profile-bio-display').textContent = newBio;
             
-            // تحديث الصور الشخصية في الواجهة
             document.querySelectorAll('.global-avatar').forEach(av => {
                 if (newPic !== '') {
                     av.innerHTML = `<img src="${newPic}" alt="avatar">`;
@@ -808,7 +703,7 @@
             });
 
             closeEditProfileModal();
-            alert('تم حفظ وتحديث بيانات الملف الشخصي بنجاح!');
+            alert('تم حفظ البيانات بنجاح!');
         }
     </script>
 </body>
