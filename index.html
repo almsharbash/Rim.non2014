@@ -1,137 +1,285 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>كلمات - إدارة الحساب</title>
-  <style>
-    body {
-      background-color: #0f111a;
-      color: #ffffff;
-      font-family: system-ui, -apple-system, sans-serif;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-      margin: 0;
-    }
-    .card {
-      background-color: #1a1d2d;
-      border-radius: 16px;
-      padding: 24px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-      margin-bottom: 20px;
-    }
-    h2 {
-      font-size: 1.1rem;
-      margin-top: 0;
-      margin-bottom: 16px;
-    }
-    .field-group {
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      font-size: 0.85rem;
-      color: #a0a5b5;
-      margin-bottom: 6px;
-    }
-    .input-wrapper {
-      display: flex;
-      gap: 8px;
-    }
-    input {
-      width: 100%;
-      background-color: #0d0f17;
-      border: 1px solid #2e344d;
-      border-radius: 8px;
-      padding: 10px 12px;
-      color: #ffffff;
-      font-size: 0.9rem;
-      outline: none;
-      box-sizing: border-box;
-    }
-    input:focus {
-      border-color: #7c5dfa;
-    }
-    .btn-copy {
-      background-color: #252a3e;
-      color: #8b92b0;
-      border: none;
-      border-radius: 8px;
-      padding: 0 16px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      white-space: nowrap;
-    }
-    .btn-primary {
-      width: 100%;
-      background-color: #7c5dfa;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 8px;
-      font-size: 0.95rem;
-    }
-    .btn-secondary {
-      width: 100%;
-      background-color: transparent;
-      border: 1px solid #3d4468;
-      color: #b0b7d0;
-      border-radius: 10px;
-      padding: 12px;
-      cursor: pointer;
-      margin-top: 10px;
-      font-size: 0.95rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كلمات - Kalimat</title>
+    <style>
+        :root {
+            --bg-color: #0f0c1b;
+            --card-bg: #18132a;
+            --input-bg: #221b3b;
+            --primary: #8b5cf6;
+            --text-color: #ffffff;
+            --text-muted: #a0a0b8;
+            --border-color: #2e264a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        input, textarea {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+        }
+    </style>
 </head>
 <body>
 
-  <div style="width: 100%; max-width: 420px;">
-    
+<div class="container">
+
+    <!-- إدارة الحساب والمفاتيح -->
     <div class="card">
-      <h2>🔑 إدارة الحساب والمفاتيح</h2>
-      
-      <div class="field-group">
-        <label>المفتاح العام (Public Key - npub):</label>
-        <div class="input-wrapper">
-          <input type="text" id="publicKey" placeholder="npub1..." />
-          <button class="btn-copy">نسخ</button>
+        <div class="section-title">
+            🔑 إدارة الحساب والمفاتيح
         </div>
-      </div>
-
-      <div class="field-group">
-        <label>المفتاح الخاص (Private Key - nsec):</label>
-        <div class="input-wrapper">
-          <input type="password" id="privateKey" placeholder="nsec1..." />
-          <button class="btn-copy">نسخ</button>
+        
+        <div class="form-group">
+            <label>المفتاح العام (Public Key - npub):</label>
+            <input type="text" id="publicKeyInput" readonly placeholder="سيظهر المفتاح العام هنا...">
         </div>
-      </div>
 
-      <button class="btn-primary">✨ توليد حساب جديد</button>
-      <button class="btn-secondary">تسجيل الدخول والدخول للمنصة</button>
+        <div class="form-group">
+            <label>المفتاح الخاص (Private Key - nsec):</label>
+            <input type="password" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+        </div>
+
+        <button type="button" class="btn-primary" id="btnGenerate">توليد حساب جديد ✨</button>
+        <button type="button" class="btn-secondary" id="btnLogin">تسجيل الدخول بالمفتاح</button>
     </div>
 
+    <!-- تعديل الملف الشخصي -->
     <div class="card">
-      <h2>👤 تعديل الملف الشخصي</h2>
-      
-      <div class="field-group">
-        <label>اسم العرض:</label>
-        <input type="text" id="displayName" placeholder="مثال: أحمد" />
-      </div>
+        <div class="section-title">
+            👤 تعديل الملف الشخصي
+        </div>
 
-      <div class="field-group">
-        <label>اسم المستخدم (Handle):</label>
-        <input type="text" id="handle" placeholder="مثال: ahmed_12" />
-      </div>
+        <div class="form-group">
+            <label>اسم العرض:</label>
+            <input type="text" id="displayNameInput" placeholder="أدخل اسم العرض">
+        </div>
+
+        <div class="form-group">
+            <label>اسم المستخدم (Handle):</label>
+            <input type="text" id="handleInput" placeholder="username">
+        </div>
+
+        <div class="form-group">
+            <label>رابط الصورة الشخصية (Picture URL):</label>
+            <input type="url" id="pictureUrlInput" placeholder="https://example.com/avatar.jpg">
+        </div>
+
+        <div class="form-group">
+            <label>نبذة شخصية (Bio):</label>
+            <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
+        </div>
+
+        <button type="button" class="btn-primary" id="btnSave">حفظ التغيرات</button>
     </div>
 
-  </div>
+</div>
+
+<!-- السكربت البرمجي المصلَح -->
+<script type="module">
+  import { generateSecretKey, getPublicKey, nip19 } from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
+
+  // تحويل البايتات إلى Hex
+  function bytesToHex(bytes) {
+      return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  // تحويل Hex إلى بايتات (Uint8Array)
+  function hexToBytes(hex) {
+      const bytes = new Uint8Array(hex.length / 2);
+      for (let i = 0; i < hex.length; i += 2) {
+          bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+      }
+      return bytes;
+  }
+
+  // 1. توليد حساب جديد
+  document.getElementById('btnGenerate').addEventListener('click', () => {
+      try {
+          const skBytes = generateSecretKey();
+          const pkHex = getPublicKey(skBytes);
+          const skHex = bytesToHex(skBytes);
+
+          const nsec = nip19.nsecEncode(skBytes);
+          const npub = nip19.npubEncode(pkHex);
+
+          localStorage.setItem('nostr_sk', skHex);
+          localStorage.setItem('nostr_pk', pkHex);
+
+          document.getElementById('publicKeyInput').value = npub;
+          document.getElementById('privateKeyInput').value = nsec;
+
+          alert('تم توليد الحساب بنجاح! احفظ المفتاح الخاص (nsec) في مكان آمن.');
+      } catch (error) {
+          console.error('خطأ والتوليد:', error);
+          alert('حدث خطأ أثناء توليد الحساب: ' + error.message);
+      }
+  });
+
+  // 2. تسجيل الدخول بالمفتاح الخاص
+  document.getElementById('btnLogin').addEventListener('click', () => {
+      try {
+          const privInput = document.getElementById('privateKeyInput').value.trim();
+
+          if (!privInput) {
+              alert('يرجى إدخال المفتاح الخاص أولاً.');
+              return;
+          }
+
+          let skBytes;
+          let skHex = '';
+
+          if (privInput.startsWith('nsec1')) {
+              const { type, data } = nip19.decode(privInput);
+              if (type === 'nsec') {
+                  skBytes = data;
+                  skHex = bytesToHex(data);
+              }
+          } else {
+              skHex = privInput;
+              skBytes = hexToBytes(privInput);
+          }
+
+          const pkHex = getPublicKey(skBytes);
+          const npub = nip19.npubEncode(pkHex);
+
+          localStorage.setItem('nostr_sk', skHex);
+          localStorage.setItem('nostr_pk', pkHex);
+
+          document.getElementById('publicKeyInput').value = npub;
+          alert('تم تسجيل الدخول بنجاح!');
+      } catch (error) {
+          alert('المفتاح الخاص غير صالح، يرجى التأكد من الصيغة.');
+      }
+  });
+
+  // 3. حفظ بيانات الملف الشخصي
+  document.getElementById('btnSave').addEventListener('click', () => {
+      const skHex = localStorage.getItem('nostr_sk');
+      if (!skHex) {
+          alert('يرجى تسجيل الدخول أو توليد حساب أولاً.');
+          return;
+      }
+
+      const profileData = {
+          name: document.getElementById('displayNameInput').value,
+          username: document.getElementById('handleInput').value,
+          picture: document.getElementById('pictureUrlInput').value,
+          about: document.getElementById('bioInput').value
+      };
+
+      localStorage.setItem('nostr_profile', JSON.stringify(profileData));
+      alert('تم حفظ بيانات الملف الشخصي بنجاح!');
+  });
+
+  // استرجاع البيانات المحفوظة تلقائياً
+  window.addEventListener('DOMContentLoaded', () => {
+      const savedSkHex = localStorage.getItem('nostr_sk');
+      const savedPkHex = localStorage.getItem('nostr_pk');
+      
+      if (savedSkHex && savedPkHex) {
+          try {
+              const skBytes = hexToBytes(savedSkHex);
+              document.getElementById('publicKeyInput').value = nip19.npubEncode(savedPkHex);
+              document.getElementById('privateKeyInput').value = nip19.nsecEncode(skBytes);
+          } catch(e) {}
+      }
+
+      const savedProfile = localStorage.getItem('nostr_profile');
+      if (savedProfile) {
+          try {
+              const p = JSON.stringify(savedProfile);
+              document.getElementById('displayNameInput').value = p.name || '';
+              document.getElementById('handleInput').value = p.username || '';
+              document.getElementById('pictureUrlInput').value = p.picture || '';
+              document.getElementById('bioInput').value = p.about || '';
+          } catch(e) {}
+      }
+  });
+</script>
 
 </body>
 </html>
