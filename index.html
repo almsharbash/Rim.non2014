@@ -1,143 +1,149 @@
-<!-- تنسيق الأنماط الخاصة بقسم المفاتيح والملف الشخصي -->
-<style>
-    :root {
-        --bg-card: #151a23;
-        --border-color: #1e293b;
-        --btn-purple: #8b5cf6;
-        --btn-purple-hover: #7c3aed;
-        --text-main: #f3f4f6;
-        --text-muted: #9ca3af;
-        --input-bg: #111827;
-    }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <!-- هذا الوسم هو المسؤول عن جعل الصفحة تتكيف مع حجم شاشة الهاتف تلقائياً دون تكبير يدوي -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>كلمات - إدارة الحساب</title>
+    
+    <style>
+        :root {
+            --bg-main: #0b0e14;
+            --bg-card: #151a23;
+            --border-color: #1e293b;
+            --btn-purple: #8b5cf6;
+            --btn-purple-hover: #7c3aed;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --input-bg: #111827;
+        }
 
-    .settings-container {
-        max-width: 500px;
-        margin: 0 auto;
-        padding: 16px;
-        background-color: #0b0e14;
-        color: var(--text-main);
-        font-family: 'Cairo', sans-serif;
-        direction: rtl;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
 
-    .setting-card {
-        background-color: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 16px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-    }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 12px;
+            direction: rtl;
+        }
 
-    .setting-card-title {
-        font-weight: 700;
-        font-size: 16px;
-        color: var(--btn-purple);
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+        .settings-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
 
-    .field-label {
-        font-size: 12px;
-        color: var(--text-muted);
-        margin-top: 10px;
-        display: block;
-        margin-bottom: 4px;
-    }
+        .setting-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
 
-    .input-field {
-        width: 100%;
-        padding: 10px 12px;
-        background-color: var(--input-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        color: var(--text-main);
-        font-size: 13px;
-        outline: none;
-        box-sizing: border-box;
-    }
+        .setting-card-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--btn-purple);
+            margin-bottom: 12px;
+        }
 
-    .input-field:focus {
-        border-color: var(--btn-purple);
-    }
+        .field-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            display: block;
+            margin-bottom: 6px;
+        }
 
-    .input-group {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-    }
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+        }
 
-    .btn-primary {
-        background-color: var(--btn-purple);
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        width: 100%;
-        transition: background-color 0.2s;
-    }
+        .input-field:focus {
+            border-color: var(--btn-purple);
+        }
 
-    .btn-primary:hover {
-        background-color: var(--btn-purple-hover);
-    }
+        .input-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
 
-    .btn-secondary {
-        background-color: #1f2937;
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: background-color 0.2s;
-    }
+        .btn-primary {
+            background-color: var(--btn-purple);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
 
-    .btn-secondary:hover {
-        background-color: #374151;
-    }
+        .btn-secondary {
+            background-color: #1f2937;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 12px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
 
-    .btn-group-dual {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 14px;
-    }
-</style>
+        .btn-group-dual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
 
 <div class="settings-container">
-    <!-- 1. قسم إدارة الحساب والمفاتيح -->
+    <!-- 1. إدارة الحساب والمفاتيح -->
     <div class="setting-card">
         <div class="setting-card-title">🔑 إدارة الحساب والمفاتيح</div>
         
         <!-- المفتاح العام -->
         <label class="field-label">المفتاح العام (Public Key - npub):</label>
         <div class="input-group">
-            <input type="text" id="display-npub" class="input-field" readonly placeholder="سيظهر المفتاح العام هنا...">
+            <input type="text" id="display-npub" class="input-field" placeholder="سيظهر المفتاح العام هنا...">
             <button class="btn-secondary" onclick="copyToClipboard('display-npub')">نسخ 📋</button>
         </div>
 
         <!-- المفتاح الخاص -->
         <label class="field-label">المفتاح الخاص (Private Key - nsec):</label>
         <div class="input-group">
-            <input type="text" id="setting-nsec" class="input-field" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+            <input type="text" id="setting-nsec" class="input-field" placeholder="أدخل أو العب بالمفتاح الخاص هنا...">
+            <button class="btn-secondary" onclick="pasteFromClipboard('setting-nsec')">لصق 📥</button>
             <button class="btn-secondary" onclick="copyToClipboard('setting-nsec')">نسخ 📋</button>
         </div>
 
-        <!-- أزرار العمليات -->
+        <!-- أزرار التوليد والدخول -->
         <div class="btn-group-dual">
             <button class="btn-primary" onclick="generateNostrAccount()">توليد حساب جديد ✨</button>
-            <button class="btn-secondary" onclick="loginWithNsec()">تسجيل الدخول بالمفتاح 🔑</button>
+            <button class="btn-secondary" style="margin-top:12px;" onclick="loginWithNsec()">تسجيل الدخول 🔑</button>
         </div>
     </div>
 
-    <!-- 2. قسم تعديل الملف الشخصي -->
+    <!-- 2. تعديل الملف الشخصي -->
     <div class="setting-card">
         <div class="setting-card-title">👤 تعديل الملف الشخصي</div>
         
@@ -147,11 +153,12 @@
         <label class="field-label">اسم المستخدم (Handle):</label>
         <input type="text" id="edit-handle" class="input-field" placeholder="username">
 
-        <button class="btn-primary" style="margin-top: 14px;" onclick="saveProfileData()">حفظ التغيرات</button>
+        <button class="btn-primary" onclick="saveProfileData()">حفظ التغيرات</button>
     </div>
 </div>
 
 <script>
+// دالة النسخ
 function copyToClipboard(elementId) {
     const inputEl = document.getElementById(elementId);
     if (!inputEl || !inputEl.value) {
@@ -159,14 +166,28 @@ function copyToClipboard(elementId) {
         return;
     }
     navigator.clipboard.writeText(inputEl.value).then(() => {
-        alert("تم نسخ الرمز بنجاح إلى الحافظة! 📋");
+        alert("تم النسخ بنجاح! 📋");
     }).catch(() => {
         inputEl.select();
         document.execCommand('copy');
-        alert("تم نسخ الرمز بنجاح! 📋");
+        alert("تم النسخ بنجاح! 📋");
     });
 }
 
+// دالة اللصق المباشر بنقرة زر
+async function pasteFromClipboard(elementId) {
+    try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+            document.getElementById(elementId).value = text;
+            alert("تم لصق الرمز بنجاح! 📥");
+        }
+    } catch (err) {
+        alert("يرجى اللصق يدوياً عبر الضغط المطول داخل الحقل.");
+    }
+}
+
+// توليد حساب Nostr
 function generateNostrAccount() {
     const hexChars = '0123456789abcdef';
     let randomHex = '';
@@ -186,10 +207,11 @@ function generateNostrAccount() {
     alert("تم توليد الحساب والمفاتيح بنجاح!");
 }
 
+// تسجيل الدخول
 function loginWithNsec() {
     const nsecInput = document.getElementById('setting-nsec').value.trim();
     if (!nsecInput) {
-        alert("يرجى كتابة أو لصق المفتاح الخاص (nsec) أولاً.");
+        alert("يرجى كتابة أو لصق المفتاح الخاص أولاً.");
         return;
     }
 
@@ -199,15 +221,16 @@ function loginWithNsec() {
     localStorage.setItem('kalimat_nsec', nsecInput);
     localStorage.setItem('kalimat_npub', npub);
 
-    alert("تم تسجيل الدخول بنجاح بالمفتاح المدخل!");
+    alert("تم تسجيل الدخول بنجاح!");
 }
 
+// حفظ الملف الشخصي
 function saveProfileData() {
     const name = document.getElementById('edit-display-name').value.trim();
     const handle = document.getElementById('edit-handle').value.trim();
 
     if (!name || !handle) {
-        alert("يرجى ملء اسم العرض واسم المستخدم.");
+        alert("يرجى ملء كافة الحقول.");
         return;
     }
 
@@ -217,6 +240,7 @@ function saveProfileData() {
     alert("تم حفظ بيانات الملف الشخصي بنجاح!");
 }
 
+// تحميل البيانات عند فتح الصفحة
 function loadAccountData() {
     const savedNsec = localStorage.getItem('kalimat_nsec');
     const savedNpub = localStorage.getItem('kalimat_npub');
@@ -233,3 +257,6 @@ function loadAccountData() {
 
 document.addEventListener('DOMContentLoaded', loadAccountData);
 </script>
+
+</body>
+</html>
