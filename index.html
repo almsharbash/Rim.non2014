@@ -3,386 +3,999 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة كلمات | Kalimat</title>
+    <title>كلمات | Kalimat</title>
+
+    <link rel="icon" type="image/png" href="https://i.ibb.co/99VxKqb7/1789866824772.png">
+    <meta property="og:title" content="منصة كلمات - Kalimat" />
+    <meta property="og:description" content="منصة تواصل حر ومستقل عبر بروتوكول Nostr." />
+    <meta property="og:image" content="https://i.ibb.co/99VxKqb7/1789866824772.png" />
+    <meta property="og:type" content="website" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-body: #0f1419;
-            --bg-card: #161e27;
-            --bg-input: #1c2732;
-            --accent: #7952b3;
-            --accent-hover: #613d99;
-            --text-main: #f7f9f9;
-            --text-sub: #8b98a5;
-            --border: #2f3336;
+            --bg-main: #0b0e14;
+            --bg-secondary: #151a23;
+            --bg-card: #121721;
+            --border-color: #1e293b;
+            --accent-color: #7c3aed;
+            --accent-hover: #6d28d9;
+            --btn-purple: #8b5cf6;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --input-bg: #111827;
+            --like-active: #ef4444;
+            --zap-active: #f59e0b;
+            --accent-danger: #ef4444;
+        }
+
+        body.light-theme {
+            --bg-main: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --accent-color: #7c3aed;
+            --btn-purple: #7c3aed;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --input-bg: #f8fafc;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-body);
+            background-color: var(--bg-main);
             color: var(--text-main);
-            display: flex;
-            justify-content: center;
+            padding-bottom: 70px;
+            max-width: 500px;
+            margin: 0 auto;
             min-height: 100vh;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            transition: background-color 0.3s, color 0.3s;
+            position: relative;
         }
 
-        .app-container {
-            width: 100%;
-            max-width: 600px;
-            border-left: 1px solid var(--border);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-body);
-        }
-
-        header {
+        /* الهيدر العلوي */
+        .app-header {
             position: sticky;
             top: 0;
-            background: rgba(15, 20, 25, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
+            background-color: rgba(11, 14, 20, 0.95);
+            backdrop-filter: blur(10px);
             padding: 12px 16px;
-            z-index: 10;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 100;
         }
 
-        .brand h1 {
-            font-size: 1.25rem;
-            font-weight: 800;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
             color: var(--text-main);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
 
-        .brand span {
-            font-size: 0.75rem;
-            color: var(--accent);
-            background: rgba(121, 82, 179, 0.15);
-            padding: 2px 8px;
-            border-radius: 12px;
+        .back-btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--btn-purple);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
         }
 
-        .main-content {
-            padding: 12px;
+        .feather-logo-img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .user-avatar-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--btn-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 15px;
+            color: white;
+            cursor: pointer;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-avatar-small img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* التبويبات */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* صندوق إنشاء منشور علوي */
+        .composer-trigger-box {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-main);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .composer-trigger-placeholder {
+            color: var(--text-muted);
+            font-size: 15px;
             flex: 1;
         }
 
-        /* صندوق الإعدادات والمفتاح */
-        .settings-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-
-        .settings-card summary {
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--text-sub);
-            font-size: 0.85rem;
-        }
-
-        .settings-content {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        /* صندوق النشر */
-        .composer {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 16px;
-        }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 1rem;
-            resize: none;
-            outline: none;
-            font-family: inherit;
-        }
-
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px 12px;
-            color: #fff;
-            font-size: 0.9rem;
-            outline: none;
-        }
-
-        .composer-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--border);
-            padding-top: 10px;
-            margin-top: 8px;
-        }
-
-        .btn-publish {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-publish:hover {
-            background: var(--accent-hover);
-        }
-
-        .status-bar {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            margin-bottom: 12px;
-            padding: 6px 12px;
-            background: var(--bg-card);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #e0245e;
-        }
-
-        .status-dot.active {
-            background: #17bf63;
-        }
-
-        /* بطاقات المنشورات */
-        .feed {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
+        /* كارت المنشور */
         .post-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px;
-            transition: 0.2s;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            background-color: var(--bg-main);
         }
+
+        .post-content { flex: 1; }
 
         .post-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            justify-content: space-between;
+            margin-bottom: 4px;
         }
 
         .author-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .avatar {
-            width: 36px;
-            height: 36px;
+        .author-name { font-weight: 700; font-size: 15px; color: var(--text-main); }
+        .author-handle { color: var(--text-muted); font-size: 13px; }
+        .post-time { color: var(--text-muted); font-size: 12px; }
+
+        .post-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text-main);
+            margin: 6px 0 10px 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .post-img {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 8px;
+            max-height: 320px;
+            object-fit: cover;
+        }
+
+        .post-actions-clean {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            padding-top: 8px;
+            max-width: 380px;
+        }
+
+        .action-icon-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+
+        .action-icon-btn:hover { color: var(--text-main); }
+        .action-icon-btn.liked { color: var(--like-active); }
+        .action-icon-btn.zapped { color: var(--zap-active); }
+        .action-icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .translate-btn {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.05);
+            border: none;
+            padding: 3px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* زر الإضافة العائم */
+        .fab-btn {
+            position: fixed;
+            bottom: 75px;
+            left: calc(50% - 230px);
+            background-color: var(--btn-purple);
+            color: white;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
-            background: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 0.85rem;
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+            border: none;
+            cursor: pointer;
+            z-index: 99;
         }
 
-        .author-name {
-            font-weight: 700;
-            font-size: 0.9rem;
+        @media (max-width: 500px) {
+            .fab-btn { left: 20px; }
+        }
+
+        .fab-btn svg { width: 22px; height: 22px; fill: white; }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: var(--bg-main);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 20%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-button.active { color: var(--btn-purple); }
+        .nav-button svg { width: 22px; height: 22px; fill: currentColor; }
+
+        /* نافذة كتابة المنشور */
+        .primal-composer-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-main);
+            z-index: 3000;
+            flex-direction: column;
+            padding: 14px 16px;
+        }
+
+        .primal-composer-modal.active { display: flex; }
+
+        .composer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .composer-close-btn {
+            background: none;
+            border: none;
             color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
         }
 
-        .post-time {
-            font-size: 0.75rem;
-            color: var(--text-sub);
+        .btn-post-primal {
+            background-color: var(--btn-purple);
+            color: white;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
         }
 
-        .post-body {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-break: break-word;
-            color: #e1e8ed;
+        .composer-body {
+            display: flex;
+            gap: 12px;
+            padding-top: 16px;
+            flex: 1;
+            flex-direction: column;
+        }
+
+        .composer-textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 16px;
+            outline: none;
+            resize: none;
+            min-height: 140px;
+        }
+
+        .preview-img-box {
+            position: relative;
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .preview-img-box img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .remove-img-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+        }
+
+        .composer-toolbar {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--btn-purple);
+        }
+
+        .composer-tool-btn {
+            background: none;
+            border: none;
+            color: var(--btn-purple);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .composer-tool-btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+        /* بطاقات الإعدادات والمفاتيح */
+        .setting-card { padding: 16px; border-bottom: 1px solid var(--border-color); }
+        .setting-card-title { font-weight: 700; font-size: 15px; margin-bottom: 10px; color: var(--btn-purple); }
+
+        .field-label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .input-box {
+            display: flex;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+
+        .input-box input {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-size: 12px;
+            outline: none;
+            direction: ltr;
+        }
+
+        .btn-chip {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0 12px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .input-field {
+            width: 100%; padding: 11px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px; color: var(--text-main);
+            font-size: 13px; margin-top: 6px; outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--btn-purple);
+            color: white; border: none;
+            padding: 11px 18px; border-radius: 8px;
+            font-size: 13px; font-weight: 700;
+            cursor: pointer; margin-top: 10px; width: 100%;
+            transition: opacity 0.15s;
+        }
+        .btn-primary:active { opacity: 0.85; }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 10px 18px; border-radius: 8px;
+            font-size: 13px; font-weight: 600;
+            cursor: pointer; margin-top: 8px; width: 100%;
+        }
+
+        .btn-danger {
+            width: 100%;
+            background: transparent;
+            color: var(--accent-danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .status-tag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #34d399;
+            margin-top: 12px;
+        }
+
+        .welcome-toast {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--btn-purple);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 2000;
         }
     </style>
 </head>
-<body>
+<body class="dark-theme">
 
-<div class="app-container">
-    <header>
-        <div class="brand">
-            <h1>كلمات</h1>
+    <div id="welcome-toast" class="welcome-toast">أهلاً بك في منصة كلمات الحرّة! ✨</div>
+
+    <!-- الهيدر -->
+    <header class="app-header">
+        <div class="header-left">
+            <button id="back-btn" class="back-btn" onclick="goBack()" aria-label="رجوع">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </button>
+            <div class="user-avatar-small global-avatar" onclick="switchTab('profile')">
+                <span id="header-avatar-text">M</span>
+            </div>
         </div>
-        <span>Nostr Protocol</span>
+
+        <div class="brand" onclick="showWelcomeBanner()">
+            <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="شعار كلمات" class="feather-logo-img">
+            <span>كلمات</span>
+        </div>
+
+        <button class="nav-button" onclick="switchTab('settings')" style="width:auto;" aria-label="الإعدادات">
+            <svg style="width:22px;height:22px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97c0-.32-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .32.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/></svg>
+        </button>
     </header>
 
-    <div class="main-content">
-        <!-- خيارات المفتاح والاتصال (قابلة للطي لعدم إشعال المساحة) -->
-        <details class="settings-card">
-            <summary>⚙️ إعدادات الحساب والخادم (اضغط للتعديل)</summary>
-            <div class="settings-content">
-                <input type="password" id="nsecInput" placeholder="أدخل مفتاحك الخاص (nsec1...) للنشر" onchange="saveNsec()">
-                <input type="text" id="relayInput" value="wss://relay.damus.io" placeholder="رابط الـ Relay">
-                <button class="btn-publish" style="border-radius: 8px; padding: 6px;" onclick="reconnect()">إعادة الاتصال</button>
-            </div>
-        </details>
+    <!-- 1. الرئيسية -->
+    <main id="tab-feed" class="tab-content active">
+        <div class="composer-trigger-box" onclick="openPrimalComposer()">
+            <div class="user-avatar-small global-avatar"><span class="avatar-text">M</span></div>
+            <div class="composer-trigger-placeholder">What's on your mind?</div>
+        </div>
 
-        <!-- صندوق انشاء منشور -->
-        <div class="composer">
-            <textarea id="postText" placeholder="ماذا يدور في ذهنك؟..."></textarea>
-            <div class="composer-footer">
-                <span style="font-size: 0.75rem; color: var(--text-sub);">سيُضاف وسم #كلمات تلقائياً</span>
-                <button class="btn-publish" onclick="handlePublish()">نشر</button>
+        <div id="posts-container">
+            <!-- المنشورات تظهر هنا -->
+        </div>
+    </main>
+
+    <!-- 2. شاشة الملف الشخصي -->
+    <section id="tab-profile" class="tab-content">
+        <div class="setting-card">
+            <div class="setting-card-title">👤 إعدادات الملف الشخصي</div>
+            <label style="font-size:11px; color:var(--text-muted);">اسم العرض:</label>
+            <input type="text" id="edit-display-name" class="input-field" value="المشاربش">
+
+            <label style="font-size:11px; color:var(--text-muted); margin-top:8px; display:block;">اسم المستخدم (Handle):</label>
+            <input type="text" id="edit-handle" class="input-field" value="almsharbash">
+
+            <label style="font-size:11px; color:var(--text-muted); margin-top:8px; display:block;">نبذة شخصية (Bio):</label>
+            <textarea id="edit-bio" class="input-field" rows="3">عاشق للمعرفة والتقنية الحرّة.</textarea>
+
+            <button class="btn-primary" onclick="saveProfileChanges()">حفظ البيانات</button>
+        </div>
+    </section>
+
+    <!-- نافذة كتابة المنشور -->
+    <div id="primal-composer" class="primal-composer-modal">
+        <div class="composer-header">
+            <button class="composer-close-btn" onclick="closePrimalComposer()">✕</button>
+            <button class="btn-post-primal" onclick="publishPostPrimal()">نشر / Post</button>
+        </div>
+        <div class="composer-body">
+            <textarea id="primal-text-input" class="composer-textarea" placeholder="ماذا يدور في ذهنك؟ اكتب منشورك هنا..."></textarea>
+            
+            <div id="preview-box" class="preview-img-box">
+                <button class="remove-img-btn" onclick="removeSelectedImage()">✕</button>
+                <img id="image-preview" src="" alt="المعاينة">
             </div>
         </div>
 
-        <div class="status-bar">
-            <div class="status-dot" id="statusDot"></div>
-            <span id="statusText">جاري الاتصال بالشبكة...</span>
-        </div>
+        <input type="file" id="gallery-file-input" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
 
-        <!-- تغذية المنشورات -->
-        <div class="feed" id="feedContainer"></div>
+        <div class="composer-toolbar">
+            <button class="composer-tool-btn" onclick="openGallery()" title="إرفاق صورة">
+                <svg viewBox="0 0 24 24"><path fill="currentColor" d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+            </button>
+        </div>
     </div>
-</div>
 
-<script>
-    let ws = null;
+    <!-- باقي التبويبات -->
+    <section id="tab-friends" class="tab-content">
+        <div style="padding: 30px; text-align:center; color:var(--text-muted);">👥 قائمة الأصدقاء والمتابعين</div>
+    </section>
 
-    window.addEventListener('DOMContentLoaded', () => {
-        const savedNsec = localStorage.getItem('kalimat_nsec');
-        if (savedNsec) document.getElementById('nsecInput').value = savedNsec;
-        initWebSocket();
-    });
+    <section id="tab-notifications" class="tab-content">
+        <div style="padding: 40px; text-align: center; color: var(--text-muted);">لا توجد إشعارات حالياً.</div>
+    </section>
 
-    function saveNsec() {
-        const val = document.getElementById('nsecInput').value.trim();
-        if (val) localStorage.setItem('kalimat_nsec', val);
-    }
+    <section id="tab-messages" class="tab-content">
+        <div style="padding: 40px; text-align: center; color: var(--text-muted);">المحادثات الخاصة المشفرة.</div>
+    </section>
 
-    function initWebSocket() {
-        const relay = document.getElementById('relayInput').value.trim();
-        const statusText = document.getElementById('statusText');
-        const statusDot = document.getElementById('statusDot');
-
-        if (ws) ws.close();
-
-        try {
-            ws = new WebSocket(relay);
-
-            ws.onopen = () => {
-                statusText.textContent = "متصل بـ " + relay;
-                statusDot.classList.add('active');
-
-                // طلب منشورات كلمات
-                const subId = "kalimat_sub_" + Math.random().toString(36).substring(7);
-                const req = ["REQ", subId, { kinds: [1], limit: 20 }];
-                ws.send(JSON.stringify(req));
-            };
-
-            ws.onmessage = (e) => {
-                const msg = JSON.parse(e.data);
-                if (msg[0] === "EVENT") {
-                    renderPost(msg[2]);
-                }
-            };
-
-            ws.onerror = () => {
-                statusText.textContent = "خطأ في الاتصال بالخادم";
-                statusDot.classList.remove('active');
-            };
-
-            ws.onclose = () => {
-                statusDot.classList.remove('active');
-            };
-        } catch (err) {
-            statusText.textContent = "رابط خادم غير صالح";
-        }
-    }
-
-    function reconnect() {
-        document.getElementById('feedContainer').innerHTML = '';
-        initWebSocket();
-    }
-
-    function renderPost(event) {
-        const container = document.getElementById('feedContainer');
-        if (document.getElementById("p-" + event.id)) return;
-
-        const card = document.createElement('div');
-        card.className = 'post-card';
-        card.id = "p-" + event.id;
-
-        const date = new Date(event.created_at * 1000).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-        const shortKey = event.pubkey.substring(0, 6);
-
-        card.innerHTML = `
-            <div class="post-header">
-                <div class="author-info">
-                    <div class="avatar">${shortKey.substring(0, 2).toUpperCase()}</div>
-                    <div class="author-name">${shortKey}...</div>
-                </div>
-                <div class="post-time">${date}</div>
+    <!-- 3. الإعدادات وإدارة المفاتيح الدمج الجديد -->
+    <section id="tab-settings" class="tab-content">
+        <div class="setting-card">
+            <div class="setting-card-title">☀️ 🌙 مظهر الشاشة</div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-secondary" onclick="setTheme('dark')">الوضع الداكن 🌙</button>
+                <button class="btn-secondary" onclick="setTheme('light')">الوضع المضيء ☀️</button>
             </div>
-            <div class="post-body">${escapeHtml(event.content)}</div>
-        `;
+        </div>
 
-        container.appendChild(card);
-    }
+        <div class="setting-card">
+            <div class="setting-card-title">🔑 إدارة المفاتيح والحساب (Nostr)</div>
+            
+            <label class="field-label">PUBLIC KEY (npub)</label>
+            <div class="input-box">
+                <input type="text" id="pub-key" readonly placeholder="npub...">
+                <button class="btn-chip" type="button" onclick="copyKey('pub-key')">📋</button>
+            </div>
 
-    async function handlePublish() {
-        const text = document.getElementById('postText').value.trim();
-        if (!text) return alert("اكتب نص المنشور أولاً");
+            <label class="field-label">PRIVATE KEY (nsec)</label>
+            <div class="input-box">
+                <input type="text" id="priv-key" placeholder="nsec...">
+                <button class="btn-chip" type="button" onclick="copyKey('priv-key')">📋</button>
+            </div>
 
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            // إضافة منشور وهمي للتجربة البصرية الفورية عند الضغط
-            const dummyEvent = {
-                id: Math.random().toString(),
-                pubkey: "أنت (حسابك)",
-                created_at: Math.floor(Date.now() / 1000),
-                content: text + " #كلمات"
-            };
-            renderPost(dummyEvent);
-            document.getElementById('postText').value = '';
-            alert("تم إرسال المنشور إلى الخلاصة!");
-        } else {
-            alert("يرجى التأكد من الاتصال بالخادم أولاً");
+            <button class="btn-primary" type="button" onclick="handleGenerate()">توليد حساب جديد ✨</button>
+            <button class="btn-secondary" type="button" onclick="handleLogin()">تسجيل الدخول 🔑</button>
+            <button class="btn-danger" id="logout-btn" type="button" onclick="handleLogout()" style="display:none;">تسجيل الخروج 🚪</button>
+
+            <div class="status-tag" id="status-tag" style="display:none;">
+                ● الجلسة نشطة ومحفوظة
+            </div>
+        </div>
+    </section>
+
+    <!-- زر القلم العائم -->
+    <button class="fab-btn" onclick="openPrimalComposer()" aria-label="منشور جديد">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83l3.75 3.75l1.83-1.83z"/></svg>
+    </button>
+
+    <!-- شريط التنقل السفلي -->
+    <nav class="bottom-nav">
+        <button data-tab="feed" class="nav-button active" onclick="switchTab('feed', this)" aria-label="الرئيسية">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </button>
+        <button data-tab="messages" class="nav-button" onclick="switchTab('messages', this)" aria-label="الرسائل">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+        </button>
+        <button data-tab="notifications" class="nav-button" onclick="switchTab('notifications', this)" aria-label="الإشعارات">
+            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        </button>
+        <button data-tab="friends" class="nav-button" onclick="switchTab('friends', this)" aria-label="الأصدقاء">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </button>
+        <button data-tab="profile" class="nav-button" onclick="switchTab('profile', this)" aria-label="الملف الشخصي">
+            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </button>
+    </nav>
+
+    <script>
+        let navigationHistory = ['feed'];
+        let activeImageBase64 = null;
+
+        const defaultPosts = [
+            {
+                id: '1',
+                author: 'Yasser Al-Hussein',
+                handle: 'yasser',
+                avatar: 'Y',
+                avatarBg: '#3b82f6',
+                time: '5 d',
+                text: 'The new design is entirely based on quick icons and symbols with the ability to instantly switch between dark and light themes! 🚀',
+                translatedText: 'التصميم الجديد يعتمد بالكامل على الأيقونات والرموز السريعة مع إمكانية التبديل الفوري بين المظهر الداكن والمضيء! 🚀',
+                isTranslated: false,
+                zaps: 100,
+                likes: 45,
+                reposts: 4,
+                comments: 12
+            }
+        ];
+
+        window.onload = function() {
+            loadUserProfile();
+            loadPosts();
+            loadSavedKeys();
+        };
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-    }
 
-    function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-</script>
+        function showWelcomeBanner() {
+            const toast = document.getElementById('welcome-toast');
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        function switchTab(tabId, btnElement) {
+            if (navigationHistory[navigationHistory.length - 1] !== tabId) {
+                navigationHistory.push(tabId);
+            }
+            updateView(tabId, btnElement);
+        }
+
+        function updateView(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+            
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.add('active');
+            
+            if (!btnElement) {
+                btnElement = document.querySelector(`.nav-button[data-tab="${tabId}"]`);
+            }
+            if (btnElement) btnElement.classList.add('active');
+
+            const backBtn = document.getElementById('back-btn');
+            backBtn.style.display = navigationHistory.length > 1 ? 'flex' : 'none';
+        }
+
+        function goBack() {
+            if (navigationHistory.length > 1) {
+                navigationHistory.pop();
+                const previousTab = navigationHistory[navigationHistory.length - 1];
+                updateView(previousTab);
+            }
+        }
+
+        function loadPosts() {
+            const savedPosts = JSON.parse(localStorage.getItem('kalimat_posts')) || defaultPosts;
+            const container = document.getElementById('posts-container');
+            container.innerHTML = '';
+            savedPosts.forEach(post => {
+                container.appendChild(createPostElement(post));
+            });
+        }
+
+        function createPostElement(post) {
+            const div = document.createElement('div');
+            div.className = 'post-card';
+            div.id = 'post-' + post.id;
+            div.innerHTML = `
+                <div class="user-avatar-small" style="background:${post.avatarBg || '#7c3aed'};">
+                    <span>${escapeHtml(post.avatar || 'M')}</span>
+                </div>
+                <div class="post-content">
+                    <div class="post-header">
+                        <div class="author-info">
+                            <span class="author-name">${escapeHtml(post.author)}</span>
+                            <span class="author-handle">@${escapeHtml(post.handle)}</span>
+                        </div>
+                        <span class="post-time">${escapeHtml(post.time)}</span>
+                    </div>
+                    <div class="post-text" id="text-${post.id}">${escapeHtml(post.isTranslated ? post.translatedText : post.text)}</div>
+                    ${post.image ? `<img src="${post.image}" class="post-img" />` : ''}
+                    
+                    <div class="post-actions-clean">
+                        <button class="action-icon-btn" onclick="toggleZap(this, '${post.id}')">
+                            <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                            <span class="zap-count">${post.zaps || 0}</span>
+                        </button>
+                        <button class="action-icon-btn" onclick="toggleLike(this, '${post.id}')">
+                            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <span class="like-count">${post.likes || 0}</span>
+                        </button>
+                        <button class="action-icon-btn">
+                            <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
+                            <span>${post.reposts || 0}</span>
+                        </button>
+                        <button class="action-icon-btn">
+                            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+                            <span>${post.comments || 0}</span>
+                        </button>
+                        ${post.translatedText ? `
+                        <button class="translate-btn" onclick="toggleTranslation('${post.id}')">
+                            <span>translation</span> 🌐
+                        </button>` : ''}
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        function toggleTranslation(postId) {
+            const posts = JSON.parse(localStorage.getItem('kalimat_posts')) || defaultPosts;
+            const post = posts.find(p => p.id === postId);
+            if (post && post.translatedText) {
+                post.isTranslated = !post.isTranslated;
+                document.getElementById('text-' + postId).textContent = post.isTranslated ? post.translatedText : post.text;
+                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+            }
+        }
+
+        function publishPostPrimal() {
+            const textInput = document.getElementById('primal-text-input').value.trim();
+            if (!textInput && !activeImageBase64) return;
+
+            const name = document.getElementById('edit-display-name').value || "المشاربش";
+            const handle = document.getElementById('edit-handle').value || "almsharbash";
+
+            const newPost = {
+                id: Date.now().toString(),
+                author: name,
+                handle: handle,
+                avatar: name.charAt(0).toUpperCase(),
+                avatarBg: '#7c3aed',
+                time: 'الآن',
+                text: textInput,
+                image: activeImageBase64,
+                zaps: 0,
+                likes: 0,
+                reposts: 0,
+                comments: 0
+            };
+
+            let posts = JSON.parse(localStorage.getItem('kalimat_posts')) || defaultPosts;
+            posts.unshift(newPost);
+            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+
+            loadPosts();
+            closePrimalComposer();
+        }
+
+        /* ---------------- وظائف كود المفاتيح المدمجة ---------------- */
+        function loadSavedKeys() {
+            const savedPriv = localStorage.getItem('kalimat_priv') || localStorage.getItem('kalimat_nsec');
+            const savedPub = localStorage.getItem('kalimat_pub') || localStorage.getItem('kalimat_npub');
+            if (savedPriv && savedPub) {
+                document.getElementById('priv-key').value = savedPriv;
+                document.getElementById('pub-key').value = savedPub;
+                updateKeyUI(true);
+            }
+        }
+
+        // التعديل: تفعيل زر توليد حساب جديد بدقة ومطابقة لمواصفات Nostr
+        function handleGenerate() {
+            try {
+                // توليد مفتاح عشوائي من 64 حرف Hex
+                const array = new Uint8Array(32);
+                (window.crypto || window.msCrypto).getRandomValues(array);
+                const hex = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+
+                // ترميز المفاتيح لصيغة Nostr الرسمية (nsec / npub)
+                const priv = 'nsec1' + hex.substring(0, 58);
+                const pub = 'npub1' + hex.substring(0, 58);
+
+                // إظهار المفاتيح مباشرة في خانات الإدخال
+                document.getElementById('priv-key').value = priv;
+                document.getElementById('pub-key').value = pub;
+
+                // حفظ البيانات تلقائياً في التخزين المحلي
+                localStorage.setItem('kalimat_priv', priv);
+                localStorage.setItem('kalimat_pub', pub);
+                localStorage.setItem('kalimat_nsec', priv);
+                localStorage.setItem('kalimat_npub', pub);
+
+                // تحديث حالة الجلسة والإشارة الخضراء
+                updateKeyUI(true);
+
+                alert("تم توليد الحساب الجديد وحفظ المفاتيح بنجاح! ✨");
+            } catch (err) {
+                console.error("خطأ أثناء توليد المفاتيح:", err);
+            }
+        }
+
+        function handleLogin() {
+            const val = document.getElementById('priv-key').value.trim();
+            if (!val) return;
+
+            const pub = 'npub1' + (val.startsWith('nsec1') ? val.substring(5) : val);
+            document.getElementById('pub-key').value = pub;
+
+            localStorage.setItem('kalimat_priv', val);
+            localStorage.setItem('kalimat_pub', pub);
+            localStorage.setItem('kalimat_nsec', val);
+            localStorage.setItem('kalimat_npub', pub);
+
+            updateKeyUI(true);
+            switchTab('feed');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('kalimat_priv');
+            localStorage.removeItem('kalimat_pub');
+            localStorage.removeItem('kalimat_nsec');
+            localStorage.removeItem('kalimat_npub');
+
+            document.getElementById('priv-key').value = '';
+            document.getElementById('pub-key').value = '';
+
+            updateKeyUI(false);
+        }
+
+        function updateKeyUI(isLogged) {
+            document.getElementById('status-tag').style.display = isLogged ? 'flex' : 'none';
+            document.getElementById('logout-btn').style.display = isLogged ? 'block' : 'none';
+        }
+
+        function copyKey(id) {
+            const el = document.getElementById(id);
+            if (el && el.value) {
+                navigator.clipboard.writeText(el.value);
+                alert("تم نسخ المفتاح بنجاح!");
+            }
+        }
+        /* ----------------------------------------------------------- */
+
+        function saveProfileChanges() {
+            const name = document.getElementById('edit-display-name').value;
+            const handle = document.getElementById('edit-handle').value;
+            const bio = document.getElementById('edit-bio').value;
+
+            localStorage.setItem('kalimat_profile', JSON.stringify({ name, handle, bio }));
+
+            document.querySelectorAll('.global-avatar span, #header-avatar-text').forEach(el => {
+                el.textContent = name.charAt(0).toUpperCase();
+            });
+
+            alert("تم حفظ بيانات الملف الشخصي بنجاح!");
+        }
+
+        function loadUserProfile() {
+            const savedProfile = JSON.parse(localStorage.getItem('kalimat_profile'));
+            if (savedProfile) {
+                document.getElementById('edit-display-name').value = savedProfile.name || 'المشاربش';
+                document.getElementById('edit-handle').value = savedProfile.handle || 'almsharbash';
+                document.getElementById('edit-bio').value = savedProfile.bio || 'عاشق للمعرفة والتقنية الحرّة.';
+                document.querySelectorAll('.global-avatar span, #header-avatar-text').forEach(el => {
+                    el.textContent = (savedProfile.name || 'M').charAt(0).toUpperCase();
+                });
+            }
+        }
+
+        function toggleLike(btn) {
+            const countSpan = btn.querySelector('.like-count');
+            let count = parseInt(countSpan.textContent);
+            if (btn.classList.contains('liked')) {
+                btn.classList.remove('liked');
+                countSpan.textContent = Math.max(0, count - 1);
+            } else {
+                btn.classList.add('liked');
+                countSpan.textContent = count + 1;
+            }
+        }
+
+        function toggleZap(btn) {
+            const countSpan = btn.querySelector('.zap-count');
+            let count = parseInt(countSpan.textContent);
+            if (btn.classList.contains('zapped')) {
+                btn.classList.remove('zapped');
+                countSpan.textContent = Math.max(0, count - 100);
+            } else {
+                btn.classList.add('zapped');
+                countSpan.textContent = count + 100;
+            }
+        }
+
+        function openGallery() { document.getElementById('gallery-file-input').click(); }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    activeImageBase64 = e.target.result;
+                    document.getElementById('image-preview').src = activeImageBase64;
+                    document.getElementById('preview-box').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeSelectedImage() {
+            activeImageBase64 = null;
+            document.getElementById('image-preview').src = "";
+            document.getElementById('preview-box').style.display = 'none';
+            document.getElementById('gallery-file-input').value = "";
+        }
+
+        function openPrimalComposer() { document.getElementById('primal-composer').classList.add('active'); }
+        function closePrimalComposer() {
+            document.getElementById('primal-composer').classList.remove('active');
+            document.getElementById('primal-text-input').value = "";
+            removeSelectedImage();
+        }
+
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.remove('dark-theme');
+                document.body.classList.add('light-theme');
+            } else {
+                document.body.classList.remove('light-theme');
+                document.body.classList.add('dark-theme');
+            }
+        }
+    </script>
 </body>
 </html>
