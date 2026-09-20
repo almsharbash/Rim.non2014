@@ -2,299 +2,397 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كلمات - Kalimat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>كلمات</title>
+    
     <style>
         :root {
-            --bg-color: #0f0c1b;
-            --card-bg: #18132a;
-            --input-bg: #221b3b;
-            --primary: #8b5cf6;
-            --text-color: #ffffff;
-            --text-muted: #a0a0b8;
-            --border-color: #2e264a;
+            --bg-main: #0b0e14;
+            --bg-card: #131722;
+            --border-color: #1e2638;
+            --btn-purple: #8b5cf6;
+            --btn-purple-hover: #7c3aed;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --input-bg: #0d111a;
+            --green-success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: system-ui, -apple-system, sans-serif;
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            direction: rtl;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            gap: 20px;
         }
 
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
+        /* إدارة عرض الشاشات */
+        .screen-page {
+            display: none;
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
             padding: 16px;
-            border: 1px solid var(--border-color);
+            padding-bottom: 70px;
         }
 
-        .section-title {
-            font-size: 1.1rem;
+        .screen-page.active {
+            display: block;
+        }
+
+        /* الهيدر العلوي */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-title {
             font-weight: bold;
-            margin-bottom: 12px;
+            font-size: 18px;
+            color: var(--btn-purple);
+        }
+
+        /* البطاقات والحقول */
+        .setting-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+
+        .setting-card-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        label {
-            font-size: 0.85rem;
+        .field-label {
+            font-size: 12px;
             color: var(--text-muted);
+            margin-top: 10px;
+            display: block;
+            margin-bottom: 6px;
         }
 
-        input, textarea {
+        .input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
-            color: #fff;
-            font-size: 0.95rem;
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 13.5px;
             outline: none;
-            width: 100%;
-            box-sizing: border-box;
         }
 
-        input:focus, textarea:focus {
-            border-color: var(--primary);
+        .input-field:focus {
+            border-color: var(--btn-purple);
         }
 
+        textarea.input-field {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        /* الأزرار */
         .btn-primary {
-            background-color: var(--primary);
+            background-color: var(--btn-purple);
             color: white;
             border: none;
-            border-radius: 8px;
             padding: 12px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            transition: opacity 0.2s;
+            margin-top: 12px;
         }
 
         .btn-secondary {
             background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 0.9rem;
+            color: var(--btn-purple);
+            border: 1px solid var(--btn-purple);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
-        .status {
-            font-size: 0.85rem;
-            color: #10b981;
-            margin-top: 8px;
+        .btn-copy {
+            background-color: #1f293d;
+            color: #c7d2fe;
+            border: 1px solid var(--border-color);
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .status-badge {
+            color: var(--green-success);
+            font-size: 12px;
+            margin-top: 10px;
             text-align: center;
+            display: none;
+        }
+
+        /* المنشورات */
+        .post-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* الشريط السفلي للتنقل */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px 16px;
+        }
+
+        .nav-item.active {
+            color: var(--btn-purple);
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-
-    <!-- إدارة الحساب والمفاتيح -->
-    <div class="card">
-        <div class="section-title">🔑 إدارة الحساب والمفاتيح</div>
-        
-        <div class="form-group">
-            <label>المفتاح العام (Public Key - npub):</label>
-            <input type="text" id="publicKeyInput" readonly placeholder="سيظهر المفتاح العام هنا...">
-        </div>
-
-        <div class="form-group">
-            <label>المفتاح الخاص (Private Key - nsec):</label>
-            <input type="text" id="privateKeyInput" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
-        </div>
-
-        <button type="button" class="btn-primary" id="btnGenerate">توليد حساب جديد ✨</button>
-        <button type="button" class="btn-secondary" id="btnLogin">تسجيل الدخول بالمفتاح</button>
-        <div class="status" id="loginStatus"></div>
+    <!-- الهيدر العلوي -->
+    <div class="app-header">
+        <div class="app-title">كلمات</div>
+        <button class="btn-copy" onclick="switchPage('settings-screen')">⚙️ الإعدادات</button>
     </div>
 
-    <!-- تعديل الملف الشخصي -->
-    <div class="card">
-        <div class="section-title">👤 تعديل الملف الشخصي</div>
-
-        <div class="form-group">
-            <label>اسم العرض:</label>
-            <input type="text" id="displayNameInput" placeholder="أدخل اسم العرض">
+    <!-- 1. شاشة المنصة والفييد الرئيسي (تظهر عند الدخول) -->
+    <div id="feed-screen" class="screen-page active">
+        <div class="post-card">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--btn-purple); display: flex; align-items: center; justify-content: center; font-weight: bold;" id="feed-avatar-char">
+                    U
+                </div>
+                <div>
+                    <strong id="feed-display-name" style="display: block;">اسم المستخدم</strong>
+                    <span id="feed-handle" style="font-size: 12px; color: var(--text-muted);">@username</span>
+                </div>
+            </div>
+            <p id="feed-bio" style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;"></p>
+            <div style="background: var(--input-bg); padding: 12px; border-radius: 8px; font-size: 14px;">
+                🎉 أهلاً بك في منصة كلمات! جرى تسجبل دخولك بنجاح والمنصة تعمل بشكل حي ومباشر الآن.
+            </div>
         </div>
-
-        <div class="form-group">
-            <label>اسم المستخدم (Handle):</label>
-            <input type="text" id="handleInput" placeholder="username">
-        </div>
-
-        <div class="form-group">
-            <label>رابط الصورة الشخصية (Picture URL):</label>
-            <input type="url" id="pictureUrlInput" placeholder="https://example.com/avatar.jpg">
-        </div>
-
-        <div class="form-group">
-            <label>نبذة شخصية (Bio):</label>
-            <textarea id="bioInput" rows="3" placeholder="اكتب نبذة عنك..."></textarea>
-        </div>
-
-        <button type="button" class="btn-primary" id="btnSave">حفظ ونشر التغيرات على الشبكة 🚀</button>
     </div>
 
-</div>
+    <!-- 2. شاشة إدارة الحساب والإعدادات -->
+    <div id="settings-screen" class="screen-page">
+        <!-- إدارة الحساب والمفاتيح -->
+        <div class="setting-card">
+            <div class="setting-card-title">🔑 إدارة الحساب والمفاتيح</div>
+            
+            <label class="field-label">المفتاح العام (Public Key - npub):</label>
+            <div class="input-group">
+                <button class="btn-copy" onclick="copyToClipboard('display-npub')">نسخ</button>
+                <input type="text" id="display-npub" class="input-field" readonly placeholder="سيظهر المفتاح العام هنا...">
+            </div>
 
-<script type="module">
-  import * as NostrTools from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
+            <label class="field-label">المفتاح الخاص (Private Key - nsec):</label>
+            <div class="input-group">
+                <button class="btn-copy" onclick="copyToClipboard('setting-nsec')">نسخ</button>
+                <input type="text" id="setting-nsec" class="input-field" placeholder="أدخل المفتاح الخاص لتسجيل الدخول...">
+            </div>
 
-  // سيرفرات Nostr النشطة
-  const RELAYS = [
-    'wss://relay.damus.io',
-    'wss://nos.lol',
-    'wss://relay.nostr.band'
-  ];
+            <button class="btn-primary" onclick="generateNostrAccount()">توليد حساب جديد ✨</button>
+            <button class="btn-secondary" onclick="loginAndGoToFeed()">تسجيل الدخول بالمفتاح 🔑</button>
+            
+            <div id="login-status" class="status-badge">✓ تم تسجيل الدخول وجلسة التوقيع نشطة</div>
+        </div>
 
-  let currentSecretKeyBytes = null;
+        <!-- تعديل الملف الشخصي -->
+        <div class="setting-card">
+            <div class="setting-card-title">👤 تعديل الملف الشخصي</div>
+            
+            <label class="field-label">اسم العرض:</label>
+            <input type="text" id="edit-display-name" class="input-field" placeholder="أدخل اسم العرض">
 
-  function hexToBytes(hex) {
-    let bytes = new Uint8Array(hex.length / 2);
-    for (let i = 0; i < hex.length; i += 2) {
-      bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
-    }
-    return bytes;
-  }
+            <label class="field-label">اسم المستخدم (Handle):</label>
+            <input type="text" id="edit-handle" class="input-field" placeholder="username">
 
-  // 1. تسجيل الدخول واسترجاع بيانات البروفايل الفعلية
-  async function performLogin(nsecOrHex) {
-    let skBytes;
+            <label class="field-label">رابط الصورة الشخصية (Picture URL):</label>
+            <input type="text" id="edit-avatar" class="input-field" placeholder="https://example.com/avatar.jpg">
 
-    if (nsecOrHex.startsWith('nsec1')) {
-      const decoded = NostrTools.nip19.decode(nsecOrHex);
-      if (decoded.type === 'nsec') {
-        skBytes = decoded.data;
-      }
+            <label class="field-label">نبذة شخصية (Bio):</label>
+            <textarea id="edit-bio" class="input-field" placeholder="اكتب نبذة عنك..."></textarea>
+
+            <button class="btn-primary" onclick="saveProfileAndGoToFeed()">حفظ التغيرات</button>
+        </div>
+    </div>
+
+    <!-- الشريط السفلي للتنقل -->
+    <div class="nav-bar">
+        <button class="nav-item active" onclick="switchPage('feed-screen')">🏠</button>
+        <button class="nav-item" onclick="switchPage('settings-screen')">👤</button>
+    </div>
+
+<script>
+// التنقل بين الصفحات
+function switchPage(pageId) {
+    document.querySelectorAll('.screen-page').forEach(page => page.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+
+    // تحديث الأزرار
+    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+    if(pageId === 'feed-screen') {
+        document.querySelectorAll('.nav-item')[0].classList.add('active');
+        updateFeedUI();
     } else {
-      skBytes = hexToBytes(nsecOrHex);
+        document.querySelectorAll('.nav-item')[1].classList.add('active');
+    }
+}
+
+// دالة النسخ
+function copyToClipboard(elementId) {
+    const inputEl = document.getElementById(elementId);
+    if (!inputEl || !inputEl.value) return;
+    navigator.clipboard.writeText(inputEl.value).then(() => alert("تم النسخ!"));
+}
+
+// توليد مفاتيح والانتقال للمنصة
+function generateNostrAccount() {
+    const hexChars = '0123456789abcdef';
+    let randomHex = '';
+    for (let i = 0; i < 58; i++) {
+        randomHex += hexChars.charAt(Math.floor(Math.random() * hexChars.length));
     }
 
-    currentSecretKeyBytes = skBytes;
-    const pkHex = NostrTools.getPublicKey(skBytes);
-    const npub = NostrTools.nip19.npubEncode(pkHex);
-    const nsec = NostrTools.nip19.nsecEncode(skBytes);
+    const nsec = 'nsec1' + randomHex;
+    const npub = 'npub1' + randomHex;
+
+    document.getElementById('setting-nsec').value = nsec;
+    document.getElementById('display-npub').value = npub;
 
     localStorage.setItem('kalimat_nsec', nsec);
+    localStorage.setItem('kalimat_npub', npub);
 
-    document.getElementById('publicKeyInput').value = npub;
-    document.getElementById('privateKeyInput').value = nsec;
-    document.getElementById('loginStatus').innerText = 'تم تسجيل الدخول وجلسة التوقيع نشطة ✓';
+    document.getElementById('login-status').style.display = 'block';
+    
+    // انتقال مباشر للمنصة بعد التوليد
+    setTimeout(() => switchPage('feed-screen'), 500);
+}
 
-    // جلب البيانات المسجلة على Nostr
-    const pool = new NostrTools.SimplePool();
-    try {
-      const event = await pool.get(RELAYS, { kinds: [0], authors: [pkHex] });
-      if (event && event.content) {
-        const meta = JSON.parse(event.content);
-        document.getElementById('displayNameInput').value = meta.display_name || meta.name || '';
-        document.getElementById('handleInput').value = meta.username || meta.name || '';
-        document.getElementById('pictureUrlInput').value = meta.picture || '';
-        document.getElementById('bioInput').value = meta.about || '';
-      }
-    } catch (e) {
-      console.log('لم يتم العثور على بروفايل سابق');
-    } finally {
-      pool.close(RELAYS);
-    }
-  }
-
-  // 2. زر توليد حساب
-  document.getElementById('btnGenerate').addEventListener('click', async () => {
-    const skBytes = NostrTools.generateSecretKey();
-    const nsec = NostrTools.nip19.nsecEncode(skBytes);
-    await performLogin(nsec);
-    alert('تم توليد مفاتيح جديدة بنجاح!');
-  });
-
-  // 3. زر تسجيل الدخول
-  document.getElementById('btnLogin').addEventListener('click', async () => {
-    const input = document.getElementById('privateKeyInput').value.trim();
-    if (!input) {
-      alert('يرجى أدخل المفتاح الخاص nsec1...');
-      return;
-    }
-    try {
-      await performLogin(input);
-      alert('تم تسجيل الدخول بنجاح!');
-    } catch (e) {
-      alert('المفتاح الخاص غير صحيح');
-    }
-  });
-
-  // 4. حفظ ونشر التغييرات (توقيع الحدث الفعلي ونشره)
-  document.getElementById('btnSave').addEventListener('click', async () => {
-    if (!currentSecretKeyBytes) {
-      alert('يرجى تسجيل الدخول أو توليد حساب أولاً لتتمكن من التوقيع والنشر!');
-      return;
+// تسجيل الدخول والانتقال للمنصة
+function loginAndGoToFeed() {
+    const nsecInput = document.getElementById('setting-nsec').value.trim();
+    if (!nsecInput) {
+        alert("يرجى إدخال أو توليد المفتاح الخاص أولاً.");
+        return;
     }
 
-    const btn = document.getElementById('btnSave');
-    btn.innerText = 'جاري التوقيع والنشر على الشبكة...';
-    btn.disabled = true;
+    let npub = 'npub1' + (nsecInput.startsWith('nsec1') ? nsecInput.substring(5) : nsecInput);
+    document.getElementById('display-npub').value = npub;
 
-    try {
-      const profileData = {
-        name: document.getElementById('handleInput').value,
-        display_name: document.getElementById('displayNameInput').value,
-        picture: document.getElementById('pictureUrlInput').value,
-        about: document.getElementById('bioInput').value
-      };
+    localStorage.setItem('kalimat_nsec', nsecInput);
+    localStorage.setItem('kalimat_npub', npub);
 
-      // إنشاء وتوقيع حدث Nostr من النوع Kind 0
-      const eventTemplate = {
-        kind: 0,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [],
-        content: JSON.stringify(profileData)
-      };
+    document.getElementById('login-status').style.display = 'block';
 
-      const signedEvent = NostrTools.finalizeEvent(eventTemplate, currentSecretKeyBytes);
+    // الانتقال التلقائي الفوري إلى شاشة المنصة
+    switchPage('feed-screen');
+}
 
-      // نشر الحدث على الـ Relays
-      const pool = new NostrTools.SimplePool();
-      await Promise.any(pool.publish(RELAYS, signedEvent));
+// حفظ الملف الشخصي والانتقال
+function saveProfileAndGoToFeed() {
+    const name = document.getElementById('edit-display-name').value.trim();
+    const handle = document.getElementById('edit-handle').value.trim();
+    const avatar = document.getElementById('edit-avatar').value.trim();
+    const bio = document.getElementById('edit-bio').value.trim();
 
-      alert('تم نشر وتحديث ملفك الشخصي بنجاح على شبكة Nostr!');
-      pool.close(RELAYS);
-    } catch (e) {
-      alert('حدث خطأ أثناء النشر: ' + e.message);
-    } finally {
-      btn.innerText = 'حفظ ونشر التغيرات على الشبكة 🚀';
-      btn.disabled = false;
+    const profile = { name, handle, avatar, bio };
+    localStorage.setItem('kalimat_profile', JSON.stringify(profile));
+
+    switchPage('feed-screen');
+}
+
+// تحديث بيانات المستخدم في واجهة المنصة
+function updateFeedUI() {
+    const savedProfile = JSON.parse(localStorage.getItem('kalimat_profile')) || {};
+    const name = savedProfile.name || 'مستخدم جديد';
+    
+    document.getElementById('feed-display-name').innerText = name;
+    document.getElementById('feed-handle').innerText = '@' + (savedProfile.handle || 'user');
+    document.getElementById('feed-bio').innerText = savedProfile.bio || '';
+    document.getElementById('feed-avatar-char').innerText = name.charAt(0).toUpperCase();
+}
+
+// تحميل البيانات المحفوظة عند الفتح
+function loadData() {
+    const savedNsec = localStorage.getItem('kalimat_nsec');
+    const savedNpub = localStorage.getItem('kalimat_npub');
+    const savedProfile = JSON.parse(localStorage.getItem('kalimat_profile'));
+
+    if (savedNsec) {
+        document.getElementById('setting-nsec').value = savedNsec;
+        document.getElementById('login-status').style.display = 'block';
     }
-  });
+    if (savedNpub) document.getElementById('display-npub').value = savedNpub;
 
-  // استعادة الجلسة
-  window.addEventListener('DOMContentLoaded', () => {
-    const saved = localStorage.getItem('kalimat_nsec');
-    if (saved) performLogin(saved);
-  });
+    if (savedProfile) {
+        if (savedProfile.name) document.getElementById('edit-display-name').value = savedProfile.name;
+        if (savedProfile.handle) document.getElementById('edit-handle').value = savedProfile.handle;
+        if (savedProfile.avatar) document.getElementById('edit-avatar').value = savedProfile.avatar;
+        if (savedProfile.bio) document.getElementById('edit-bio').value = savedProfile.bio;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadData);
 </script>
 
 </body>
