@@ -1,12 +1,10 @@
-import os
-
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كلمات | Kalimat - Nostr Client</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>كلمات | Kalimat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-main: #0b0e14;
@@ -14,11 +12,8 @@ html_content = """<!DOCTYPE html>
             --bg-card: #1c2331;
             --border-color: #2a3447;
             --accent-color: #8b5cf6;
-            --accent-hover: #7c3aed;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
-            --danger: #ef4444;
-            --success: #10b981;
         }
 
         * {
@@ -26,542 +21,372 @@ html_content = """<!DOCTYPE html>
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
-            display: flex;
-            justify-content: center;
+            padding-bottom: 70px; /* مساحة للشريط السفلي */
+            max-width: 500px; /* تحديد العرض ليكون مثل شاشة الهاتف تماماً */
+            margin: 0 auto;
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* App Layout */
-        .app-container {
-            display: flex;
-            width: 100%;
-            max-width: 1300px;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Navigation */
-        .sidebar {
-            width: 260px;
-            padding: 20px;
             border-left: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            border-right: 1px solid var(--border-color);
+        }
+
+        /* الهيدر العلوي */
+        .app-header {
             position: sticky;
             top: 0;
-            height: 100vh;
+            background-color: rgba(11, 14, 20, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
         }
 
         .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--accent-color);
-            margin-bottom: 30px;
-            padding: 0 10px;
-        }
-
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .nav-item {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
+            gap: 6px;
         }
 
-        .nav-item:hover, .nav-item.active {
-            background-color: var(--bg-secondary);
-            color: var(--text-main);
-        }
-
-        .nav-item.active {
-            border-right: 4px solid var(--accent-color);
-        }
-
-        .post-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-            transition: background 0.2s;
-        }
-
-        .post-btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        /* Profile Mini Card */
-        .user-mini {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background-color: var(--bg-secondary);
-            border-radius: 12px;
-            cursor: pointer;
-        }
-
-        .avatar {
-            width: 42px;
-            height: 42px;
+        .user-avatar-small {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            background-color: var(--accent-color);
+            background: var(--accent-color);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: white;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .user-name {
             font-size: 14px;
-            font-weight: 700;
-            white-space: nowrap;
-            text-overflow: ellipsis;
         }
 
-        .user-handle {
-            font-size: 12px;
-            color: var(--text-muted);
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        /* Main Content Area */
-        .main-content {
-            flex: 1;
-            max-width: 650px;
-            border-left: 1px solid var(--border-color);
-            min-height: 100vh;
-        }
-
-        .top-header {
-            position: sticky;
-            top: 0;
-            background-color: rgba(11, 14, 20, 0.85);
-            backdrop-filter: blur(12px);
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 18px;
-            font-weight: 700;
-            z-index: 10;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Tabs Navigation inside View */
-        .views-container {
-            padding: 0;
-        }
-
-        .view-section {
+        /* الشاشات / الصفحات */
+        .tab-content {
             display: none;
         }
 
-        .view-section.active {
+        .tab-content.active {
             display: block;
         }
 
-        /* Feed Composer */
-        .composer {
-            padding: 16px 20px;
+        /* صندوق التدوين السريع */
+        .composer-box {
+            padding: 14px;
             border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
 
-        .composer textarea {
+        .composer-box textarea {
             width: 100%;
             background: transparent;
             border: none;
-            color: var(--text-main);
-            font-size: 16px;
-            resize: none;
+            color: white;
+            font-size: 15px;
             outline: none;
-            min-height: 80px;
+            resize: none;
+            height: 50px;
         }
 
-        .composer-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        /* Post Cards */
+        /* بطاقة المنشور المخصصة للهاتف */
         .post-card {
-            padding: 18px 20px;
+            padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
-            gap: 14px;
-            transition: background 0.15s;
+            gap: 12px;
         }
 
-        .post-card:hover {
-            background-color: rgba(21, 26, 35, 0.5);
+        .post-content {
+            flex: 1;
         }
 
         .post-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            justify-content: space-between;
+            margin-bottom: 4px;
         }
 
-        .post-author {
+        .author-name {
             font-weight: 700;
             font-size: 15px;
         }
 
-        .post-handle {
+        .author-handle {
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12px;
+            margin-right: 4px;
         }
 
         .post-time {
             color: var(--text-muted);
-            font-size: 12px;
-            margin-right: auto;
+            font-size: 11px;
         }
 
-        .post-body {
-            font-size: 15px;
-            line-height: 1.6;
+        .post-text {
+            font-size: 14px;
+            line-height: 1.5;
             color: #e5e7eb;
-            margin-bottom: 12px;
+            margin: 6px 0 10px 0;
         }
 
         .post-actions {
             display: flex;
             justify-content: space-between;
-            max-width: 400px;
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12px;
+            padding-top: 4px;
         }
 
-        .action-btn {
+        .action-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+        }
+
+        /* زر النشر العائم */
+        .fab-btn {
+            position: fixed;
+            bottom: 75px;
+            left: 20px;
+            background-color: var(--accent-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+            border: none;
             cursor: pointer;
-            transition: color 0.2s;
+            z-index: 99;
         }
 
-        .action-btn:hover {
+        /* شريط الملاحة السفلي (Bottom Nav) */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: rgba(15, 20, 29, 0.98);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            font-size: 11px;
+            cursor: pointer;
+            width: 20%;
+        }
+
+        .nav-button.active {
             color: var(--accent-color);
+            font-weight: 700;
         }
 
-        /* Settings View Styles */
-        .settings-group {
-            padding: 20px;
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        /* عناصر الإعدادات */
+        .setting-item {
+            padding: 16px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .settings-title {
-            font-size: 16px;
+        .setting-title {
             font-weight: 700;
-            margin-bottom: 15px;
+            font-size: 14px;
+            margin-bottom: 6px;
             color: var(--accent-color);
         }
 
-        .input-box {
+        .input-field {
             width: 100%;
-            padding: 12px;
-            background-color: var(--bg-secondary);
+            padding: 10px;
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: white;
-            margin-top: 6px;
-            margin-bottom: 15px;
+            font-size: 12px;
+            margin-top: 4px;
             outline: none;
-        }
-
-        /* Right Widgets Sidebar */
-        .widgets-sidebar {
-            width: 320px;
-            padding: 20px;
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .widget-box {
-            background-color: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .widget-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .relay-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--success);
         }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- القائمة الجانبية للتنقل -->
-        <aside class="sidebar">
-            <div>
-                <div class="brand">
-                    <span>⚡</span> كلمات
-                </div>
-                <ul class="nav-menu">
-                    <li class="nav-item active" onclick="switchView('feed-view', this)">
-                        <span>🏠</span> الرئيسية
-                    </li>
-                    <li class="nav-item" onclick="switchView('notifications-view', this)">
-                        <span>🔔</span> الإشعارات
-                    </li>
-                    <li class="nav-item" onclick="switchView('messages-view', this)">
-                        <span>💬</span> الرسائل
-                    </li>
-                    <li class="nav-item" onclick="switchView('profile-view', this)">
-                        <span>👤</span> الملف الشخصي
-                    </li>
-                    <li class="nav-item" onclick="switchView('settings-view', this)">
-                        <span>⚙️</span> الإعدادات
-                    </li>
-                </ul>
-                <button class="post-btn">انشر الآن ✍️</button>
-            </div>
+    <!-- الهيدر العلوي -->
+    <header class="app-header">
+        <div class="user-avatar-small" onclick="switchTab('profile')">M</div>
+        <div class="brand">⚡ كلمات</div>
+        <div style="font-size: 18px; cursor: pointer;" onclick="switchTab('settings')">⚙️</div>
+    </header>
 
-            <!-- بطاقة المستخدم المصغرة -->
-            <div class="user-mini">
-                <div class="avatar">M</div>
-                <div class="user-info">
-                    <span class="user-name">المشاربش</span>
-                    <span class="user-handle">npub1...almsharbash</span>
-                </div>
-            </div>
-        </aside>
+    <!-- 1. الشاشة الرئيسية (Feed) -->
+    <main id="tab-feed" class="tab-content active">
+        <!-- كتابة منشور سريع -->
+        <div class="composer-box">
+            <div class="user-avatar-small">M</div>
+            <textarea placeholder="ماذا يدور في ذهنك؟"></textarea>
+        </div>
 
-        <!-- المنطقة المركزية لعرض الشاشات -->
-        <main class="main-content">
-            
-            <!-- 1. شاشة الخيم/الرئيسية (Feed View) -->
-            <div id="feed-view" class="view-section active">
-                <div class="top-header">
-                    <span>الرئيسية</span>
-                    <span style="font-size: 14px; color: var(--text-muted); cursor: pointer;">✨ منشورات مختارة</span>
-                </div>
-
-                <!-- صندوق إنشاء منشور -->
-                <div class="composer">
-                    <div class="avatar">M</div>
-                    <div style="flex: 1;">
-                        <textarea placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
-                        <div class="composer-actions">
-                            <span style="cursor: pointer;">🖼️ 🎙️ 📊</span>
-                            <button class="post-btn" style="width: auto; padding: 8px 20px; margin: 0;">نشر</button>
-                        </div>
+        <!-- قائمة المنشورات -->
+        <div class="post-card">
+            <div class="user-avatar-small" style="background:#3b82f6;">A</div>
+            <div class="post-content">
+                <div class="post-header">
+                    <div>
+                        <span class="author-name">أحمد العمر</span>
+                        <span class="author-handle">@ahmed</span>
                     </div>
+                    <span class="post-time">5 د</span>
                 </div>
+                <div class="post-text">
+                    أهلاً بكم في التحديث الجديد لمنصة "كلمات"! الواجهة الآن مصممة خصيصاً لتعمل بسلاسة وأناقة على شاشات الهواتف المحمولة. 🚀📱
+                </div>
+                <div class="post-actions">
+                    <span class="action-item">💬 12</span>
+                    <span class="action-item">🔄 4</span>
+                    <span class="action-item">❤️ 45</span>
+                    <span class="action-item">⚡ 100</span>
+                </div>
+            </div>
+        </div>
 
-                <!-- قائمة المنشورات التجريبية العينة -->
-                <div id="posts-feed">
-                    <div class="post-card">
-                        <div class="avatar" style="background: #3b82f6;">A</div>
-                        <div style="flex: 1;">
-                            <div class="post-header">
-                                <span class="post-author">أحمد العمر</span>
-                                <span class="post-handle">@ahmed</span>
-                                <span class="post-time">منذ 5 د</span>
-                            </div>
-                            <div class="post-body">
-                                نرحب بالجميع في واجهة منصة "كلمات" الجديدة! تم بناء الواجهة لتكون سريعة ومنظمة وتعمل بسلاسة عبر بروتوكول نوستر اللامركزي. 🚀
-                            </div>
-                            <div class="post-actions">
-                                <span class="action-btn">💬 12</span>
-                                <span class="action-btn">🔄 4</span>
-                                <span class="action-btn">❤️ 45</span>
-                                <span class="action-btn">⚡ 100</span>
-                            </div>
-                        </div>
+        <div class="post-card">
+            <div class="user-avatar-small" style="background:#10b981;">S</div>
+            <div class="post-content">
+                <div class="post-header">
+                    <div>
+                        <span class="author-name">سارة علي</span>
+                        <span class="author-handle">@sara</span>
                     </div>
-
-                    <div class="post-card">
-                        <div class="avatar" style="background: #10b981;">S</div>
-                        <div style="flex: 1;">
-                            <div class="post-header">
-                                <span class="post-author">سارة علي</span>
-                                <span class="post-handle">@sara</span>
-                                <span class="post-time">منذ ساعة</span>
-                            </div>
-                            <div class="post-body">
-                                اللامركزية ليست مجرد تقنية، بل هي حرية امتلاك بياناتك دون التحكم من أي جهة مركزية. 🌐✨
-                            </div>
-                            <div class="post-actions">
-                                <span class="action-btn">💬 5</span>
-                                <span class="action-btn">🔄 2</span>
-                                <span class="action-btn">❤️ 28</span>
-                                <span class="action-btn">⚡ 50</span>
-                            </div>
-                        </div>
-                    </div>
+                    <span class="post-time">ساعة</span>
+                </div>
+                <div class="post-text">
+                    التصميم المخصص للهاتف يجعل تصفح شبكة Nostr أسرع وأسهل بكثير دون أي تداخل في عناصر الشاشة! ✨
+                </div>
+                <div class="post-actions">
+                    <span class="action-item">💬 5</span>
+                    <span class="action-item">🔄 2</span>
+                    <span class="action-item">❤️ 28</span>
+                    <span class="action-item">⚡ 50</span>
                 </div>
             </div>
+        </div>
+    </main>
 
-            <!-- 2. شاشة الإشعارات (Notifications View) -->
-            <div id="notifications-view" class="view-section">
-                <div class="top-header">الإشعارات</div>
-                <div style="padding: 20px; text-align: center; color: var(--text-muted);">
-                    🔔 لا توجد إشعارات جديدة حالياً.
-                </div>
+    <!-- 2. شاشة الإشعارات -->
+    <section id="tab-notifications" class="tab-content">
+        <div style="padding: 40px 20px; text-align: center; color: var(--text-muted);">
+            🔔 لا توجد إشعارات جديدة حتى الآن.
+        </div>
+    </section>
+
+    <!-- 3. شاشة الرسائل -->
+    <section id="tab-messages" class="tab-content">
+        <div style="padding: 40px 20px; text-align: center; color: var(--text-muted);">
+            💬 الرسائل المشفرة ستظهر هنا.
+        </div>
+    </section>
+
+    <!-- 4. شاشة الملف الشخصي -->
+    <section id="tab-profile" class="tab-content">
+        <div style="height: 100px; background: linear-gradient(90deg, #8b5cf6, #3b82f6);"></div>
+        <div style="padding: 0 16px; position: relative;">
+            <div class="user-avatar-small" style="width: 60px; height: 60px; font-size: 24px; border: 3px solid var(--bg-main); position: absolute; top: -30px;">M</div>
+            <div style="padding-top: 35px;">
+                <h3>المشاربش</h3>
+                <span style="color: var(--text-muted); font-size: 12px;">npub1...almsharbash</span>
+                <p style="margin-top: 8px; font-size: 13px;">مطور ومحاضر مهتم بالتقنيات الحديثة والحرية الرقمية. ⚡</p>
             </div>
+        </div>
+    </section>
 
-            <!-- 3. شاشة الرسائل (Messages View) -->
-            <div id="messages-view" class="view-section">
-                <div class="top-header">الرسائل الخاصة (Direct Messages)</div>
-                <div style="padding: 20px; text-align: center; color: var(--text-muted);">
-                    💬 المحادثات المشفرة بين الأطراف ستظهر هنا.
-                </div>
-            </div>
+    <!-- 5. شاشة الإعدادات -->
+    <section id="tab-settings" class="tab-content">
+        <div class="setting-item">
+            <div class="setting-title">🔑 المفتاح العام (Public Key)</div>
+            <input type="text" class="input-field" value="npub1almsharbash..." readonly>
+        </div>
+        <div class="setting-item">
+            <div class="setting-title">🌐 خوادم الترحيل (Relays)</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">• wss://relay.damus.io (متصل)</div>
+            <div style="font-size: 12px; color: var(--text-muted);">• wss://nos.lol (متصل)</div>
+        </div>
+    </section>
 
-            <!-- 4. شاشة الملف الشخصي (Profile View) -->
-            <div id="profile-view" class="view-section">
-                <div style="height: 140px; background: linear-gradient(90deg, #8b5cf6, #3b82f6);"></div>
-                <div style="padding: 0 20px; position: relative; margin-bottom: 20px;">
-                    <div class="avatar" style="width: 80px; height: 80px; font-size: 32px; border: 4px solid var(--bg-main); position: absolute; top: -40px;">M</div>
-                    <div style="text-align: left; padding-top: 10px;">
-                        <button class="post-btn" style="width: auto; padding: 6px 16px; background: transparent; border: 1px solid var(--border-color);">تعديل الملف</button>
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <h2>المشاربش</h2>
-                        <span style="color: var(--text-muted); font-size: 13px;">npub1...almsharbash</span>
-                        <p style="margin-top: 10px; font-size: 14px;">مطور ومحاضر مهتم بالتقنيات الحديثة والحرية الرقمية. ⚡</p>
-                    </div>
-                </div>
-            </div>
+    <!-- زر النشر العائم -->
+    <button class="fab-btn">✍️</button>
 
-            <!-- 5. شاشة الإعدادات الكاملة (Settings View) -->
-            <div id="settings-view" class="view-section">
-                <div class="top-header">إعدادات المنصة</div>
-
-                <div class="settings-group">
-                    <div class="settings-title">🔑 إدارة المفاتيح الرقمية (Nostr Keys)</div>
-                    <label style="font-size: 13px; color: var(--text-muted);">المفتاح العام (Public Key - npub):</label>
-                    <input type="text" class="input-box" value="npub1almsharbash..." readonly>
-
-                    <label style="font-size: 13px; color: var(--text-muted);">المفتاح الخاص (Private Key - nsec):</label>
-                    <input type="password" class="input-box" value="nsec1234567890..." readonly>
-                </div>
-
-                <div class="settings-group">
-                    <div class="settings-title">🌐 خوادم الترحيل المتصلة (Relays)</div>
-                    <div class="relay-status">
-                        <span>wss://relay.damus.io</span>
-                        <span style="color: var(--success);">متصل ✅</span>
-                    </div>
-                    <div class="relay-status">
-                        <span>wss://nos.lol</span>
-                        <span style="color: var(--success);">متصل ✅</span>
-                    </div>
-                    <input type="text" class="input-box" placeholder="إضافة خادم جديد wss://..." style="margin-top: 15px;">
-                </div>
-            </div>
-
-        </main>
-
-        <!-- الجانب الأيسر: الأدوات والتوجيهات -->
-        <aside class="widgets-sidebar">
-            <div class="widget-box">
-                <div class="widget-title">🔥 المواضيع المتداولة</div>
-                <div style="font-size: 14px; margin-bottom: 8px;">#Nostr ⚡</div>
-                <div style="font-size: 14px; margin-bottom: 8px;">#Bitcoin 🪙</div>
-                <div style="font-size: 14px;">#التقنية_العربية 💻</div>
-            </div>
-
-            <div class="widget-box">
-                <div class="widget-title">📡 حالة الشبكة</div>
-                <div class="relay-status">
-                    <span>الخوادم النشطة:</span>
-                    <span>2/2</span>
-                </div>
-                <div class="relay-status">
-                    <span>سرعة الاستجابة:</span>
-                    <span style="color: var(--success);">45ms</span>
-                </div>
-            </div>
-        </aside>
-    </div>
+    <!-- شريط التنقل السفلي -->
+    <nav class="bottom-nav">
+        <button class="nav-button active" onclick="switchTab('feed', this)">
+            <span class="nav-icon">🏠</span>
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-button" onclick="switchTab('notifications', this)">
+            <span class="nav-icon">🔔</span>
+            <span>الإشعارات</span>
+        </button>
+        <button class="nav-button" onclick="switchTab('messages', this)">
+            <span class="nav-icon">💬</span>
+            <span>الرسائل</span>
+        </button>
+        <button class="nav-button" onclick="switchTab('profile', this)">
+            <span class="nav-icon">👤</span>
+            <span>حسابي</span>
+        </button>
+        <button class="nav-button" onclick="switchTab('settings', this)">
+            <span class="nav-icon">⚙️</span>
+            <span>الإعدادات</span>
+        </button>
+    </nav>
 
     <script>
-        // التنقل السلس بين الشاشات
-        function switchView(viewId, element) {
+        function switchTab(tabId, btnElement) {
             // إخفاء كافة الشاشات
-            document.querySelectorAll('.view-section').forEach(view => {
-                view.classList.remove('active');
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
-            // إلغاء تحديد عناصر القائمة
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
+            // إزالة التحديد عن الأزرار
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
             });
 
-            // إظهار الشاشة المطلوبة وتحديد الزر النشط
-            document.getElementById(viewId).classList.add('active');
-            element.classList.add('active');
+            // تفعيل الشاشة المطلوبة
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if (btnElement) {
+                btnElement.classList.add('active');
+            }
         }
     </script>
 </body>
 </html>
-"""
-
-os.makedirs('kalimat_app', exist_ok=True)
-with open('kalimat_app/index.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("تم إنشاء واجهة تطبيق 'كلمات' الجاهزة للتجربة المعاينة بنجاح.")
