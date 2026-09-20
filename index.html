@@ -12,8 +12,8 @@
     <meta property="og:type" content="website" />
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- مكتبة الترجمة التلقائية من جوجل -->
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <!-- مكتبة الترجمة التلقائية من جوجل بروابط آمنة -->
+    <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <style>
         :root {
@@ -26,6 +26,7 @@
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --input-bg: #111827;
+            --like-active: #ef4444;
         }
 
         body.light-theme {
@@ -66,7 +67,6 @@
             position: sticky;
             top: 0;
             background-color: var(--bg-main);
-            opacity: 0.98;
             backdrop-filter: blur(10px);
             padding: 12px 16px;
             border-bottom: 1px solid var(--border-color);
@@ -87,7 +87,7 @@
             border: none;
             color: var(--text-main);
             cursor: pointer;
-            display: none; /* يظهر عند التنقل داخل الشاشات */
+            display: none;
             align-items: center;
             justify-content: center;
         }
@@ -179,6 +179,7 @@
             color: var(--text-main);
             margin: 6px 0 10px 0;
             white-space: pre-wrap;
+            word-break: break-word;
         }
 
         .post-img {
@@ -189,7 +190,7 @@
             object-fit: cover;
         }
 
-        /* أزرار التفاعل (أيقونات موحدة Vector/SVG) */
+        /* أزرار التفاعل */
         .post-actions-clean {
             display: flex;
             justify-content: space-between;
@@ -207,6 +208,11 @@
             align-items: center;
             gap: 6px;
             font-size: 13px;
+            transition: color 0.2s;
+        }
+
+        .action-icon-btn.liked {
+            color: var(--like-active);
         }
 
         .action-icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
@@ -215,7 +221,7 @@
         .fab-btn {
             position: fixed;
             bottom: 75px;
-            left: 20px;
+            left: calc(50% - 230px);
             background-color: var(--btn-blue);
             color: white;
             width: 52px;
@@ -230,9 +236,13 @@
             z-index: 99;
         }
 
+        @media (max-width: 500px) {
+            .fab-btn { left: 20px; }
+        }
+
         .fab-btn svg { width: 24px; height: 24px; fill: white; }
 
-        /* شريط التنقل السفي */
+        /* شريط التنقل السفلي */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -260,7 +270,7 @@
         .nav-button.active { color: var(--accent-color); }
         .nav-button svg { width: 22px; height: 22px; fill: currentColor; }
 
-        /* نافذة كتابة المنشور الكاملة (Primal Composer) */
+        /* نافذة كتابة المنشور */
         .primal-composer-modal {
             display: none;
             position: fixed;
@@ -368,7 +378,7 @@
 
         .composer-tool-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
-        /* نموذج إعدادات والتعديل */
+        /* نموذج الإعدادات */
         .setting-card { padding: 16px; border-bottom: 1px solid var(--border-color); }
         .setting-card-title { font-weight: 700; font-size: 15px; margin-bottom: 10px; color: var(--accent-color); }
 
@@ -397,7 +407,6 @@
             cursor: pointer; margin-top: 10px; width: 100%;
         }
 
-        /* رسالة الترحيب */
         .welcome-toast {
             position: fixed;
             top: 70px;
@@ -422,7 +431,7 @@
     <!-- الهيدر -->
     <header class="app-header">
         <div class="header-left">
-            <button id="back-btn" class="back-btn" onclick="goBack()">
+            <button id="back-btn" class="back-btn" onclick="goBack()" aria-label="رجوع">
                 <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
             </button>
             <div class="user-avatar-small global-avatar" onclick="switchTab('profile')">
@@ -435,12 +444,11 @@
             <span>كلمات</span>
         </div>
 
-        <button class="nav-button" onclick="switchTab('settings')" style="width:auto;">
+        <button class="nav-button" onclick="switchTab('settings')" style="width:auto;" aria-label="الإعدادات">
             <svg style="width:22px;height:22px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.65.07-.97c0-.32-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .32.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/></svg>
         </button>
     </header>
 
-    <!-- عنصر الترجمة التلقائية المستتر من جوجل -->
     <div id="google_translate_element" style="display:none;"></div>
 
     <!-- 1. الرئيسية -->
@@ -485,7 +493,7 @@
         </div>
     </main>
 
-    <!-- شاشة إعداده وتعديل الملف الشخصي -->
+    <!-- 2. شاشة الملف الشخصي -->
     <section id="tab-profile" class="tab-content">
         <div class="setting-card">
             <div class="setting-card-title">👤 تعديل الملف الشخصي</div>
@@ -502,7 +510,7 @@
         </div>
     </section>
 
-    <!-- واجهة كتابة المنشور كاملة مع رفع الصور من المعرض -->
+    <!-- واجهة كتابة المنشور -->
     <div id="primal-composer" class="primal-composer-modal">
         <div class="composer-header">
             <button class="composer-close-btn" onclick="closePrimalComposer()">✕</button>
@@ -517,7 +525,6 @@
             </div>
         </div>
 
-        <!-- أداة اختيار ملف الصورة من الاستوديو -->
         <input type="file" id="gallery-file-input" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
 
         <div class="composer-toolbar">
@@ -530,7 +537,7 @@
         </div>
     </div>
 
-    <!-- باقي الشاشات -->
+    <!-- باقی التبويبات -->
     <section id="tab-friends" class="tab-content">
         <div style="padding: 20px; text-align:center; color:var(--text-muted);">👥 قائمة الأصدقاء المتابعين</div>
     </section>
@@ -569,34 +576,40 @@
     </section>
 
     <!-- زر القلم العائم -->
-    <button class="fab-btn" onclick="openPrimalComposer()">
+    <button class="fab-btn" onclick="openPrimalComposer()" aria-label="منشور جديد">
         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83l3.75 3.75l1.83-1.83z"/></svg>
     </button>
 
-    <!-- شريط التنقل السفلي مع أيقونات SVG رمزية موحدة -->
+    <!-- شريط التنقل السفلي -->
     <nav class="bottom-nav">
-        <button class="nav-button active" onclick="switchTab('feed', this)">
+        <button data-tab="feed" class="nav-button active" onclick="switchTab('feed', this)" aria-label="الرئيسية">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </button>
-        <button class="nav-button" onclick="switchTab('friends', this)">
-            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        <button data-tab="friends" class="nav-button" onclick="switchTab('friends', this)" aria-label="الأصدقاء">
+            <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
         </button>
-        <button class="nav-button" onclick="switchTab('notifications', this)">
+        <button data-tab="notifications" class="nav-button" onclick="switchTab('notifications', this)" aria-label="الإشعارات">
             <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
         </button>
-        <button class="nav-button" onclick="switchTab('messages', this)">
+        <button data-tab="messages" class="nav-button" onclick="switchTab('messages', this)" aria-label="الرسائل">
             <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
         </button>
-        <button class="nav-button" onclick="switchTab('profile', this)">
+        <button data-tab="profile" class="nav-button" onclick="switchTab('profile', this)" aria-label="الملف الشخصي">
             <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         </button>
     </nav>
 
     <script>
         let navigationHistory = ['feed'];
-        let loadedBase64Image = "";
+        let activeImageObjectUrl = null;
 
-        // تهيئة ترجمة جوجل التلقائية
+        // تنظيف وحماية النصوص لمنع ثغرات XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({pageLanguage: 'ar'}, 'google_translate_element');
         }
@@ -604,21 +617,20 @@
         function triggerGoogleTranslate() {
             const selectEl = document.querySelector('.goog-te-combo');
             if (selectEl) {
-                selectEl.value = 'en'; // أو التبديل للغة المطلوبة
+                selectEl.value = 'en';
                 selectEl.dispatchEvent(new Event('change'));
             } else {
-                alert("جاري تحميل خدمة الترجمة من جوجل...");
+                alert("جاري تحميل خدمة الترجمة...");
             }
         }
 
-        // إظهار رسالة ترحيب عند الضغط على الشعار
         function showWelcomeBanner() {
             const toast = document.getElementById('welcome-toast');
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
         }
 
-        // إدارة التنقل وسهم الرجوع
+        // إدارة الشاشات وتحديث شريط التنقل السفلي تلقائياً
         function switchTab(tabId, btnElement) {
             if (navigationHistory[navigationHistory.length - 1] !== tabId) {
                 navigationHistory.push(tabId);
@@ -633,15 +645,14 @@
             const targetTab = document.getElementById('tab-' + tabId);
             if (targetTab) targetTab.classList.add('active');
             
+            // تحديد الأيقونة النشطة تلقائياً حتى لو تم استدعاؤها من مكان آخر
+            if (!btnElement) {
+                btnElement = document.querySelector(`.nav-button[data-tab="${tabId}"]`);
+            }
             if (btnElement) btnElement.classList.add('active');
 
-            // التحكم بإظهار سهم الرجوع
             const backBtn = document.getElementById('back-btn');
-            if (navigationHistory.length > 1) {
-                backBtn.style.display = 'flex';
-            } else {
-                backBtn.style.display = 'none';
-            }
+            backBtn.style.display = navigationHistory.length > 1 ? 'flex' : 'none';
         }
 
         function goBack() {
@@ -652,14 +663,13 @@
             }
         }
 
-        // التعامل مع زر الرجوع في الهاتف (Android Back Button)
-        window.addEventListener('popstate', function (event) {
+        window.addEventListener('popstate', function () {
             if (navigationHistory.length > 1) {
                 goBack();
             }
         });
 
-        // رفع الصورة من استوديو الهاتف
+        // إدارة رفع الصور الآمن مع خفض استهلاك الذاكرة
         function openGallery() {
             document.getElementById('gallery-file-input').click();
         }
@@ -667,41 +677,47 @@
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    loadedBase64Image = e.target.result;
-                    document.getElementById('image-preview').src = loadedBase64Image;
-                    document.getElementById('preview-box').style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+                if (activeImageObjectUrl) URL.revokeObjectURL(activeImageObjectUrl);
+                activeImageObjectUrl = URL.createObjectURL(file);
+                
+                document.getElementById('image-preview').src = activeImageObjectUrl;
+                document.getElementById('preview-box').style.display = 'block';
             }
         }
 
         function removeSelectedImage() {
-            loadedBase64Image = "";
+            if (activeImageObjectUrl) {
+                URL.revokeObjectURL(activeImageObjectUrl);
+                activeImageObjectUrl = null;
+            }
+            document.getElementById('image-preview').src = "";
             document.getElementById('preview-box').style.display = 'none';
             document.getElementById('gallery-file-input').value = "";
         }
 
-        // نشر المنشور
+        // نشر المنشور مع معالجة حماية النص XSS
         function publishPostPrimal() {
-            const text = document.getElementById('primal-text-input').value.trim();
-            if (!text && !loadedBase64Image) return;
+            const rawText = document.getElementById('primal-text-input').value.trim();
+            if (!rawText && !activeImageObjectUrl) return;
+
+            const safeText = escapeHtml(rawText);
+            const name = escapeHtml(document.getElementById('edit-display-name').value || "مستخدم");
+            const handle = escapeHtml(document.getElementById('edit-handle').value || "user");
 
             const postsContainer = document.getElementById('posts-container');
             const newPostHtml = `
                 <div class="post-card">
-                    <div class="user-avatar-small global-avatar"><span class="avatar-text">M</span></div>
+                    <div class="user-avatar-small global-avatar"><span class="avatar-text">${name.charAt(0).toUpperCase()}</span></div>
                     <div class="post-content">
                         <div class="post-header">
                             <div>
-                                <span class="author-name">${document.getElementById('edit-display-name').value}</span>
-                                <span class="author-handle">@${document.getElementById('edit-handle').value}</span>
+                                <span class="author-name">${name}</span>
+                                <span class="author-handle">@${handle}</span>
                             </div>
                             <span class="post-time">الآن</span>
                         </div>
-                        <div class="post-text">${text}</div>
-                        ${loadedBase64Image ? `<img src="${loadedBase64Image}" class="post-img" />` : ''}
+                        <div class="post-text">${safeText}</div>
+                        ${activeImageObjectUrl ? `<img src="${activeImageObjectUrl}" class="post-img" />` : ''}
                         <div class="post-actions-clean">
                             <button class="action-icon-btn"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg><span>0</span></button>
                             <button class="action-icon-btn"><svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg><span>0</span></button>
@@ -712,6 +728,9 @@
                 </div>
             `;
             postsContainer.insertAdjacentHTML('afterbegin', newPostHtml);
+            
+            // عدم إغلاق رابط ObjectURL المستخدم في المنشور الجديد لتجنب إتلاف الصورة
+            activeImageObjectUrl = null;
             closePrimalComposer();
         }
 
@@ -726,13 +745,27 @@
         }
 
         function saveProfileChanges() {
+            const newName = document.getElementById('edit-display-name').value;
+            if(newName) {
+                document.querySelectorAll('.global-avatar span, #header-avatar-text').forEach(el => {
+                    el.textContent = newName.charAt(0).toUpperCase();
+                });
+            }
             alert("تم حفظ بيانات الملف الشخصي بنجاح!");
         }
 
+        // تفاعل زر الإعجاب مع التبديل (Like/Unlike)
         function toggleLike(btn) {
             const countSpan = btn.querySelector('.like-count');
             let count = parseInt(countSpan.textContent);
-            countSpan.textContent = count + 1;
+            
+            if (btn.classList.contains('liked')) {
+                btn.classList.remove('liked');
+                countSpan.textContent = Math.max(0, count - 1);
+            } else {
+                btn.classList.add('liked');
+                countSpan.textContent = count + 1;
+            }
         }
 
         function setTheme(theme) {
@@ -743,6 +776,14 @@
                 document.body.classList.remove('light-theme');
                 document.body.classList.add('dark-theme');
             }
+        }
+
+        function generateNewAccount() {
+            alert("وظيفة توليد المفاتيح جاهزة للربط مع مكتبات Nostr.");
+        }
+
+        function saveLoginKey() {
+            alert("تم تسجيل الدخول بنجاح بالمفتاح الخاص.");
         }
     </script>
 </body>
