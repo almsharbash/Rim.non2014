@@ -1,269 +1,567 @@
-<!DOCTYPE html>
+import os
+
+html_content = """<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة كلمات - Nostr</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/nostr-tools@1.17.0/lib/nostr.bundle.js"></script>
-
+    <title>كلمات | Kalimat - Nostr Client</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #0a0e17;
-            --bg-secondary: #121824;
-            --bg-tertiary: #1a2332;
-            --border-color: #26334d;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-blue: #38bdf8;
-            --accent-purple: #818cf8;
-            --accent-red: #f43f5e;
-            --accent-green: #34d399;
+            --bg-main: #0b0e14;
+            --bg-secondary: #151a23;
+            --bg-card: #1c2331;
+            --border-color: #2a3447;
+            --accent-color: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background-color: var(--bg-primary); color: var(--text-primary); display: flex; justify-content: center; min-height: 100vh; padding: 0 10px; }
-        .app-container { width: 100%; max-width: 620px; padding-bottom: 40px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
 
-        header { position: sticky; top: 0; background-color: rgba(10, 14, 23, 0.85); backdrop-filter: blur(12px); display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border-color); z-index: 100; }
-        .brand { display: flex; align-items: center; gap: 12px; }
-        .brand img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--accent-blue); }
-        .brand h1 { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        .account-bar { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px; margin: 12px 0; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-        .nsec-box { display: none; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
-        .nsec-box input { width: 100%; background: var(--bg-tertiary); border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; color: #fff; margin-top: 6px; outline: none; }
+        /* App Layout */
+        .app-container {
+            display: flex;
+            width: 100%;
+            max-width: 1300px;
+            min-height: 100vh;
+        }
 
-        .composer { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
-        .composer textarea { width: 100%; height: 80px; background: transparent; border: none; color: var(--text-primary); font-size: 15px; resize: none; outline: none; }
-        .composer-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); }
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px;
+            padding: 20px;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
 
-        .btn-icon { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; }
-        .btn-publish { background: linear-gradient(135deg, var(--accent-blue), #2563eb); color: #fff; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 14px; }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
 
-        .post-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 14px; word-break: break-word; }
-        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .avatar { width: 36px; height: 36px; border-radius: 50%; background-color: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-blue); border: 1px solid var(--border-color); font-size: 12px; }
-        .author-info { display: flex; flex-direction: column; }
-        .author-name { font-size: 13px; font-weight: 600; color: var(--accent-blue); }
-        .post-body { font-size: 15px; line-height: 1.6; color: var(--text-primary); white-space: pre-line; }
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
-        .post-actions { display: flex; justify-content: space-around; padding-top: 10px; margin-top: 10px; border-top: 1px solid var(--border-color); }
-        .action-btn { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 6px; }
-        .action-btn:hover { background-color: var(--bg-tertiary); color: var(--text-primary); }
-        .action-btn.liked { color: var(--accent-red); }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-        .comment-section { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-color); }
-        .comment-input { display: flex; gap: 6px; }
-        .comment-input input { flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 15px; padding: 6px 12px; color: #fff; font-size: 12px; outline: none; }
-        .comment-input button { background: var(--accent-blue); color: #fff; border: none; border-radius: 15px; padding: 6px 12px; font-size: 12px; cursor: pointer; }
-        .comment-list { margin-top: 8px; font-size: 12px; color: var(--text-secondary); }
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--bg-secondary);
+            color: var(--text-main);
+        }
 
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 20px; font-size: 13px; transition: transform 0.3s ease; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        #toast.show { transform: translateX(-50%) translateY(0); }
+        .nav-item.active {
+            border-right: 4px solid var(--accent-color);
+        }
+
+        .post-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .post-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Profile Mini Card */
+        .user-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .user-handle {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            max-width: 650px;
+            border-left: 1px solid var(--border-color);
+            min-height: 100vh;
+        }
+
+        .top-header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(11, 14, 20, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 18px;
+            font-weight: 700;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Tabs Navigation inside View */
+        .views-container {
+            padding: 0;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        /* Feed Composer */
+        .composer {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 15px;
+        }
+
+        .composer textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            min-height: 80px;
+        }
+
+        .composer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Post Cards */
+        .post-card {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            gap: 14px;
+            transition: background 0.15s;
+        }
+
+        .post-card:hover {
+            background-color: rgba(21, 26, 35, 0.5);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .post-author {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .post-handle {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .post-time {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-right: auto;
+        }
+
+        .post-body {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #e5e7eb;
+            margin-bottom: 12px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            max-width: 400px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .action-btn:hover {
+            color: var(--accent-color);
+        }
+
+        /* Settings View Styles */
+        .settings-group {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: white;
+            margin-top: 6px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        /* Right Widgets Sidebar */
+        .widgets-sidebar {
+            width: 320px;
+            padding: 20px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .widget-box {
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .widget-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .relay-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <header>
-            <div class="brand">
-                <img src="https://raw.githubusercontent.com/almsharbash/Rim.non2014/main/1000224814.png" alt="كلمات" onerror="this.style.display='none'">
-                <h1>كلمات</h1>
+        <!-- القائمة الجانبية للتنقل -->
+        <aside class="sidebar">
+            <div>
+                <div class="brand">
+                    <span>⚡</span> كلمات
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item active" onclick="switchView('feed-view', this)">
+                        <span>🏠</span> الرئيسية
+                    </li>
+                    <li class="nav-item" onclick="switchView('notifications-view', this)">
+                        <span>🔔</span> الإشعارات
+                    </li>
+                    <li class="nav-item" onclick="switchView('messages-view', this)">
+                        <span>💬</span> الرسائل
+                    </li>
+                    <li class="nav-item" onclick="switchView('profile-view', this)">
+                        <span>👤</span> الملف الشخصي
+                    </li>
+                    <li class="nav-item" onclick="switchView('settings-view', this)">
+                        <span>⚙️</span> الإعدادات
+                    </li>
+                </ul>
+                <button class="post-btn">انشر الآن ✍️</button>
             </div>
-            <button class="btn-icon" onclick="toggleNsecBox()">🔑 المفتاح الخاص</button>
-        </header>
 
-        <div class="account-bar">
-            <span>الحساب الحسابي المولد: <strong id="userNpubDisplay" style="color:var(--accent-green)">...</strong></span>
-            <button class="btn-icon" onclick="copyNsec()">نسخ nsec 📋</button>
-        </div>
-
-        <div class="nsec-box" id="nsecBox">
-            <span style="font-size: 12px; color: var(--text-secondary);">إذا كان لديك حساب سابق، أدخل nsec هنا:</span>
-            <input type="password" id="customNsec" placeholder="nsec1..." onchange="loadCustomNsec()">
-        </div>
-
-        <div class="composer">
-            <textarea id="postInput" placeholder="اكتب كلمتك هنا..."></textarea>
-            <div class="composer-footer">
-                <span id="statusInfo" style="font-size: 11px; color: var(--text-secondary);">متصل بالشبكة</span>
-                <button class="btn-publish" onclick="publishPost()">✨ نشر</button>
+            <!-- بطاقة المستخدم المصغرة -->
+            <div class="user-mini">
+                <div class="avatar">M</div>
+                <div class="user-info">
+                    <span class="user-name">المشاربش</span>
+                    <span class="user-handle">npub1...almsharbash</span>
+                </div>
             </div>
-        </div>
+        </aside>
 
-        <div id="feed"></div>
+        <!-- المنطقة المركزية لعرض الشاشات -->
+        <main class="main-content">
+            
+            <!-- 1. شاشة الخيم/الرئيسية (Feed View) -->
+            <div id="feed-view" class="view-section active">
+                <div class="top-header">
+                    <span>الرئيسية</span>
+                    <span style="font-size: 14px; color: var(--text-muted); cursor: pointer;">✨ منشورات مختارة</span>
+                </div>
+
+                <!-- صندوق إنشاء منشور -->
+                <div class="composer">
+                    <div class="avatar">M</div>
+                    <div style="flex: 1;">
+                        <textarea placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
+                        <div class="composer-actions">
+                            <span style="cursor: pointer;">🖼️ 🎙️ 📊</span>
+                            <button class="post-btn" style="width: auto; padding: 8px 20px; margin: 0;">نشر</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- قائمة المنشورات التجريبية العينة -->
+                <div id="posts-feed">
+                    <div class="post-card">
+                        <div class="avatar" style="background: #3b82f6;">A</div>
+                        <div style="flex: 1;">
+                            <div class="post-header">
+                                <span class="post-author">أحمد العمر</span>
+                                <span class="post-handle">@ahmed</span>
+                                <span class="post-time">منذ 5 د</span>
+                            </div>
+                            <div class="post-body">
+                                نرحب بالجميع في واجهة منصة "كلمات" الجديدة! تم بناء الواجهة لتكون سريعة ومنظمة وتعمل بسلاسة عبر بروتوكول نوستر اللامركزي. 🚀
+                            </div>
+                            <div class="post-actions">
+                                <span class="action-btn">💬 12</span>
+                                <span class="action-btn">🔄 4</span>
+                                <span class="action-btn">❤️ 45</span>
+                                <span class="action-btn">⚡ 100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="avatar" style="background: #10b981;">S</div>
+                        <div style="flex: 1;">
+                            <div class="post-header">
+                                <span class="post-author">سارة علي</span>
+                                <span class="post-handle">@sara</span>
+                                <span class="post-time">منذ ساعة</span>
+                            </div>
+                            <div class="post-body">
+                                اللامركزية ليست مجرد تقنية، بل هي حرية امتلاك بياناتك دون التحكم من أي جهة مركزية. 🌐✨
+                            </div>
+                            <div class="post-actions">
+                                <span class="action-btn">💬 5</span>
+                                <span class="action-btn">🔄 2</span>
+                                <span class="action-btn">❤️ 28</span>
+                                <span class="action-btn">⚡ 50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. شاشة الإشعارات (Notifications View) -->
+            <div id="notifications-view" class="view-section">
+                <div class="top-header">الإشعارات</div>
+                <div style="padding: 20px; text-align: center; color: var(--text-muted);">
+                    🔔 لا توجد إشعارات جديدة حالياً.
+                </div>
+            </div>
+
+            <!-- 3. شاشة الرسائل (Messages View) -->
+            <div id="messages-view" class="view-section">
+                <div class="top-header">الرسائل الخاصة (Direct Messages)</div>
+                <div style="padding: 20px; text-align: center; color: var(--text-muted);">
+                    💬 المحادثات المشفرة بين الأطراف ستظهر هنا.
+                </div>
+            </div>
+
+            <!-- 4. شاشة الملف الشخصي (Profile View) -->
+            <div id="profile-view" class="view-section">
+                <div style="height: 140px; background: linear-gradient(90deg, #8b5cf6, #3b82f6);"></div>
+                <div style="padding: 0 20px; position: relative; margin-bottom: 20px;">
+                    <div class="avatar" style="width: 80px; height: 80px; font-size: 32px; border: 4px solid var(--bg-main); position: absolute; top: -40px;">M</div>
+                    <div style="text-align: left; padding-top: 10px;">
+                        <button class="post-btn" style="width: auto; padding: 6px 16px; background: transparent; border: 1px solid var(--border-color);">تعديل الملف</button>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <h2>المشاربش</h2>
+                        <span style="color: var(--text-muted); font-size: 13px;">npub1...almsharbash</span>
+                        <p style="margin-top: 10px; font-size: 14px;">مطور ومحاضر مهتم بالتقنيات الحديثة والحرية الرقمية. ⚡</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. شاشة الإعدادات الكاملة (Settings View) -->
+            <div id="settings-view" class="view-section">
+                <div class="top-header">إعدادات المنصة</div>
+
+                <div class="settings-group">
+                    <div class="settings-title">🔑 إدارة المفاتيح الرقمية (Nostr Keys)</div>
+                    <label style="font-size: 13px; color: var(--text-muted);">المفتاح العام (Public Key - npub):</label>
+                    <input type="text" class="input-box" value="npub1almsharbash..." readonly>
+
+                    <label style="font-size: 13px; color: var(--text-muted);">المفتاح الخاص (Private Key - nsec):</label>
+                    <input type="password" class="input-box" value="nsec1234567890..." readonly>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-title">🌐 خوادم الترحيل المتصلة (Relays)</div>
+                    <div class="relay-status">
+                        <span>wss://relay.damus.io</span>
+                        <span style="color: var(--success);">متصل ✅</span>
+                    </div>
+                    <div class="relay-status">
+                        <span>wss://nos.lol</span>
+                        <span style="color: var(--success);">متصل ✅</span>
+                    </div>
+                    <input type="text" class="input-box" placeholder="إضافة خادم جديد wss://..." style="margin-top: 15px;">
+                </div>
+            </div>
+
+        </main>
+
+        <!-- الجانب الأيسر: الأدوات والتوجيهات -->
+        <aside class="widgets-sidebar">
+            <div class="widget-box">
+                <div class="widget-title">🔥 المواضيع المتداولة</div>
+                <div style="font-size: 14px; margin-bottom: 8px;">#Nostr ⚡</div>
+                <div style="font-size: 14px; margin-bottom: 8px;">#Bitcoin 🪙</div>
+                <div style="font-size: 14px;">#التقنية_العربية 💻</div>
+            </div>
+
+            <div class="widget-box">
+                <div class="widget-title">📡 حالة الشبكة</div>
+                <div class="relay-status">
+                    <span>الخوادم النشطة:</span>
+                    <span>2/2</span>
+                </div>
+                <div class="relay-status">
+                    <span>سرعة الاستجابة:</span>
+                    <span style="color: var(--success);">45ms</span>
+                </div>
+            </div>
+        </aside>
     </div>
 
-    <div id="toast">تم الإجراء بنجاح</div>
-
     <script>
-        const relayUrls = ['wss://relay.damus.io', 'wss://nos.lol', 'wss://relay.nostr.band'];
-        let sockets = [];
-        let sk = null;
-        let pk = null;
-
-        function initAccount() {
-            let savedSk = localStorage.getItem('kalimat_sk');
-            if (!savedSk) {
-                sk = NostrTools.generatePrivateKey();
-                localStorage.setItem('kalimat_sk', sk);
-            } else {
-                sk = savedSk;
-            }
-            pk = NostrTools.getPublicKey(sk);
-            const npub = NostrTools.nip19.npubEncode(pk);
-            document.getElementById('userNpubDisplay').innerText = npub.substring(0, 10) + "...";
-        }
-
-        function initRelays() {
-            relayUrls.forEach(url => {
-                try {
-                    const ws = new WebSocket(url);
-                    ws.onopen = () => {
-                        ws.send(JSON.stringify(["REQ", "main-feed", { kinds: [1], limit: 15 }]));
-                    };
-                    ws.onmessage = (e) => {
-                        const msg = JSON.parse(e.data);
-                        if (msg[0] === "EVENT") displayPost(msg[2]);
-                    };
-                    sockets.push(ws);
-                } catch(err) {}
+        // التنقل السلس بين الشاشات
+        function switchView(viewId, element) {
+            // إخفاء كافة الشاشات
+            document.querySelectorAll('.view-section').forEach(view => {
+                view.classList.remove('active');
             });
-        }
-
-        function publishPost() {
-            const input = document.getElementById('postInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            let event = {
-                kind: 1,
-                created_at: Math.floor(Date.now() / 1000),
-                tags: [],
-                content: text,
-                pubkey: pk
-            };
-
-            event.id = NostrTools.getEventHash(event);
-            event.sig = NostrTools.signEvent(event, sk);
-
-            const msg = JSON.stringify(["EVENT", event]);
-            sockets.forEach(ws => {
-                if (ws.readyState === WebSocket.OPEN) ws.send(msg);
+            // إلغاء تحديد عناصر القائمة
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
             });
 
-            displayPost(event);
-            input.value = '';
-            showToast('تم النشر بنجاح ✨');
+            // إظهار الشاشة المطلوبة وتحديد الزر النشط
+            document.getElementById(viewId).classList.add('active');
+            element.classList.add('active');
         }
-
-        const renderedIds = new Set();
-        function displayPost(event) {
-            if (renderedIds.has(event.id)) return;
-            renderedIds.add(event.id);
-
-            const feed = document.getElementById('feed');
-            const card = document.createElement('div');
-            card.className = 'post-card';
-            const postId = 'p-' + Math.random().toString(36).substr(2, 7);
-
-            let npubShort = event.pubkey ? NostrTools.nip19.npubEncode(event.pubkey).substring(0, 9) + "..." : "عضو";
-
-            card.innerHTML = `
-                <div class="post-header">
-                    <div class="avatar">${npubShort.substring(5, 7).toUpperCase()}</div>
-                    <div class="author-info">
-                        <span class="author-name">${npubShort}</span>
-                    </div>
-                </div>
-                <div class="post-body">${escapeHtml(event.content)}</div>
-                <div class="post-actions">
-                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
-                    <button class="action-btn" onclick="toggleComments('${postId}')">💬</button>
-                    <button class="action-btn" onclick="sharePost()">🔗</button>
-                </div>
-                <div class="comment-section" id="${postId}">
-                    <div class="comment-input">
-                        <input type="text" placeholder="اكتب تعليقاً..." id="in-${postId}">
-                        <button onclick="addComment('${postId}')">إرسال</button>
-                    </div>
-                    <div class="comment-list" id="list-${postId}"></div>
-                </div>
-            `;
-            feed.prepend(card);
-        }
-
-        function toggleLike(btn) {
-            btn.classList.toggle('liked');
-            showToast(btn.classList.contains('liked') ? 'تم الإعجاب' : 'تم الغاء الإعجاب');
-        }
-
-        function toggleComments(id) {
-            const el = document.getElementById(id);
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function addComment(id) {
-            const input = document.getElementById(`in-${id}`);
-            const list = document.getElementById(`list-${id}`);
-            if (!input.value.trim()) return;
-
-            const div = document.createElement('div');
-            div.style.marginTop = '4px';
-            div.innerText = '• ' + input.value;
-            list.appendChild(div);
-            input.value = '';
-            showToast('تمت إضافة التعليق');
-        }
-
-        function sharePost() {
-            navigator.clipboard.writeText(window.location.href);
-            showToast('تم نسخ الرابط');
-        }
-
-        function toggleNsecBox() {
-            const b = document.getElementById('nsecBox');
-            b.style.display = b.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function copyNsec() {
-            const nsec = NostrTools.nip19.nsecEncode(sk);
-            navigator.clipboard.writeText(nsec);
-            showToast('تم نسخ مفتاح nsec الخاص بك');
-        }
-
-        function loadCustomNsec() {
-            const val = document.getElementById('customNsec').value.trim();
-            try {
-                const { data } = NostrTools.nip19.decode(val);
-                sk = data;
-                pk = NostrTools.getPublicKey(sk);
-                localStorage.setItem('kalimat_sk', sk);
-                document.getElementById('userNpubDisplay').innerText = NostrTools.nip19.npubEncode(pk).substring(0, 10) + "...";
-                showToast('تم تحميل حسابك بنجاح');
-            } catch(e) {
-                showToast('رمز غير صالح');
-            }
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2500);
-        }
-
-        function escapeHtml(str) {
-            return str ? str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m])) : '';
-        }
-
-        window.onload = () => {
-            initAccount();
-            initRelays();
-        };
     </script>
 </body>
 </html>
+"""
+
+os.makedirs('kalimat_app', exist_ok=True)
+with open('kalimat_app/index.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("تم إنشاء واجهة تطبيق 'كلمات' الجاهزة للتجربة المعاينة بنجاح.")
