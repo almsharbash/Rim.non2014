@@ -723,23 +723,43 @@
 
     <script>
         // ==========================================
-        // وحدة توليد مفاتيح Nostr المشفرة
+        // وحدة توليد واشتقاق مفاتيح Nostr المشفرة
         // ==========================================
         const NostrCrypto = {
             generateAccount: function() {
                 try {
-                    // توليد مفتاح خاص عشوائي محلياً باستخدام NostrTools
-                    const sk = window.NostrTools.generatePrivateKey();
-                    const nsec = window.NostrTools.nip19.nsecEncode(sk);
+                    const NT = window.NostrTools;
+                    if (!NT) throw new Error("لم يتم تحميل مكتبة NostrTools");
 
-                    // اشتقاق المفتاح العام المترابط به
-                    const pk = window.NostrTools.getPublicKey(sk);
-                    const npub = window.NostrTools.nip19.npubEncode(pk);
+                    // توليد مفتاح خاص عشوائي محلياً (SecretKey)
+                    const sk = NT.generateSecretKey ? NT.generateSecretKey() : NT.generatePrivateKey();
+                    
+                    // تحويله إلى صيغة nsec
+                    const nsec = NT.nip19.nsecEncode(sk);
+
+                    // اشتقاق المفتاح العام المترابط به بتحويله لـ npub
+                    const pk = NT.getPublicKey(sk);
+                    const npub = NT.nip19.npubEncode(pk);
 
                     return { nsec, npub };
                 } catch (err) {
                     console.error("خطأ في مكتبة NostrTools:", err);
                     alert("تعذر استخدام مكتبة التشفير، تأكد من الاتصال بالشبكة لمرة واحدة.");
+                    return null;
+                }
+            },
+
+            deriveNpubFromNsec: function(nsecStr) {
+                try {
+                    const NT = window.NostrTools;
+                    if (!NT) return null;
+                    const decoded = NT.nip19.decode(nsecStr);
+                    if (decoded.type !== 'nsec') return null;
+                    
+                    const sk = decoded.data;
+                    const pk = NT.getPublicKey(sk);
+                    return NT.nip19.npubEncode(pk);
+                } catch (e) {
                     return null;
                 }
             }
@@ -913,28 +933,33 @@
             }
         }
 
-        // حفظ وتعديل المفاتيح المدخلة يدوياً
+        // حفظ وتعديل المفاتيح المدخلة يدوياً مع الاشتقاق التلقائي
         function updateCustomKeys() {
             const nsecInput = document.getElementById('setting-nsec').value.trim();
-            const npubInput = document.getElementById('setting-npub').value.trim();
 
-            if (!nsecInput && !npubInput) {
-                alert("يرجى إدخال مفتاح واحد على الأقل للحفظ.");
+            if (!nsecInput) {
+                alert("يرجى إدخال المفتاح الخاص (nsec) لحفظ وتعديل الحساب.");
                 return;
             }
 
-            if (nsecInput && !nsecInput.startsWith('nsec1')) {
-                alert("تنبيه: المفتاح الخاص يبدأ عادةً بـ nsec1");
+            if (!nsecInput.startsWith('nsec1')) {
+                alert("تنبيه: المفتاح الخاص يجب أن يبدأ بـ nsec1");
+                return;
             }
 
-            if (npubInput && !npubInput.startsWith('npub1')) {
-                alert("تنبيه: المفتاح العام يبدأ عادةً بـ npub1");
+            // اشتقاق المفتاح العام تلقائياً لمنع أي تعارض
+            const derivedNpub = NostrCrypto.deriveNpubFromNsec(nsecInput);
+
+            if (!derivedNpub) {
+                alert("المفتاح الخاص (nsec) المدخل غير صحيح أو لا يمكن فك تشفيره!");
+                return;
             }
 
+            document.getElementById('setting-npub').value = derivedNpub;
             localStorage.setItem('kalimat_nsec', nsecInput);
-            localStorage.setItem('kalimat_npub', npubInput);
+            localStorage.setItem('kalimat_npub', derivedNpub);
 
-            alert("تم حفظ المفاتيح المعدلة بنجاح!");
+            alert("تم حفظ المفتاح الخاص واشتقاق المفتاح العام المترابط به بنجاح! ✨");
         }
 
         function copyToClipboard(elementId) {
