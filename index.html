@@ -159,15 +159,13 @@
 </div>
 
 <script type="module">
-  import { generateSecretKey, getPublicKey, nip19, SimplePool } from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
+  import * as NostrTools from 'https://cdn.jsdelivr.net/npm/nostr-tools@2.7.0/+esm';
 
   const RELAYS = [
     'wss://relay.damus.io',
     'wss://nos.lol',
     'wss://relay.nostr.band'
   ];
-
-  const pool = new SimplePool();
 
   function hexToBytes(hex) {
     let bytes = new Uint8Array(hex.length / 2);
@@ -177,9 +175,10 @@
     return bytes;
   }
 
-  // دالة لجلب بيانات البروفايل الفردية من الشبكة
+  // جلب البيانات من شبكة Nostr
   async function fetchProfile(pubkeyHex) {
     try {
+      const pool = new NostrTools.SimplePool();
       const event = await pool.get(RELAYS, {
         kinds: [0],
         authors: [pubkeyHex]
@@ -192,18 +191,18 @@
         document.getElementById('pictureUrlInput').value = metadata.picture || '';
         document.getElementById('bioInput').value = metadata.about || '';
       }
+      pool.close(RELAYS);
     } catch (e) {
-      console.warn('تعذر جلب بيانات الملف الشخصي:', e);
+      console.warn('تعذر جلب البيانات:', e);
     }
   }
 
-  // تسجيل الدخول الفعلي
-  async function loginWithKey(privInput) {
+  // تسجيل الدخول الحقيقي
+  async function performLogin(privInput) {
     let skBytes;
-    let pkHex;
 
     if (privInput.startsWith('nsec1')) {
-      const decoded = nip19.decode(privInput);
+      const decoded = NostrTools.nip19.decode(privInput);
       if (decoded.type === 'nsec') {
         skBytes = decoded.data;
       }
@@ -211,65 +210,64 @@
       skBytes = hexToBytes(privInput);
     }
 
-    pkHex = getPublicKey(skBytes);
-    const npub = nip19.npubEncode(pkHex);
-    const nsec = privInput.startsWith('nsec1') ? privInput : nip19.nsecEncode(skBytes);
+    const pkHex = NostrTools.getPublicKey(skBytes);
+    const npub = NostrTools.nip19.npubEncode(pkHex);
+    const nsec = privInput.startsWith('nsec1') ? privInput : NostrTools.nip19.nsecEncode(skBytes);
 
+    // حفظ البيانات في المتصفح
     localStorage.setItem('kalimat_nsec', nsec);
     localStorage.setItem('kalimat_npub', npub);
     localStorage.setItem('kalimat_pk_hex', pkHex);
 
+    // تحديث الواجهة
     document.getElementById('publicKeyInput').value = npub;
     document.getElementById('privateKeyInput').value = nsec;
 
-    // جلب البيانات الفعلية للحساب المسجل
+    // استرجاع البروفايل من السيرفرات
     await fetchProfile(pkHex);
   }
 
-  // عند تحميل الصفحة - التحقق من وجود جلسة سابقة
-  window.addEventListener('DOMContentLoaded', async () => {
-    const savedNsec = localStorage.getItem('kalimat_nsec');
-    if (savedNsec) {
-      await loginWithKey(savedNsec);
-    }
-  });
-
-  // 1. زر توليد حساب جديد
+  // التوليد والتسجيل
   document.getElementById('btnGenerate').addEventListener('click', async () => {
     try {
-      const skBytes = generateSecretKey();
-      const pkHex = getPublicKey(skBytes);
-      const nsec = nip19.nsecEncode(skBytes);
-
-      await loginWithKey(nsec);
-      alert('تم إنشاء الحساب وتكويت الجلسة بنجاح!');
-    } catch (error) {
-      alert('حدث خطأ في التوليد: ' + error.message);
+      const skBytes = NostrTools.generateSecretKey();
+      const nsec = NostrTools.nip19.nsecEncode(skBytes);
+      await performLogin(nsec);
+      alert('تم توليد حساب جديد وتسجيل الدخول بنجاح!');
+    } catch (e) {
+      alert('خطأ في التوليد: ' + e.message);
     }
   });
 
-  // 2. زر تسجيل الدخول بالمفتاح الخاص
   document.getElementById('btnLogin').addEventListener('click', async () => {
     const btn = document.getElementById('btnLogin');
-    const privInput = document.getElementById('privateKeyInput').value.trim();
+    const input = document.getElementById('privateKeyInput').value.trim();
 
-    if (!privInput) {
-      alert('يرجى إدخال المفتاح الخاص أولاً (nsec1...)');
+    if (!input) {
+      alert('يرجى كتابة أو لصق المفتاح الخاص (nsec1...) أولاً');
       return;
     }
 
     try {
-      btn.innerText = 'جاري تسجيل الدخول...';
+      btn.innerText = 'جاري التحقق والجلب...';
       btn.disabled = true;
 
-      await loginWithKey(privInput);
+      await performLogin(input);
 
-      alert('تم تسجيل الدخول واسترجاع البيانات بنجاح!');
-    } catch (error) {
-      alert('المفتاح الخاص غير صالح، تأكد من إدخال nsec بشكل صحيح.');
+      alert('تم تسجيل الدخول بنجاح!');
+    } catch (e) {
+      alert('المفتاح الخاص غير صحيح، يرجى التأكد منه.');
     } finally {
       btn.innerText = 'تسجيل الدخول بالمفتاح';
       btn.disabled = false;
+    }
+  });
+
+  // استعادة الجلسة فور فتح الصفحة
+  window.addEventListener('DOMContentLoaded', async () => {
+    const saved = localStorage.getItem('kalimat_nsec');
+    if (saved) {
+      await performLogin(saved);
     }
   });
 </script>
