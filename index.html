@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كلمات | Kalimat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- استدعاء خط الرقعة العربي الفني وخط تجوال للنصوص -->
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Tajawal', sans-serif;
         }
 
         body {
             background-color: #f0f2f5;
+            font-family: 'Tajawal', sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -25,32 +26,29 @@
 
         .header-container {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        .logo-box {
-            display: inline-block;
-            background: #ffffff;
-            padding: 8px;
-            border-radius: 22px;
-            box-shadow: 0 10px 25px rgba(10, 58, 110, 0.12);
-            margin-bottom: 12px;
-        }
-
+        /* عرض الريشة مباشرة بدون إطار أو كادر أبيض */
         .logo-img {
-            width: 85px;
-            height: 85px;
+            width: 100px;
+            height: auto;
+            max-height: 120px;
             object-fit: contain;
-            border-radius: 16px;
             display: block;
+            margin: 0 auto 10px auto;
+            /* لمسة اختيارية لإعطاء عمق للريشة فوق الخلفية */
+            filter: drop-shadow(0px 6px 10px rgba(13, 71, 161, 0.2));
         }
 
+        /* تنسيق اسم المنصة بخط الرقعة الفني */
         .app-title {
             color: #0d47a1;
-            font-size: 34px;
+            font-family: 'Aref Ruqaa', serif;
+            font-size: 48px;
             font-weight: 700;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+            line-height: 1.2;
         }
 
         .app-desc {
@@ -81,6 +79,7 @@
             font-size: 15px;
             outline: none;
             transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
         }
 
         .input-field:focus {
@@ -99,6 +98,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: background 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
         }
 
         .btn-primary:hover {
@@ -131,6 +131,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: background 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
         }
 
         .btn-secondary:hover {
@@ -149,9 +150,7 @@
 
     <!-- الهيدر والشعار -->
     <div class="header-container">
-        <div class="logo-box">
-            <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="كلمات" class="logo-img">
-        </div>
+        <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="كلمات" class="logo-img">
         <h1 class="app-title">كلمات</h1>
         <p class="app-desc">تواصل مع الأصدقاء والعالم من حولك عبر المنصة في مكان واحد.</p>
     </div>
