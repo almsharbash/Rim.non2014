@@ -88,14 +88,45 @@
             cursor: pointer;
         }
 
+        /* --- نافذة إنشاء حساب جديد (Modal) --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-card {
+            background: #fff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 16px;
+            padding: 20px 25px;
+            position: relative;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+        .modal-title { font-size: 22px; font-weight: bold; color: #1c1e21; }
+        .close-btn { background: none; border: none; font-size: 24px; color: #888; cursor: pointer; }
+        .row-inputs { display: flex; gap: 10px; }
+
         /* --- واجهة المنشورات الرئيسية --- */
         #main-feed {
-            display: none; /* مخفية حتى يتم تسجيل الدخول */
+            display: none;
             max-width: 600px;
             margin: 0 auto;
             padding-bottom: 40px;
         }
-
         .top-navbar {
             background: #ffffff;
             position: sticky;
@@ -117,7 +148,6 @@
             width: 60%;
             font-family: 'Tajawal', sans-serif;
         }
-
         .post-creator {
             background: #ffffff;
             margin: 15px 10px;
@@ -136,9 +166,8 @@
             outline: none;
             font-family: 'Tajawal', sans-serif;
         }
-        .creator-actions { display: flex; justify-content: space-around; border-top: 1px solid #eee; pt: 10px; margin-top: 10px; padding-top: 10px; }
+        .creator-actions { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
         .action-btn { background: none; border: none; color: #555; font-size: 14px; cursor: pointer; font-family: 'Tajawal', sans-serif; }
-
         .post-card {
             background: #ffffff;
             margin: 15px 10px;
@@ -176,20 +205,41 @@
             </form>
             <a href="#" class="forgot-pass">هل نسيت كلمة السر؟</a>
             <div class="divider"></div>
-            <button class="btn-secondary" onclick="handleLogin(event)">إنشاء حساب جديد</button>
+            <button class="btn-secondary" onclick="openRegisterModal()">إنشاء حساب جديد</button>
         </div>
     </div>
 
-    <!-- 2. واجهة المنشورات (Main Feed) -->
+    <!-- 2. نافذة منبثقة لإنشاء حساب جديد -->
+    <div class="modal-overlay" id="registerModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">إنشاء حساب جديد</span>
+                <button class="close-btn" onclick="closeRegisterModal()">&times;</button>
+            </div>
+            <form onsubmit="handleRegisterSubmit(event)">
+                <div class="form-group row-inputs">
+                    <input type="text" class="input-field" placeholder="الاسم الأول" required>
+                    <input type="text" class="input-field" placeholder="اسم العائلة" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="input-field" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="input-field" placeholder="كلمة السر الجديدة" required>
+                </div>
+                <button type="submit" class="btn-secondary" style="margin-top: 10px;">تسجيل الحساب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. واجهة المنشورات (Main Feed) -->
     <div id="main-feed">
-        <!-- الشريط العلوي -->
         <nav class="top-navbar">
             <a href="#" class="nav-logo">كلمات</a>
             <input type="text" class="search-box" placeholder="بحث في كلمات...">
             <div class="user-avatar">ك</div>
         </nav>
 
-        <!-- صندوق إنشاء منشور -->
         <div class="post-creator">
             <div class="creator-top">
                 <div class="user-avatar">ك</div>
@@ -202,9 +252,7 @@
             </div>
         </div>
 
-        <!-- قائمة المنشورات -->
         <div id="postsContainer">
-            <!-- منشور تجريبي 1 -->
             <div class="post-card">
                 <div class="post-header">
                     <div class="user-avatar">م</div>
@@ -226,14 +274,29 @@
     </div>
 
     <script>
-        // التبديل بين صفحة الدخول والواجهة الرئيسية
+        // فتح وإغلاق نافذة التسجيل
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        // معالجة تسجيل حساب جديد
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+            closeRegisterModal();
+        }
+
+        // الدخول لواجهة المنشورات
         function handleLogin(e) {
             e.preventDefault();
             document.getElementById('login-page').style.display = 'none';
             document.getElementById('main-feed').style.display = 'block';
         }
 
-        // إضافة منشور جديد متفاعل محلياً
+        // إضافة منشور جديد محلياً
         function addPost() {
             const input = document.getElementById('postInput');
             if (!input.value.trim()) return;
