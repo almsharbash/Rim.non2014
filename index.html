@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كلمات | Kalimat</title>
-    <!-- استدعاء خط الرقعة العربي الفني وخط تجوال للنصوص -->
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- استدعاء خطوط عربية أصيلة مطابقة للتصميم -->
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Reem+Kufi:wght@700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -29,30 +29,33 @@
             margin-bottom: 20px;
         }
 
-        /* عرض الريشة مباشرة بدون إطار أو كادر أبيض */
+        /* عرض الريشة الشفافة مباشرة دون أي إطار أو خلفية مستطيلة */
         .logo-img {
-            width: 100px;
+            width: 120px;
             height: auto;
-            max-height: 120px;
+            max-height: 150px;
             object-fit: contain;
             display: block;
-            margin: 0 auto 10px auto;
-            /* لمسة اختيارية لإعطاء عمق للريشة فوق الخلفية */
-            filter: drop-shadow(0px 6px 10px rgba(13, 71, 161, 0.2));
+            margin: 0 auto 5px auto;
+            /* لمسة انعكاس ناعمة على الخلفية */
+            filter: drop-shadow(0px 8px 12px rgba(13, 71, 161, 0.18));
+            mix-blend-mode: multiply; /* تدمج البيض بالخلفية مؤقتاً لحين رفع صورة PNG مجردة */
         }
 
-        /* تنسيق اسم المنصة بخط الرقعة الفني */
+        /* تنسيق الخط العربي المميز لاسم المنصة */
         .app-title {
-            color: #0d47a1;
-            font-family: 'Aref Ruqaa', serif;
-            font-size: 48px;
+            color: #0b4395;
+            font-family: 'Aref Ruqaa', 'Reem Kufi', serif;
+            font-size: 52px;
             font-weight: 700;
-            margin-bottom: 4px;
-            line-height: 1.2;
+            margin-bottom: 6px;
+            line-height: 1.1;
+            letter-spacing: 1px;
+            text-shadow: 0px 2px 4px rgba(13, 71, 161, 0.1);
         }
 
         .app-desc {
-            color: #555;
+            color: #444;
             font-size: 15px;
             max-width: 320px;
             line-height: 1.5;
