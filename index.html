@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UI Framework Layout</title>
+  <title>الواجهة الأساسية للمنصة</title>
   <style>
     :root {
       --bg-main: #f0f2f5;
       --card-bg: #ffffff;
       --accent-color: #1877f2;
-      --text-primary: #050505;
-      --text-secondary: #65676b;
-      --divider: #e4e6eb;
-      --hover-bg: #f2f2f2;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+      --accent-hover: #166fe5;
+      --green-btn: #42b72a;
+      --green-hover: #36a420;
+      --text-primary: #1c1e21;
+      --text-secondary: #606770;
+      --border-color: #dddfe2;
+      --shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
     }
 
     * {
@@ -26,475 +28,268 @@
     body {
       background-color: var(--bg-main);
       color: var(--text-primary);
-      overflow-y: scroll;
-    }
-
-    /* ================= Top Navigation Bar ================= */
-    .top-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 56px;
-      background: var(--card-bg);
-      box-shadow: var(--shadow-sm);
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      align-items: center;
-      padding: 0 16px;
-      z-index: 1000;
     }
 
-    .nav-left {
+    /* Container Box */
+    .main-wrapper {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 120px 20px 80px 20px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      width: 280px;
+      justify-content: space-between;
+      gap: 40px;
+      width: 100%;
     }
 
-    .brand-icon {
-      width: 40px;
-      height: 40px;
+    /* 1. الجانب الأيمن: الشعار والوصف */
+    .brand-section {
+      max-width: 500px;
+      margin-bottom: 80px;
+    }
+
+    .brand-logo-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .logo-badge {
+      width: 56px;
+      height: 56px;
       background: var(--accent-color);
-      border-radius: 50%;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
+      font-size: 28px;
       font-weight: bold;
     }
 
-    .search-wrapper {
-      position: relative;
-      width: 100%;
+    .brand-title {
+      font-size: 32px;
+      color: var(--accent-color);
+      font-weight: bold;
     }
 
-    .search-input {
+    .brand-description {
+      font-size: 24px;
+      line-height: 1.34;
+      color: var(--text-primary);
+      font-weight: normal;
+    }
+
+    /* 2. الجانب الأيسر: بطاقة تسجيل الدخول */
+    .login-box-wrapper {
+      width: 396px;
+      text-align: center;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 16px 16px 24px 16px;
+    }
+
+    .login-input {
       width: 100%;
-      height: 40px;
-      border-radius: 50px;
-      border: none;
-      background: var(--bg-main);
-      padding: 0 16px 0 36px;
-      font-size: 0.9375rem;
+      height: 52px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-size: 17px;
+      margin-bottom: 12px;
       outline: none;
     }
 
-    /* Central Tab Navigation */
-    .nav-tabs {
-      display: flex;
-      height: 100%;
-      max-width: 680px;
-      flex: 1;
-      justify-content: center;
+    .login-input:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px #e7f3ff;
     }
 
-    .tab-item {
-      flex: 1;
-      max-width: 110px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      color: var(--text-secondary);
-    }
-
-    .tab-item.active {
-      color: var(--accent-color);
-      border-bottom-color: var(--accent-color);
-    }
-
-    .tab-item svg {
-      width: 28px;
-      height: 28px;
-      fill: currentColor;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: 280px;
-      justify-content: flex-end;
-    }
-
-    .icon-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--divider);
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .icon-btn svg {
-      width: 20px;
-      height: 20px;
-      fill: var(--text-primary);
-    }
-
-    .profile-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #ccc;
-      cursor: pointer;
-    }
-
-    /* ================= Main Content Grid ================= */
-    .layout-grid {
-      display: grid;
-      grid-template-columns: 280px minmax(500px, 680px) 280px;
-      justify-content: space-between;
-      margin-top: 56px;
-      padding-top: 16px;
-      max-width: 1920px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Common Card Module */
-    .card {
-      background: var(--card-bg);
-      border-radius: 8px;
-      box-shadow: var(--shadow-sm);
-      margin-bottom: 16px;
-    }
-
-    /* ================= Left Sidebar ================= */
-    .sidebar-left {
-      padding: 8px;
-      position: sticky;
-      top: 72px;
-      height: calc(100vh - 72px);
-    }
-
-    .menu-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      color: var(--text-primary);
-      font-weight: 500;
-      font-size: 0.9375rem;
-    }
-
-    .menu-row:hover {
-      background: var(--divider);
-    }
-
-    .menu-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #e4e6eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* ================= Central Feed ================= */
-    /* Stories Bar */
-    .stories-container {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-      overflow-x: auto;
-    }
-
-    .story-card {
-      width: 110px;
-      height: 190px;
-      border-radius: 10px;
-      background: #ddd;
-      position: relative;
-      flex-shrink: 0;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .story-user {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 3px solid var(--accent-color);
-      background: #aaa;
-    }
-
-    /* Publisher Card */
-    .publisher-card {
-      padding: 12px 16px 10px 16px;
-    }
-
-    .pub-top {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--divider);
-    }
-
-    .pub-input {
-      flex: 1;
-      height: 40px;
-      border-radius: 20px;
-      background: var(--bg-main);
-      border: none;
-      padding: 0 16px;
-      text-align: right;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-size: 0.9375rem;
-    }
-
-    .pub-bottom {
-      display: flex;
-      padding-top: 8px;
-    }
-
-    .pub-action {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      height: 40px;
-      border: none;
-      background: transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-
-    .pub-action:hover {
-      background: var(--bg-main);
-    }
-
-    /* Post Module */
-    .post-card {
-      padding: 12px 0 4px 0;
-    }
-
-    .post-header {
-      display: flex;
-      justify-content: space-between;
-      padding: 0 16px 12px 16px;
-    }
-
-    .post-user-info {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .post-title {
-      font-weight: 600;
-      font-size: 0.9375rem;
-    }
-
-    .post-time {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-    }
-
-    .post-body {
-      padding: 0 16px 12px 16px;
-      font-size: 0.9375rem;
-      line-height: 1.3333;
-    }
-
-    .post-media {
+    .btn-login {
       width: 100%;
-      height: 380px;
-      background: #ccc;
+      height: 48px;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: background 0.2s;
     }
 
-    .post-actions-bar {
+    .btn-login:hover {
+      background: var(--accent-hover);
+    }
+
+    .forgot-link {
+      color: var(--accent-color);
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .divider {
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .btn-register {
+      height: 48px;
+      background: var(--green-btn);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 17px;
+      font-weight: bold;
+      padding: 0 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-register:hover {
+      background: var(--green-hover);
+    }
+
+    .sub-text {
+      margin-top: 28px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .sub-text a {
+      font-weight: bold;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    /* Footer Elements */
+    footer {
+      background: var(--card-bg);
+      padding: 20px 0;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .footer-content {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .footer-links {
       display: flex;
-      padding: 4px 16px;
-      border-top: 1px solid var(--divider);
-      margin-top: 4px;
+      flex-wrap: wrap;
+      gap: 12px;
+      list-style: none;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 10px;
     }
 
-    /* Responsive Rules */
-    @media (max-width: 1100px) {
-      .layout-grid {
-        grid-template-columns: 80px minmax(0, 1fr) 0px;
-      }
-      .sidebar-right { display: none; }
-      .menu-row span { display: none; }
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
     }
 
-    @media (max-width: 700px) {
-      .layout-grid {
-        grid-template-columns: 1fr;
-        padding: 8px;
+    /* للتجاوب مع الهواتف الذكية */
+    @media (max-width: 900px) {
+      .main-wrapper {
+        flex-direction: column;
+        padding-top: 40px;
+        text-align: center;
       }
-      .sidebar-left { display: none; }
-      .nav-tabs { display: none; }
+      .brand-section {
+        margin-bottom: 20px;
+        max-width: 100%;
+      }
+      .brand-description {
+        font-size: 20px;
+      }
+      .login-box-wrapper {
+        width: 100%;
+        max-width: 400px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. Header Toolbar -->
-  <nav class="top-nav">
-    <div class="nav-left">
-      <div class="brand-icon">UI</div>
-      <div class="search-wrapper">
-        <input type="text" class="search-input" placeholder="بحث...">
+  <!-- 1. المكون الرئيسي للواجهة -->
+  <div class="main-wrapper">
+    
+    <!-- الجانب الأيمن: شعار المنصة وتوضيح الفكرة -->
+    <div class="brand-section">
+      <div class="brand-logo-icon">
+        <div class="logo-badge">✦</div>
+        <span class="brand-title">اسم المنصة</span>
       </div>
+      <h2 class="brand-description">
+        تواصل مع الأصدقاء والعالم من حولك عبر المنصة في مكان واحد.
+      </h2>
     </div>
 
-    <!-- Center Navigation Tabs -->
-    <div class="nav-tabs">
-      <div class="tab-item active">
-        <svg viewBox="0 0 28 28"><path d="M25.825 12.29l-11-10c-.449-.408-1.201-.408-1.65 0l-11 10A1.001 1.001 0 002.825 13.71L4 12.642V24c0 .552.448 1 1 1h6c.552 0 1-.448 1-1v-6h4v6c0 .552.448 1 1 1h6c.552 0 1-.448 1-1V12.642l1.175 1.068a.998.998 0 001.405-1.42z"/></svg>
+    <!-- الجانب الأيسر: صندوق تسجيل الدخول وإنشاء حساب -->
+    <div class="login-box-wrapper">
+      <div class="login-card">
+        <form onsubmit="event.preventDefault();">
+          <input type="text" class="login-input" placeholder="البريد الإلكتروني أو رقم الهاتف">
+          <input type="password" class="login-input" placeholder="كلمة السر">
+          
+          <button class="btn-login">تسجيل الدخول</button>
+          
+          <a href="#" class="forgot-link">هل نسيت كلمة السر؟</a>
+          
+          <div class="divider"></div>
+          
+          <button class="btn-register">إنشاء حساب جديد</button>
+        </form>
       </div>
-      <div class="tab-item">
-        <svg viewBox="0 0 28 28"><path d="M22.5 4h-17A2.5 2.5 0 003 6.5v15A2.5 2.5 0 005.5 24h17a2.5 2.5 0 002.5-2.5v-15A2.5 2.5 0 0022.5 4zM23 21.5a.5.5 0 01-.5.5h-17a.5.5 0 01-.5-.5V10h18v11.5z"/></svg>
-      </div>
-      <div class="tab-item">
-        <svg viewBox="0 0 28 28"><path d="M14 2.005c-6.627 0-12 5.373-12 12 0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.358.358 0 01.083.344c-.091.378-.293 1.189-.333 1.357-.053.224-.174.271-.401.164-1.495-.696-2.43-2.88-2.43-4.636 0-3.778 2.748-7.252 7.92-7.252 4.158 0 7.392 2.963 7.392 6.923 0 4.135-2.607 7.462-6.225 7.462-1.215 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C11.57 25.86 12.766 26 14 26c6.627 0 12-5.373 12-12s-5.373-11.995-12-11.995z"/></svg>
-      </div>
-      <div class="tab-item">
-        <svg viewBox="0 0 28 28"><path d="M12 4.5a2.5 2.5 0 00-2.5 2.5v14a2.5 2.5 0 002.5 2.5h11a2.5 2.5 0 002.5-2.5V7a2.5 2.5 0 00-2.5-2.5H12zM4.5 7.5A1.5 1.5 0 016 6h1v15H6a1.5 1.5 0 01-1.5-1.5v-12z"/></svg>
+
+      <div class="sub-text">
+        <a href="#">أنشئ صفحة</a> لشخصية عامة أو علامة تجارية أو عمل تجاري.
       </div>
     </div>
-
-    <!-- Right Controls -->
-    <div class="nav-right">
-      <button class="icon-btn">
-        <svg viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/></svg>
-      </button>
-      <button class="icon-btn">
-        <svg viewBox="0 0 20 20"><path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7z"/></svg>
-      </button>
-      <div class="profile-avatar"></div>
-    </div>
-  </nav>
-
-  <!-- 2. Application Layout Grid -->
-  <div class="layout-grid">
-
-    <!-- Left Menu -->
-    <aside class="sidebar-left">
-      <a href="#" class="menu-row">
-        <div class="profile-avatar" style="width:36px; height:36px;"></div>
-        <span>اسم الملف الشخصي</span>
-      </a>
-      <a href="#" class="menu-row">
-        <div class="menu-icon">👥</div>
-        <span>الأصدقاء</span>
-      </a>
-      <a href="#" class="menu-row">
-        <div class="menu-icon">📑</div>
-        <span>الصفحات</span>
-      </a>
-      <a href="#" class="menu-row">
-        <div class="menu-icon">👨‍👩‍👧‍👦</div>
-        <span>المجموعات</span>
-      </a>
-      <a href="#" class="menu-row">
-        <div class="menu-icon">🏪</div>
-        <span>السوق (Marketplace)</span>
-      </a>
-      <a href="#" class="menu-row">
-        <div class="menu-icon">🕒</div>
-        <span>الأرشيف والذكريات</span>
-      </a>
-    </aside>
-
-    <!-- Main Feed -->
-    <main class="feed-center">
-      
-      <!-- Story Feed Carousel -->
-      <div class="stories-container">
-        <div class="story-card">
-          <div class="story-user"></div>
-        </div>
-        <div class="story-card">
-          <div class="story-user"></div>
-        </div>
-        <div class="story-card">
-          <div class="story-user"></div>
-        </div>
-        <div class="story-card">
-          <div class="story-user"></div>
-        </div>
-      </div>
-
-      <!-- New Post Box -->
-      <div class="card publisher-card">
-        <div class="pub-top">
-          <div class="profile-avatar"></div>
-          <button class="pub-input">بم تفكر؟</button>
-        </div>
-        <div class="pub-bottom">
-          <button class="pub-action">📹 فيديو مباشر</button>
-          <button class="pub-action">🖼️ صورة/فيديو</button>
-          <button class="pub-action">😊 التفاعل</button>
-        </div>
-      </div>
-
-      <!-- Standard Post Element -->
-      <article class="card post-card">
-        <div class="post-header">
-          <div class="post-user-info">
-            <div class="profile-avatar"></div>
-            <div>
-              <div class="post-title">اسم الناشر</div>
-              <div class="post-time">منذ ساعتين · 🌐</div>
-            </div>
-          </div>
-          <button class="icon-btn" style="width: 32px; height: 32px;">•••</button>
-        </div>
-
-        <div class="post-body">
-          هيكل المنشور القياسي مع مسافات دقيقة وتحديد الأزرار السفلية القياسية للتفاعل.
-        </div>
-
-        <!-- Post Image Placeholder -->
-        <div class="post-media"></div>
-
-        <!-- Actions Footer -->
-        <div class="post-actions-bar">
-          <button class="pub-action">👍 أعجبني</button>
-          <button class="pub-action">💬 تعليق</button>
-          <button class="pub-action">↪️ مشاركة</button>
-        </div>
-      </article>
-
-    </main>
-
-    <!-- Right Sidebar -->
-    <aside class="sidebar-right">
-      <div style="padding: 8px;">
-        <h4 style="color: var(--text-secondary); margin-bottom: 12px; font-size: 0.9375rem;">جهات الاتصال</h4>
-        <div class="menu-row">
-          <div class="profile-avatar" style="width: 32px; height: 32px;"></div>
-          <span>مستخدم متصل 1</span>
-        </div>
-        <div class="menu-row">
-          <div class="profile-avatar" style="width: 32px; height: 32px;"></div>
-          <span>مستخدم متصل 2</span>
-        </div>
-      </div>
-    </aside>
 
   </div>
+
+  <!-- 2. ترويسة الأسفل (Footer) -->
+  <footer>
+    <div class="footer-content">
+      <ul class="footer-links">
+        <li>العربية</li>
+        <li>English</li>
+        <li>Français</li>
+        <li>Español</li>
+        <li>Deutsch</li>
+      </ul>
+      <ul class="footer-links" style="border: none;">
+        <li><a href="#">إنشاء حساب</a></li>
+        <li><a href="#">تسجيل الدخول</a></li>
+        <li><a href="#">التطبيق</a></li>
+        <li><a href="#">الماركت</a></li>
+        <li><a href="#">الخصوصية</a></li>
+        <li><a href="#">الشروط</a></li>
+        <li><a href="#">المساعدة</a></li>
+      </ul>
+      <p style="margin-top: 10px;">Platform © 2026</p>
+    </div>
+  </footer>
 
 </body>
 </html>
