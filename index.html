@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كلمات | Kalimat</title>
-    <!-- استدعاء خطوط عربية أصيلة مطابقة للتصميم -->
-    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Reem+Kufi:wght@700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -16,6 +15,11 @@
         body {
             background-color: #f0f2f5;
             font-family: 'Tajawal', sans-serif;
+            color: #1c1e21;
+        }
+
+        /* --- صفحة تسجيل الدخول --- */
+        #login-page {
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -24,42 +28,22 @@
             padding: 20px;
         }
 
-        .header-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        /* عرض الريشة الشفافة مباشرة دون أي إطار أو خلفية مستطيلة */
+        .header-container { text-align: center; margin-bottom: 20px; }
         .logo-img {
-            width: 120px;
+            width: 110px;
             height: auto;
-            max-height: 150px;
-            object-fit: contain;
             display: block;
             margin: 0 auto 5px auto;
-            /* لمسة انعكاس ناعمة على الخلفية */
-            filter: drop-shadow(0px 8px 12px rgba(13, 71, 161, 0.18));
-            mix-blend-mode: multiply; /* تدمج البيض بالخلفية مؤقتاً لحين رفع صورة PNG مجردة */
+            filter: drop-shadow(0px 6px 10px rgba(13, 71, 161, 0.15));
+            mix-blend-mode: multiply;
         }
-
-        /* تنسيق الخط العربي المميز لاسم المنصة */
         .app-title {
             color: #0b4395;
-            font-family: 'Aref Ruqaa', 'Reem Kufi', serif;
-            font-size: 52px;
+            font-family: 'Aref Ruqaa', serif;
+            font-size: 48px;
             font-weight: 700;
-            margin-bottom: 6px;
-            line-height: 1.1;
-            letter-spacing: 1px;
-            text-shadow: 0px 2px 4px rgba(13, 71, 161, 0.1);
         }
-
-        .app-desc {
-            color: #444;
-            font-size: 15px;
-            max-width: 320px;
-            line-height: 1.5;
-        }
+        .app-desc { color: #555; font-size: 15px; max-width: 320px; }
 
         .card {
             background: #ffffff;
@@ -67,13 +51,9 @@
             max-width: 400px;
             padding: 25px;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
+        .form-group { margin-bottom: 15px; }
         .input-field {
             width: 100%;
             padding: 14px 16px;
@@ -81,15 +61,8 @@
             border-radius: 10px;
             font-size: 15px;
             outline: none;
-            transition: all 0.3s ease;
             font-family: 'Tajawal', sans-serif;
         }
-
-        .input-field:focus {
-            border-color: #0d47a1;
-            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.1);
-        }
-
         .btn-primary {
             width: 100%;
             padding: 14px;
@@ -100,29 +73,9 @@
             font-size: 17px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
-            font-family: 'Tajawal', sans-serif;
         }
-
-        .btn-primary:hover {
-            background-color: #1557b0;
-        }
-
-        .forgot-pass {
-            display: block;
-            text-align: center;
-            margin: 15px 0;
-            color: #1a73e8;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #e0e0e0;
-            margin: 20px 0;
-        }
-
+        .forgot-pass { display: block; text-align: center; margin: 15px 0; color: #1a73e8; text-decoration: none; font-size: 14px; }
+        .divider { height: 1px; background-color: #e0e0e0; margin: 20px 0; }
         .btn-secondary {
             width: 100%;
             padding: 12px;
@@ -133,53 +86,179 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
+        }
+
+        /* --- واجهة المنشورات الرئيسية --- */
+        #main-feed {
+            display: none; /* مخفية حتى يتم تسجيل الدخول */
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        .top-navbar {
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .nav-logo { font-family: 'Aref Ruqaa', serif; font-size: 26px; color: #0b4395; text-decoration: none; }
+        .search-box {
+            background: #f0f2f5;
+            border-radius: 20px;
+            padding: 8px 16px;
+            border: none;
+            outline: none;
+            width: 60%;
             font-family: 'Tajawal', sans-serif;
         }
 
-        .btn-secondary:hover {
-            background-color: #1b5e20;
+        .post-creator {
+            background: #ffffff;
+            margin: 15px 10px;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
+        .creator-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #0b4395; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .creator-input {
+            width: 100%;
+            border: none;
+            background: #f0f2f5;
+            padding: 10px 15px;
+            border-radius: 20px;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+        }
+        .creator-actions { display: flex; justify-content: space-around; border-top: 1px solid #eee; pt: 10px; margin-top: 10px; padding-top: 10px; }
+        .action-btn { background: none; border: none; color: #555; font-size: 14px; cursor: pointer; font-family: 'Tajawal', sans-serif; }
 
-        .footer-text {
-            margin-top: 25px;
-            color: #666;
-            font-size: 13px;
-            text-align: center;
+        .post-card {
+            background: #ffffff;
+            margin: 15px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            padding: 15px;
         }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .post-author { font-weight: bold; font-size: 15px; }
+        .post-time { font-size: 12px; color: #777; }
+        .post-content { font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
+        .post-footer { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
+        .interaction-btn { background: none; border: none; color: #65676b; font-weight: 500; cursor: pointer; font-family: 'Tajawal', sans-serif; }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر والشعار -->
-    <div class="header-container">
-        <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="كلمات" class="logo-img">
-        <h1 class="app-title">كلمات</h1>
-        <p class="app-desc">تواصل مع الأصدقاء والعالم من حولك عبر المنصة في مكان واحد.</p>
+    <!-- 1. صفحة التسجيل والدخول -->
+    <div id="login-page">
+        <div class="header-container">
+            <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="كلمات" class="logo-img">
+            <h1 class="app-title">كلمات</h1>
+            <p class="app-desc">تواصل مع الأصدقاء والعالم من حولك عبر المنصة في مكان واحد.</p>
+        </div>
+
+        <div class="card">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <input type="text" class="input-field" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="input-field" placeholder="كلمة السر" required>
+                </div>
+                <button type="submit" class="btn-primary">تسجيل الدخول</button>
+            </form>
+            <a href="#" class="forgot-pass">هل نسيت كلمة السر؟</a>
+            <div class="divider"></div>
+            <button class="btn-secondary" onclick="handleLogin(event)">إنشاء حساب جديد</button>
+        </div>
     </div>
 
-    <!-- كارت تسجيل الدخول -->
-    <div class="card">
-        <form id="loginForm" onsubmit="event.preventDefault(); alert('تم الضغط على تسجيل الدخول');">
-            <div class="form-group">
-                <input type="text" class="input-field" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+    <!-- 2. واجهة المنشورات (Main Feed) -->
+    <div id="main-feed">
+        <!-- الشريط العلوي -->
+        <nav class="top-navbar">
+            <a href="#" class="nav-logo">كلمات</a>
+            <input type="text" class="search-box" placeholder="بحث في كلمات...">
+            <div class="user-avatar">ك</div>
+        </nav>
+
+        <!-- صندوق إنشاء منشور -->
+        <div class="post-creator">
+            <div class="creator-top">
+                <div class="user-avatar">ك</div>
+                <input type="text" id="postInput" class="creator-input" placeholder="بم تفكر يا صديقي؟">
             </div>
-            <div class="form-group">
-                <input type="password" class="input-field" placeholder="كلمة السر" required>
+            <div class="creator-actions">
+                <button class="action-btn" onclick="addPost()">📷 صورة/فيديو</button>
+                <button class="action-btn" onclick="addPost()">😊 شعار/نشاط</button>
+                <button class="action-btn" onclick="addPost()" style="color:#1a73e8; font-weight:bold;">نشر</button>
             </div>
-            <button type="submit" class="btn-primary">تسجيل الدخول</button>
-        </form>
+        </div>
 
-        <a href="#" class="forgot-pass">هل نسيت كلمة السر؟</a>
-
-        <div class="divider"></div>
-
-        <button class="btn-secondary" onclick="alert('انتقال لإنشاء حساب جديد')">إنشاء حساب جديد</button>
+        <!-- قائمة المنشورات -->
+        <div id="postsContainer">
+            <!-- منشور تجريبي 1 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="user-avatar">م</div>
+                    <div>
+                        <div class="post-author">محمد أحمد</div>
+                        <div class="post-time">منذ 15 دقيقة</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    مرحباً بكم في منصة "كلمات"! هذه البداية الأولى للهيكل العظمي للمنصة، سنقوم بربطها قريباً بالسحابة وقاعدة البيانات.
+                </div>
+                <div class="post-footer">
+                    <button class="interaction-btn">👍 أعجبني</button>
+                    <button class="interaction-btn">💬 تعليق</button>
+                    <button class="interaction-btn">↪️ مشاركة</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="footer-text">
-        أنشئ صفحة لشخصية عامة أو علامة تجارية أو عمل تجاري.
-    </div>
+    <script>
+        // التبديل بين صفحة الدخول والواجهة الرئيسية
+        function handleLogin(e) {
+            e.preventDefault();
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-feed').style.display = 'block';
+        }
 
+        // إضافة منشور جديد متفاعل محلياً
+        function addPost() {
+            const input = document.getElementById('postInput');
+            if (!input.value.trim()) return;
+
+            const postsContainer = document.getElementById('postsContainer');
+            const newPost = document.createElement('div');
+            newPost.className = 'post-card';
+            newPost.innerHTML = `
+                <div class="post-header">
+                    <div class="user-avatar">ك</div>
+                    <div>
+                        <div class="post-author">أنت</div>
+                        <div class="post-time">الآن</div>
+                    </div>
+                </div>
+                <div class="post-content">${input.value}</div>
+                <div class="post-footer">
+                    <button class="interaction-btn">👍 أعجبني</button>
+                    <button class="interaction-btn">💬 تعليق</button>
+                    <button class="interaction-btn">↪️ مشاركة</button>
+                </div>
+            `;
+            postsContainer.prepend(newPost);
+            input.value = '';
+        }
+    </script>
 </body>
 </html>
