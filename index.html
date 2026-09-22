@@ -68,12 +68,13 @@
             border-radius: 50%;
             object-fit: cover;
             cursor: pointer;
+            background: #ddd;
         }
 
-        /* Views Container */
+        /* Container */
         .container {
             max-width: 500px;
-            margin: 15px auto;
+            margin: 10px auto;
             padding: 0 10px;
         }
 
@@ -85,83 +86,123 @@
             display: block;
         }
 
-        /* Auth Screen */
-        .auth-card {
+        /* Card Styles */
+        .card {
             background: var(--card-bg);
-            padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .auth-card h2 {
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .input-group {
+            padding: 15px;
             margin-bottom: 12px;
-            text-align: right;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 4px;
-            color: #65670b;
+        /* Create Post */
+        .create-post {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .input-group input {
+        .post-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .post-input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border: none;
+            background: #f0f2f5;
+            padding: 10px 15px;
+            border-radius: 20px;
             outline: none;
         }
 
-        .btn {
-            width: 100%;
-            padding: 10px;
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            font-size: 13px;
+            color: #65670b;
+        }
+
+        /* Feed Post */
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-author {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .post-time {
+            font-size: 11px;
+            color: #777;
+        }
+
+        .post-content {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .post-stats {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 0;
+            font-size: 13px;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .comment-box {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .comment-box input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        .btn-small {
             background: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 6px 15px;
+            border-radius: 15px;
             cursor: pointer;
-            margin-top: 5px;
+            font-size: 13px;
         }
 
-        .btn-secondary {
-            background: #6c757d;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-        }
-
-        .account-list {
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-            text-align: right;
-        }
-
-        .account-item {
+        /* Chat / Friends List */
+        .item-list {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .account-item:hover {
-            background: #f8f9fa;
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* Navigation Bar */
+        /* Bottom Nav */
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
@@ -170,7 +211,7 @@
             background: var(--card-bg);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 0;
             box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
             z-index: 100;
         }
@@ -179,7 +220,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 12px;
+            font-size: 11px;
             color: #65670b;
             cursor: pointer;
             text-decoration: none;
@@ -190,19 +231,45 @@
             font-weight: bold;
         }
 
-        /* Profile Card */
-        .profile-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
+        .nav-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        /* Auth Screen */
+        .auth-card {
             text-align: center;
         }
 
-        .profile-avatar {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            margin-bottom: 10px;
+        .auth-card input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .account-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 8px;
         }
     </style>
 </head>
@@ -212,50 +279,136 @@
     <header id="main-header">
         <div class="logo">كلمات</div>
         <div class="search-box">
-            <input type="text" placeholder="بحث في كلمات...">
+            <input type="text" id="global-search" placeholder="بحث في كلمات..." onkeyup="filterContent()">
         </div>
-        <img src="https://via.placeholder.com/40" class="user-avatar" id="header-avatar" alt="User">
+        <img src="" class="user-avatar" id="header-avatar" alt="User">
     </header>
 
     <div class="container">
 
-        <!-- 1. شاشة تسجيل الدخول / إنشاء حساب -->
+        <!-- 1. شاشة تسجيل الدخول / التبديل -->
         <div id="auth-view" class="view">
-            <div class="auth-card">
-                <h2>تبديل الحساب / انضمام</h2>
-                <div class="input-group">
-                    <label>الاسم الظاهر:</label>
-                    <input type="text" id="reg-name" placeholder="مثال: جوجو">
-                </div>
-                <div class="input-group">
-                    <label>البريد الإلكتروني:</label>
-                    <input type="email" id="reg-email" placeholder="example@mail.com">
-                </div>
-                <button class="btn" onclick="registerNewAccount()">دخول / إنشاء حساب جديد</button>
+            <div class="card auth-card">
+                <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام / تبديل الحساب</h3>
+                <input type="text" id="reg-name" placeholder="الاسم الظاهر (مثال: جوجو)">
+                <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="registerNewAccount()">دخول / إنشاء حساب</button>
 
-                <div class="account-list">
-                    <h4>الحسابات المسجلة على هذا الجهاز:</h4>
-                    <div id="saved-accounts"></div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <h5 style="margin-bottom: 8px;">الحسابات المحفوظة على الجهاز:</h5>
+                    <div id="saved-accounts-list"></div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. الشاشة الرئيسية -->
+        <!-- 2. الشاشة الرئيسية (التغذية والمنشورات) -->
         <div id="home-view" class="view active">
-            <div class="auth-card">
-                <h3>أهلاً بك في التغذية الرئيسية لمنصة كلمات!</h3>
-                <p style="margin-top: 10px; color: #555;">أنت متصل الآن بحسابك ويمكنك استخدام المنصة بشكل طبيعي.</p>
+            <!-- صندوق إنشاء منشور -->
+            <div class="card create-post">
+                <div class="post-input-container">
+                    <img src="" class="user-avatar" id="post-box-avatar" alt="">
+                    <input type="text" id="new-post-text" class="post-input" placeholder="بم تفكر يا صديقي؟">
+                </div>
+                <div class="post-actions">
+                    <span>📷 إضافة صورة</span>
+                    <span>😊 شعار/نشاط</span>
+                    <button class="btn-small" onclick="publishPost()">نشر</button>
+                </div>
+            </div>
+
+            <!-- قائمة المنشورات -->
+            <div id="feed-container">
+                <div class="card post">
+                    <div class="post-header">
+                        <img src="https://ui-avatars.com/api/?name=محمد+أحمد&background=0d6efd&color=fff" class="user-avatar">
+                        <div>
+                            <div class="post-author">محمد أحمد</div>
+                            <div class="post-time">منذ 15 دقيقة</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        مرحباً بكم في منصة "كلمات"! يسعدنا انضمامكم إلينا.
+                    </div>
+                    <div class="post-stats">
+                        <span onclick="toggleLike(this)">👍 إعجاب</span>
+                        <span>💬 تعليق</span>
+                        <span>↪️ مشاركة</span>
+                    </div>
+                    <div class="comment-box">
+                        <input type="text" placeholder="اكتب تعليقاً...">
+                        <button class="btn-small">إرسال</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 3. شاشة حسابي -->
+        <!-- 3. شاشة الأصدقاء -->
+        <div id="friends-view" class="view">
+            <div class="card">
+                <h3>مقترحات المتابعة والأصدقاء</h3>
+                <div class="item-list">
+                    <div class="item-info">
+                        <img src="https://ui-avatars.com/api/?name=سامر+العلي&background=0d6efd&color=fff" class="user-avatar">
+                        <div>
+                            <strong>سامر العلي</strong><br>
+                            <small style="color:#777;">صديق مشترك</small>
+                        </div>
+                    </div>
+                    <button class="btn-small" onclick="this.innerText='تتابعه'">متابعة</button>
+                </div>
+                <div class="item-list">
+                    <div class="item-info">
+                        <img src="https://ui-avatars.com/api/?name=نور+الهدى&background=0d6efd&color=fff" class="user-avatar">
+                        <div>
+                            <strong>نور الهدى</strong><br>
+                            <small style="color:#777;">نشط الآن</small>
+                        </div>
+                    </div>
+                    <button class="btn-small" onclick="this.innerText='تتابعه'">متابعة</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. شاشة الدردشة -->
+        <div id="chat-view" class="view">
+            <div class="card">
+                <h3>الرسائل الخاصة</h3>
+                <div class="item-list" style="cursor: pointer;">
+                    <div class="item-info">
+                        <img src="https://ui-avatars.com/api/?name=سامر+العلي&background=0d6efd&color=fff" class="user-avatar">
+                        <div>
+                            <strong>سامر العلي</strong> 🟢<br>
+                            <small style="color:#777;">أهلاً بك في منصة كلمات! كيف حالك اليوم؟</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-box" style="margin-top: 15px;">
+                    <input type="text" placeholder="اكتب رسالة خاصة...">
+                    <button class="btn-small">إرسال</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. شاشة حسابي والملف الشخصي -->
         <div id="profile-view" class="view">
-            <div class="profile-card">
-                <img id="prof-img" src="https://via.placeholder.com/90" class="profile-avatar" alt="Profile">
-                <h2 id="prof-name">اسم المستخدم</h2>
-                <p id="prof-email" style="color: #666; margin-bottom: 20px;">email@domain.com</p>
-                
-                <button class="btn btn-danger" onclick="logout()">تسجيل الخروج 🚪</button>
+            <div class="card" style="text-align: center;">
+                <h3 style="margin-bottom: 15px;">تعديل الملف الشخصي والأمان</h3>
+                <img id="prof-img" src="" class="user-avatar" style="width: 80px; height: 80px; margin: 0 auto 10px;" alt="">
+                <br>
+                <a href="#" style="font-size: 13px; color: var(--primary-color); text-decoration: none;">📸 تغيير الصورة الشخصية</a>
+
+                <div style="text-align: right; margin-top: 20px;">
+                    <label style="font-size: 13px; color: #555;">الاسم الظاهر:</label>
+                    <input type="text" id="prof-name-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);">
+
+                    <label style="font-size: 13px; color: #555;">البريد الإلكتروني / رقم الهاتف:</label>
+                    <input type="text" id="prof-email-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);" readonly>
+
+                    <label style="font-size: 13px; color: #555;">النبذة الشخصية (Bio):</label>
+                    <textarea id="prof-bio-input" class="post-input" style="height: 60px; border: 1px solid var(--border-color);"></textarea>
+                </div>
+
+                <button class="btn-danger" onclick="logout()">تسجيل الخروج 🚪</button>
             </div>
         </div>
 
@@ -264,17 +417,24 @@
     <!-- Navigation Bar -->
     <nav class="bottom-nav" id="main-nav">
         <div class="nav-item active" onclick="switchTab('home-view', this)">
-            <span>🏠</span>
+            <span class="nav-icon">🏠</span>
             <span>الرئيسية</span>
         </div>
+        <div class="nav-item" onclick="switchTab('friends-view', this)">
+            <span class="nav-icon">👥</span>
+            <span>الأصدقاء</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('chat-view', this)">
+            <span class="nav-icon">💬</span>
+            <span>الدردشة</span>
+        </div>
         <div class="nav-item" onclick="switchTab('profile-view', this)">
-            <span>👤</span>
+            <span class="nav-icon">👤</span>
             <span>حسابي</span>
         </div>
     </nav>
 
     <script>
-        // Data Management
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
 
@@ -305,17 +465,15 @@
             let email = document.getElementById('reg-email').value.trim();
 
             if (!name || !email) {
-                alert('يرجى كتابة الاسم والبريد الإلكتروني');
+                alert('يرجى إدخال الاسم والبريد الإلكتروني');
                 return;
             }
 
+            let avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0d6efd&color=fff`;
+
             let existing = accounts.find(a => a.email === email);
             if (!existing) {
-                let newUser = {
-                    name: name,
-                    email: email,
-                    avatar: 'https://via.placeholder.com/90/0d6efd/ffffff?text=' + encodeURIComponent(name[0])
-                };
+                let newUser = { name: name, email: email, avatar: avatarUrl, bio: '' };
                 accounts.push(newUser);
                 localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
             }
@@ -344,10 +502,12 @@
         }
 
         function loadUserData(user) {
-            document.getElementById('prof-name').innerText = user.name;
-            document.getElementById('prof-email').innerText = user.email;
-            document.getElementById('prof-img').src = user.avatar;
             document.getElementById('header-avatar').src = user.avatar;
+            document.getElementById('post-box-avatar').src = user.avatar;
+            document.getElementById('prof-img').src = user.avatar;
+            document.getElementById('prof-name-input').value = user.name;
+            document.getElementById('prof-email-input').value = user.email;
+            document.getElementById('prof-bio-input').value = user.bio || '';
         }
 
         function logout() {
@@ -357,25 +517,28 @@
         }
 
         function renderSavedAccounts() {
-            let listContainer = document.getElementById('saved-accounts');
-            listContainer.innerHTML = '';
+            let container = document.getElementById('saved-accounts-list');
+            container.innerHTML = '';
 
             if (accounts.length === 0) {
-                listContainer.innerHTML = '<p style="font-size:12px; color:#888;">لا توجد حسابات مسجلة بعد.</p>';
+                container.innerHTML = '<small style="color:#888;">لا توجد حسابات مسجلة.</small>';
                 return;
             }
 
             accounts.forEach(acc => {
                 let div = document.createElement('div');
-                div.className = 'account-item';
+                div.className = 'account-badge';
                 div.innerHTML = `
-                    <div>
-                        <strong>${acc.name}</strong><br>
-                        <small style="color:#666;">${acc.email}</small>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <img src="${acc.avatar}" class="user-avatar" style="width:30px; height:30px;">
+                        <div>
+                            <strong style="font-size:13px;">${acc.name}</strong><br>
+                            <small style="color:#777; font-size:11px;">${acc.email}</small>
+                        </div>
                     </div>
-                    <button class="btn btn-secondary" style="width:auto; padding:5px 10px; font-size:12px;" onclick="switchAccount('${acc.email}')">دخول</button>
+                    <button class="btn-small" onclick="switchAccount('${acc.email}')">دخول</button>
                 `;
-                listContainer.appendChild(div);
+                container.appendChild(div);
             });
         }
 
@@ -389,7 +552,49 @@
             }
         }
 
-        // Run App
+        function publishPost() {
+            let text = document.getElementById('new-post-text').value.trim();
+            if (!text) return;
+
+            let currentUser = accounts.find(a => a.email === currentEmail);
+
+            let postHTML = `
+                <div class="card post">
+                    <div class="post-header">
+                        <img src="${currentUser.avatar}" class="user-avatar">
+                        <div>
+                            <div class="post-author">${currentUser.name}</div>
+                            <div class="post-time">الآن</div>
+                        </div>
+                    </div>
+                    <div class="post-content">${text}</div>
+                    <div class="post-stats">
+                        <span onclick="toggleLike(this)">👍 إعجاب</span>
+                        <span>💬 تعليق</span>
+                        <span>↪️ مشاركة</span>
+                    </div>
+                    <div class="comment-box">
+                        <input type="text" placeholder="اكتب تعليقاً...">
+                        <button class="btn-small">إرسال</button>
+                    </div>
+                </div>
+            `;
+
+            let feed = document.getElementById('feed-container');
+            feed.insertAdjacentHTML('afterbegin', postHTML);
+            document.getElementById('new-post-text').value = '';
+        }
+
+        function toggleLike(el) {
+            if (el.style.color === 'rgb(13, 110, 253)') {
+                el.style.color = 'inherit';
+                el.innerText = '👍 إعجاب';
+            } else {
+                el.style.color = '#0d6efd';
+                el.innerText = '👍 تم الإعجاب';
+            }
+        }
+
         initApp();
     </script>
 </body>
