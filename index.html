@@ -198,6 +198,50 @@
         .post-image { width: 100%; max-height: 350px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
         .post-footer { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
         .interaction-btn { background: none; border: none; color: #65676b; font-weight: 500; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+        .interaction-btn.liked { color: #1a73e8; font-weight: bold; }
+
+        /* منطقة التعليقات */
+        .comments-section {
+            display: none;
+            border-top: 1px solid #eee;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+        .comment-input-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .comment-input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 1px solid #ddd;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 13px;
+        }
+        .comment-btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .comment-item {
+            background: #f0f2f5;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+        .comment-author { font-weight: bold; margin-bottom: 2px; }
 
         /* --- واجهة تعديل الملف الشخصي --- */
         #profile-page {
@@ -221,8 +265,6 @@
             margin-bottom: 20px;
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
-            user-select: none;
-            -webkit-user-select: none;
         }
 
         .back-btn {
@@ -284,7 +326,6 @@
 
     <!-- 2. واجهة المنشورات (Main Feed) -->
     <div id="main-feed">
-        <!-- الشريط العلوي -->
         <nav class="top-navbar">
             <a href="#" class="nav-logo">كلمات</a>
             <input type="text" class="search-box" placeholder="بحث في كلمات...">
@@ -293,7 +334,6 @@
             </div>
         </nav>
 
-        <!-- صندوق إنشاء منشور -->
         <div class="post-creator">
             <div class="creator-top">
                 <div class="user-avatar" id="creatorAvatar">
@@ -302,7 +342,6 @@
                 <input type="text" id="postInput" class="creator-input" placeholder="بم تفكر يا صديقي؟">
             </div>
 
-            <!-- معاينة الصورة المختارة للمنشور -->
             <div class="post-img-preview-container" id="postImgPreviewContainer">
                 <button class="remove-img-btn" onclick="removePostImage()">✕</button>
                 <img id="postImgPreview" class="post-img-preview" src="" alt="معاينة الصورة">
@@ -317,9 +356,7 @@
             </div>
         </div>
 
-        <!-- قائمة المنشورات -->
         <div id="postsContainer">
-            <!-- منشور تجريبي 1 -->
             <div class="post-card">
                 <div class="post-header">
                     <div class="user-avatar">م</div>
@@ -332,9 +369,16 @@
                     مرحباً بكم في منصة "كلمات"! هذه البداية الأولى للهيكل العظمي للمنصة، سنقوم بربطها قريباً بالسحابة وقاعدة البيانات.
                 </div>
                 <div class="post-footer">
-                    <button class="interaction-btn">👍 أعجبني</button>
-                    <button class="interaction-btn">💬 تعليق</button>
-                    <button class="interaction-btn">↪️ مشاركة</button>
+                    <button class="interaction-btn" onclick="toggleLike(this)">👍 أعجبني</button>
+                    <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
+                    <button class="interaction-btn" onclick="sharePost()">↪️ مشاركة</button>
+                </div>
+                <div class="comments-section">
+                    <div class="comment-input-box">
+                        <input type="text" class="comment-input" placeholder="اكتب تعليقاً...">
+                        <button class="comment-btn" onclick="addComment(this)">إرسال</button>
+                    </div>
+                    <div class="comments-list"></div>
                 </div>
             </div>
         </div>
@@ -376,16 +420,14 @@
     </div>
 
     <script>
-        // بيانات المستخدم الافتراضية
         let currentUser = {
-            name: 'المستخدم',
+            name: '',
             bio: '',
             avatarData: ''
         };
 
         let selectedPostImageData = '';
 
-        // عند تحميل الصفحة
         window.onload = function() {
             const savedProfile = localStorage.getItem('kalimat_user_profile');
             if (savedProfile) {
@@ -394,7 +436,6 @@
             updateUserUI();
         };
 
-        // التبديل بين الشاشات
         function handleLogin(e) {
             e.preventDefault();
             document.getElementById('login-page').style.display = 'none';
@@ -406,11 +447,12 @@
             document.getElementById('main-feed').style.display = 'none';
             document.getElementById('profile-page').style.display = 'block';
 
-            // تعبئة البيانات الحالية
             document.getElementById('editDisplayName').value = currentUser.name || '';
             document.getElementById('editBio').value = currentUser.bio || '';
             if (currentUser.avatarData) {
                 document.getElementById('avatarEditPreview').src = currentUser.avatarData;
+            } else {
+                document.getElementById('avatarEditPreview').src = 'https://via.placeholder.com/90?text=صورة';
             }
         }
 
@@ -419,7 +461,6 @@
             document.getElementById('main-feed').style.display = 'block';
         }
 
-        // تحديث الصور والأشكال عبر المنصة
         function updateUserUI() {
             const navAvatar = document.getElementById('navAvatar');
             const creatorAvatar = document.getElementById('creatorAvatar');
@@ -434,7 +475,6 @@
             }
         }
 
-        // معاينة صورة البروفايل الجديدة
         function previewProfileAvatar(event) {
             const file = event.target.files[0];
             if (file) {
@@ -446,7 +486,6 @@
             }
         }
 
-        // حفظ بيانات البروفايل
         function saveProfile() {
             const name = document.getElementById('editDisplayName').value.trim();
             const bio = document.getElementById('editBio').value.trim();
@@ -471,10 +510,9 @@
             setTimeout(() => {
                 msg.innerText = "";
                 showMainFeed();
-            }, 1200);
+            }, 1000);
         }
 
-        // معاينة صورة المنشور من المعرض
         function previewPostImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -495,7 +533,6 @@
             document.getElementById('postImageInput').value = '';
         }
 
-        // إضافة منشور جديد (نص + صورة)
         function addPost() {
             const input = document.getElementById('postInput');
             const postText = input.value.trim();
@@ -525,17 +562,50 @@
                 ${postText ? `<div class="post-content">${postText}</div>` : ''}
                 ${imageHTML}
                 <div class="post-footer">
-                    <button class="interaction-btn">👍 أعجبني</button>
-                    <button class="interaction-btn">💬 تعليق</button>
-                    <button class="interaction-btn">↪️ مشاركة</button>
+                    <button class="interaction-btn" onclick="toggleLike(this)">👍 أعجبني</button>
+                    <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
+                    <button class="interaction-btn" onclick="sharePost()">↪️ مشاركة</button>
+                </div>
+                <div class="comments-section">
+                    <div class="comment-input-box">
+                        <input type="text" class="comment-input" placeholder="اكتب تعليقاً...">
+                        <button class="comment-btn" onclick="addComment(this)">إرسال</button>
+                    </div>
+                    <div class="comments-list"></div>
                 </div>
             `;
 
             postsContainer.prepend(newPost);
-
-            // إعادة تعيين الحقول
             input.value = '';
             removePostImage();
+        }
+
+        function toggleLike(btn) {
+            btn.classList.toggle('liked');
+        }
+
+        function toggleComments(btn) {
+            const card = btn.closest('.post-card');
+            const section = card.querySelector('.comments-section');
+            section.style.display = (section.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function addComment(btn) {
+            const box = btn.closest('.comment-input-box');
+            const input = box.querySelector('.comment-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const list = box.nextElementSibling;
+            const item = document.createElement('div');
+            item.className = 'comment-item';
+            item.innerHTML = `<div class="comment-author">${currentUser.name || 'أنت'}</div><div>${text}</div>`;
+            list.appendChild(item);
+            input.value = '';
+        }
+
+        function sharePost() {
+            alert("تم نسخ رابط المنشور بنجاح!");
         }
     </script>
 </body>
