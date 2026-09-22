@@ -15,17 +15,45 @@
         }
         .profile-card {
             background: #ffffff;
-            padding: 24px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             width: 100%;
             max-width: 400px;
+            position: relative;
         }
-        h2 {
-            margin-top: 0;
+        
+        /* شريط العودة والعنوان */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            color: #007bff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+        }
+        .back-btn:hover {
+            background-color: #f0f4f8;
+        }
+        .card-header h2 {
+            margin: 0;
+            font-size: 18px;
             color: #333;
+            flex-grow: 1;
             text-align: center;
         }
+        
         .avatar-container {
             text-align: center;
             margin-bottom: 20px;
@@ -95,7 +123,12 @@
 <body>
 
 <div class="profile-card">
-    <h2>تعديل الملف الشخصي</h2>
+    <!-- هيدر الصفحة يحتوي على سهم الرجوع -->
+    <div class="card-header">
+        <button class="back-btn" onclick="goBack()" title="رجوع">➔</button>
+        <h2>تعديل الملف الشخصي</h2>
+        <div style="width: 30px;"></div> <!-- لموازنة عنوان الصفحة بالمنتصف -->
+    </div>
     
     <!-- معاينة واختيار الصورة -->
     <div class="avatar-container">
@@ -123,6 +156,16 @@
 <script>
     let currentAvatarData = "";
 
+    // وظيفة زر الرجوع للنافذة السابقة
+    function goBack() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // رابط العودة إلى الصفحة الرئيسية للمنصة إذا لم تتواجد صفحة سابقة
+            window.location.href = 'index.html'; 
+        }
+    }
+
     // معاينة الصورة مباشرة من معرض الجهاز
     function previewImage(event) {
         const file = event.target.files[0];
@@ -136,7 +179,7 @@
         }
     }
 
-    // حفظ البيانات محلية للتجربة (أو ربطها بالنظام)
+    // حفظ البيانات
     function saveProfile() {
         const name = document.getElementById('displayName').value.trim();
         const bio = document.getElementById('bio').value.trim();
@@ -152,7 +195,6 @@
             avatar: currentAvatarData || document.getElementById('avatarPreview').src
         };
 
-        // حفظ المؤقت في متصفحك للتحقق
         localStorage.setItem('user_profile', JSON.stringify(profileData));
 
         const msg = document.getElementById('statusMsg');
@@ -160,7 +202,7 @@
         setTimeout(() => { msg.innerText = ""; }, 3000);
     }
 
-    // تحميل البيانات عند فتح الصفحة تلقائياً
+    // تحميل البيانات تلقائياً عند فتح الصفحة
     window.onload = function() {
         const savedProfile = localStorage.getItem('user_profile');
         if (savedProfile) {
