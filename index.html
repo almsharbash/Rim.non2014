@@ -167,12 +167,10 @@
 <script>
     let currentAvatarData = "";
 
+    // الانتقال المباشر للصفحة الرئيسية
     function goBack() {
-        if (document.referrer && document.referrer.includes(window.location.host)) {
-            window.history.back();
-        } else {
-            window.location.href = 'index.html'; 
-        }
+        // يمكنك تغيير 'index.html' للرابط الخاص بالصفحة الرئيسية للمنصة لديك
+        window.location.href = 'index.html';
     }
 
     function previewImage(event) {
