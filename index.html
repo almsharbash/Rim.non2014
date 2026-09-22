@@ -11,13 +11,14 @@
 
     <style>
         :root {
-            --primary-color: #0d47a1;
-            --primary-hover: #1565c0;
+            --primary-color: #1877f2;
+            --primary-hover: #166fe5;
             --bg-color: #f0f2f5;
             --card-bg: #ffffff;
-            --text-main: #1c1e21;
+            --text-main: #050505;
             --text-sub: #65676b;
-            --border-color: #e4e6eb;
+            --border-color: #ced0d4;
+            --divider-color: #e4e6eb;
             --like-color: #e41e3f;
         }
 
@@ -40,8 +41,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-            padding: 10px 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 8px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -54,21 +55,22 @@
         }
 
         .logo-text {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 800;
             color: var(--primary-color);
             text-decoration: none;
+            letter-spacing: -0.5px;
         }
 
         .search-bar {
             background: #f0f2f5;
             border-radius: 20px;
-            padding: 8px 15px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             gap: 8px;
-            width: 50%;
-            max-width: 300px;
+            width: 45%;
+            max-width: 280px;
         }
 
         .search-bar input {
@@ -82,14 +84,14 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: var(--primary-color);
+            background-color: #0d47a1;
             color: white;
             display: flex;
             align-items: center;
@@ -100,44 +102,42 @@
         }
 
         .container {
-            max-width: 600px;
-            margin: 15px auto;
-            padding: 0 10px;
+            max-width: 580px;
+            margin: 12px auto;
+            padding: 0 8px;
         }
 
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .profile-card {
             text-align: center;
-            padding: 20px;
-            position: relative;
+            padding: 0 0 16px 0;
             overflow: hidden;
         }
 
         .profile-banner {
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-color), #1976d2);
-            margin: -20px -20px 0 -20px;
+            height: 90px;
+            background: linear-gradient(135deg, #0d47a1, #1976d2);
         }
 
         .profile-avatar-large {
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--primary-color);
+            background: #0d47a1;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 32px;
             font-weight: bold;
-            margin: -40px auto 10px auto;
+            margin: -40px auto 8px auto;
             border: 4px solid var(--card-bg);
         }
 
@@ -148,14 +148,14 @@
 
         .profile-bio {
             color: var(--text-sub);
-            font-size: 14px;
-            margin: 5px 0 15px 0;
+            font-size: 13px;
+            margin: 4px 0 12px 0;
         }
 
         .btn {
             border: none;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
@@ -171,22 +171,23 @@
             background-color: var(--primary-hover);
         }
 
-        .btn-outline {
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            background: transparent;
+        .btn-danger {
+            background-color: #e41e3f;
+            color: white;
         }
 
-        .create-post {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .btn-outline {
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            background: #e4e6eb;
         }
 
         .create-post-top {
             display: flex;
             gap: 10px;
             align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--divider-color);
         }
 
         .create-post textarea {
@@ -194,11 +195,33 @@
             border: none;
             background: #f0f2f5;
             border-radius: 20px;
-            padding: 12px 15px;
+            padding: 10px 15px;
             resize: none;
             outline: none;
             font-size: 14px;
-            min-height: 45px;
+            min-height: 40px;
+        }
+
+        .create-post-actions {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 8px;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-sub);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .action-item:hover {
+            background: #f0f2f5;
         }
 
         .post-header {
@@ -225,17 +248,17 @@
 
         .post-content {
             font-size: 15px;
-            line-height: 1.5;
-            margin-bottom: 12px;
+            line-height: 1.4;
+            margin-bottom: 10px;
             white-space: pre-wrap;
         }
 
         .post-actions {
             display: flex;
             justify-content: space-around;
-            border-top: 1px solid var(--border-color);
-            padding-top: 10px;
-            margin-top: 10px;
+            border-top: 1px solid var(--divider-color);
+            padding-top: 4px;
+            margin-top: 8px;
         }
 
         .post-action-btn {
@@ -247,9 +270,11 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 0;
+            width: 33%;
+            border-radius: 4px;
         }
 
         .post-action-btn:hover {
@@ -260,7 +285,6 @@
             color: var(--like-color);
         }
 
-        /* Auth Modal */
         .modal {
             display: none;
             position: fixed;
@@ -268,7 +292,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -280,13 +304,14 @@
 
         .modal-content {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 8px;
             width: 90%;
-            max-width: 400px;
+            max-width: 380px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .modal-content input {
@@ -295,6 +320,7 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             outline: none;
+            font-size: 14px;
         }
 
         .auth-switch {
@@ -302,7 +328,8 @@
             font-size: 13px;
             color: var(--primary-color);
             cursor: pointer;
-            margin-top: 8px;
+            margin-top: 6px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -317,6 +344,7 @@
             <input type="text" placeholder="بحث في كلمات...">
         </div>
         <div class="header-actions">
+            <button id="header-logout-btn" class="btn btn-danger" style="display:none; padding: 5px 10px; font-size: 12px;">خروج</button>
             <div id="user-avatar-btn" class="user-avatar">؟</div>
         </div>
     </header>
@@ -327,10 +355,9 @@
             <div class="profile-banner"></div>
             <div id="profile-avatar" class="profile-avatar-large">؟</div>
             <div id="profile-name" class="profile-name">زائر كلمات</div>
-            <div id="profile-bio" class="profile-bio">مرحباً بكم في منصة كلمات السحابية!</div>
-            <div style="display: flex; justify-content: center; gap: 10px;">
-                <button id="auth-btn" class="btn btn-primary">تسجيل الدخول / حساب جديد</button>
-                <button id="logout-btn" class="btn btn-outline" style="display: none;">تسجيل الخروج</button>
+            <div id="profile-bio" class="profile-bio">مرحباً بكم في صفقتي الشخصية على منصة كلمات!</div>
+            <div style="display: flex; justify-content me: center; gap: 8px; padding: 0 10px;">
+                <button id="auth-btn" class="btn btn-primary" style="width: 100%;">تسجيل الدخول / حساب جديد</button>
             </div>
         </div>
 
@@ -340,8 +367,10 @@
                 <div id="input-avatar" class="user-avatar">؟</div>
                 <textarea id="post-input" placeholder="بم تفكر يا صديقي؟"></textarea>
             </div>
-            <div style="display: flex; justify-content: flex-end;">
-                <button id="publish-btn" class="btn btn-primary"><i class="fas fa-paper-plane"></i> نشر</button>
+            <div class="create-post-actions">
+                <div class="action-item"><i class="fas fa-video" style="color: #f3425f;"></i> صورة/فيديو</div>
+                <div class="action-item"><i class="fas fa-smile" style="color: #f7b928;"></i> شعار/نشاط</div>
+                <div class="action-item" id="publish-btn" style="color: var(--primary-color); font-weight: bold;"><i class="fas fa-paper-plane"></i> نشر</div>
             </div>
         </div>
 
@@ -360,7 +389,7 @@
             <input type="password" id="auth-password" placeholder="كلمة السر">
             <button id="auth-submit-btn" class="btn btn-primary">دخول</button>
             <div id="auth-switch" class="auth-switch">ليس لديك حساب؟ إنشاء حساب جديد</div>
-            <button id="modal-close-btn" class="btn btn-outline" style="margin-top: 5px;">إلغاء</button>
+            <button id="modal-close-btn" class="btn btn-outline">إلغاء</button>
         </div>
     </div>
 
@@ -389,7 +418,6 @@
             arrayRemove
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // إعدادات مشروعك الحقيقي في Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBznOsrwmvtWDFKTbqz3bFry94J7hJFn0c",
             authDomain: "gogo1982-2026.firebaseapp.com",
@@ -407,10 +435,9 @@
         let currentUser = null;
         let isSignUpMode = false;
 
-        // Elements
         const authModal = document.getElementById('auth-modal');
         const authBtn = document.getElementById('auth-btn');
-        const logoutBtn = document.getElementById('logout-btn');
+        const headerLogoutBtn = document.getElementById('header-logout-btn');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const authSwitch = document.getElementById('auth-switch');
         const authSubmitBtn = document.getElementById('auth-submit-btn');
@@ -428,7 +455,6 @@
         const publishBtn = document.getElementById('publish-btn');
         const postsContainer = document.getElementById('posts-container');
 
-        // Modal Handlers
         authBtn.onclick = () => authModal.classList.add('active');
         userAvatarBtn.onclick = () => { if(!currentUser) authModal.classList.add('active'); };
         modalCloseBtn.onclick = () => authModal.classList.remove('active');
@@ -436,9 +462,9 @@
         authSwitch.onclick = () => {
             isSignUpMode = !isSignUpMode;
             if(isSignUpMode) {
-                modalTitle.innerText = "حساب جديد";
+                modalTitle.innerText = "إنشاء حساب جديد";
                 authName.style.display = "block";
-                authSubmitBtn.innerText = "إنشاء حساب";
+                authSubmitBtn.innerText = "إنشاء الحساب";
                 authSwitch.innerText = "لديك حساب بالفعل؟ تسجيل الدخول";
             } else {
                 modalTitle.innerText = "تسجيل الدخول";
@@ -448,7 +474,6 @@
             }
         };
 
-        // Auth Operations
         authSubmitBtn.onclick = async () => {
             const email = authEmail.value.trim();
             const password = authPassword.value.trim();
@@ -458,7 +483,7 @@
 
             try {
                 if(isSignUpMode) {
-                    if(!name) return alert('يرجى كتابة الاسم');
+                    if(!name) return alert('يرجى كتابة الاسم الكامل');
                     const userCred = await createUserWithEmailAndPassword(auth, email, password);
                     await updateProfile(userCred.user, { displayName: name });
                 } else {
@@ -466,13 +491,12 @@
                 }
                 authModal.classList.remove('active');
             } catch(err) {
-                alert("خطأ: " + err.message);
+                alert("خطأ في تسجيل الدخول: البريد أو كلمة السر غير صحيحة، أو الحساب غير موجود.");
             }
         };
 
-        logoutBtn.onclick = () => signOut(auth);
+        headerLogoutBtn.onclick = () => signOut(auth);
 
-        // Auth Listener
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if(user) {
@@ -485,20 +509,19 @@
                 inputAvatar.innerText = initial;
 
                 authBtn.style.display = "none";
-                logoutBtn.style.display = "inline-block";
+                headerLogoutBtn.style.display = "inline-block";
             } else {
                 profileName.innerText = "زائر كلمات";
                 profileAvatar.innerText = "؟";
                 userAvatarBtn.innerText = "؟";
                 inputAvatar.innerText = "؟";
 
-                authBtn.style.display = "inline-block";
-                logoutBtn.style.display = "none";
+                authBtn.style.display = "block";
+                headerLogoutBtn.style.display = "none";
             }
             loadPosts();
         });
 
-        // Publish Post
         publishBtn.onclick = async () => {
             if(!currentUser) return alert('يرجى تسجيل الدخول أولاً لتتمكن من النشر!');
             const text = postInput.value.trim();
@@ -519,7 +542,6 @@
             }
         };
 
-        // Load Posts
         async function loadPosts() {
             postsContainer.innerHTML = '<div style="text-align: center; color: var(--text-sub); padding: 20px;">جاري تحديث المنشورات...</div>';
             try {
@@ -552,12 +574,12 @@
                         <div class="post-content">${escapeHtml(post.text)}</div>
                         <div class="post-actions">
                             <button class="post-action-btn ${isLiked ? 'liked' : ''}" onclick="window.toggleLike('${postId}', ${isLiked})">
-                                <i class="fas fa-heart"></i> <span>${likesCount} أعجبني</span>
+                                <i class="fas fa-thumbs-up"></i> <span>${likesCount > 0 ? likesCount : ''} أعجبني</span>
                             </button>
-                            <button class="post-action-btn" onclick="alert('ميزة التعليقات قادمة')">
+                            <button class="post-action-btn" onclick="alert('ميزة التعليقات قادمة قريباً')">
                                 <i class="fas fa-comment"></i> <span>تعليق</span>
                             </button>
-                            <button class="post-action-btn" onclick="navigator.clipboard.writeText(location.href); alert('تم نسخ رابط المنصة!');">
+                            <button class="post-action-btn" onclick="navigator.clipboard.writeText(location.href); alert('تم نسخ رابط المنشور!');">
                                 <i class="fas fa-share"></i> <span>مشاركة</span>
                             </button>
                         </div>
@@ -570,9 +592,8 @@
             }
         }
 
-        // Toggle Like Global Function
         window.toggleLike = async (postId, isLiked) => {
-            if(!currentUser) return alert('سجل الدخول أولاً للعمل بالتفاعلات!');
+            if(!currentUser) return alert('سجل الدخول أولاً لتتمكن من التفاعل!');
             const postRef = doc(db, "posts", postId);
             try {
                 if(isLiked) {
