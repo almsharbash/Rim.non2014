@@ -62,13 +62,25 @@
             font-size: 14px;
         }
 
-        .user-avatar {
-            width: 36px;
-            height: 36px;
+        /* CSS Avatar Component */
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            background: #ddd;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .avatar-lg {
+            width: 80px;
+            height: 80px;
+            font-size: 32px;
         }
 
         /* Container */
@@ -124,7 +136,7 @@
             border-top: 1px solid var(--border-color);
             padding-top: 10px;
             font-size: 13px;
-            color: #65670b;
+            color: #555;
         }
 
         /* Feed Post */
@@ -221,7 +233,7 @@
             flex-direction: column;
             align-items: center;
             font-size: 11px;
-            color: #65670b;
+            color: #555;
             cursor: pointer;
             text-decoration: none;
         }
@@ -279,9 +291,9 @@
     <header id="main-header">
         <div class="logo">كلمات</div>
         <div class="search-box">
-            <input type="text" id="global-search" placeholder="بحث في كلمات..." onkeyup="filterContent()">
+            <input type="text" placeholder="بحث في كلمات...">
         </div>
-        <img src="" class="user-avatar" id="header-avatar" alt="User">
+        <div class="avatar-circle" id="header-avatar">؟</div>
     </header>
 
     <div class="container">
@@ -301,12 +313,11 @@
             </div>
         </div>
 
-        <!-- 2. الشاشة الرئيسية (التغذية والمنشورات) -->
+        <!-- 2. الشاشة الرئيسية -->
         <div id="home-view" class="view active">
-            <!-- صندوق إنشاء منشور -->
             <div class="card create-post">
                 <div class="post-input-container">
-                    <img src="" class="user-avatar" id="post-box-avatar" alt="">
+                    <div class="avatar-circle" id="post-box-avatar">؟</div>
                     <input type="text" id="new-post-text" class="post-input" placeholder="بم تفكر يا صديقي؟">
                 </div>
                 <div class="post-actions">
@@ -316,11 +327,10 @@
                 </div>
             </div>
 
-            <!-- قائمة المنشورات -->
             <div id="feed-container">
                 <div class="card post">
                     <div class="post-header">
-                        <img src="https://ui-avatars.com/api/?name=محمد+أحمد&background=0d6efd&color=fff" class="user-avatar">
+                        <div class="avatar-circle">م</div>
                         <div>
                             <div class="post-author">محمد أحمد</div>
                             <div class="post-time">منذ 15 دقيقة</div>
@@ -348,7 +358,7 @@
                 <h3>مقترحات المتابعة والأصدقاء</h3>
                 <div class="item-list">
                     <div class="item-info">
-                        <img src="https://ui-avatars.com/api/?name=سامر+العلي&background=0d6efd&color=fff" class="user-avatar">
+                        <div class="avatar-circle">س</div>
                         <div>
                             <strong>سامر العلي</strong><br>
                             <small style="color:#777;">صديق مشترك</small>
@@ -358,7 +368,7 @@
                 </div>
                 <div class="item-list">
                     <div class="item-info">
-                        <img src="https://ui-avatars.com/api/?name=نور+الهدى&background=0d6efd&color=fff" class="user-avatar">
+                        <div class="avatar-circle">ن</div>
                         <div>
                             <strong>نور الهدى</strong><br>
                             <small style="color:#777;">نشط الآن</small>
@@ -375,7 +385,7 @@
                 <h3>الرسائل الخاصة</h3>
                 <div class="item-list" style="cursor: pointer;">
                     <div class="item-info">
-                        <img src="https://ui-avatars.com/api/?name=سامر+العلي&background=0d6efd&color=fff" class="user-avatar">
+                        <div class="avatar-circle">س</div>
                         <div>
                             <strong>سامر العلي</strong> 🟢<br>
                             <small style="color:#777;">أهلاً بك في منصة كلمات! كيف حالك اليوم؟</small>
@@ -393,15 +403,14 @@
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
                 <h3 style="margin-bottom: 15px;">تعديل الملف الشخصي والأمان</h3>
-                <img id="prof-img" src="" class="user-avatar" style="width: 80px; height: 80px; margin: 0 auto 10px;" alt="">
+                <div class="avatar-circle avatar-lg" id="prof-img" style="margin: 0 auto 10px;">؟</div>
                 <br>
-                <a href="#" style="font-size: 13px; color: var(--primary-color); text-decoration: none;">📸 تغيير الصورة الشخصية</a>
 
                 <div style="text-align: right; margin-top: 20px;">
                     <label style="font-size: 13px; color: #555;">الاسم الظاهر:</label>
                     <input type="text" id="prof-name-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);">
 
-                    <label style="font-size: 13px; color: #555;">البريد الإلكتروني / رقم الهاتف:</label>
+                    <label style="font-size: 13px; color: #555;">البريد الإلكتروني:</label>
                     <input type="text" id="prof-email-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);" readonly>
 
                     <label style="font-size: 13px; color: #555;">النبذة الشخصية (Bio):</label>
@@ -438,6 +447,10 @@
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
 
+        function getInitial(name) {
+            return name ? name.trim().charAt(0).toUpperCase() : '؟';
+        }
+
         function initApp() {
             if (!currentEmail || accounts.length === 0) {
                 showAuthScreen();
@@ -469,11 +482,9 @@
                 return;
             }
 
-            let avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0d6efd&color=fff`;
-
             let existing = accounts.find(a => a.email === email);
             if (!existing) {
-                let newUser = { name: name, email: email, avatar: avatarUrl, bio: '' };
+                let newUser = { name: name, email: email, bio: '' };
                 accounts.push(newUser);
                 localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
             }
@@ -502,9 +513,10 @@
         }
 
         function loadUserData(user) {
-            document.getElementById('header-avatar').src = user.avatar;
-            document.getElementById('post-box-avatar').src = user.avatar;
-            document.getElementById('prof-img').src = user.avatar;
+            let initial = getInitial(user.name);
+            document.getElementById('header-avatar').innerText = initial;
+            document.getElementById('post-box-avatar').innerText = initial;
+            document.getElementById('prof-img').innerText = initial;
             document.getElementById('prof-name-input').value = user.name;
             document.getElementById('prof-email-input').value = user.email;
             document.getElementById('prof-bio-input').value = user.bio || '';
@@ -530,7 +542,7 @@
                 div.className = 'account-badge';
                 div.innerHTML = `
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <img src="${acc.avatar}" class="user-avatar" style="width:30px; height:30px;">
+                        <div class="avatar-circle" style="width:30px; height:30px; font-size:12px;">${getInitial(acc.name)}</div>
                         <div>
                             <strong style="font-size:13px;">${acc.name}</strong><br>
                             <small style="color:#777; font-size:11px;">${acc.email}</small>
@@ -557,11 +569,12 @@
             if (!text) return;
 
             let currentUser = accounts.find(a => a.email === currentEmail);
+            let initial = getInitial(currentUser.name);
 
             let postHTML = `
                 <div class="card post">
                     <div class="post-header">
-                        <img src="${currentUser.avatar}" class="user-avatar">
+                        <div class="avatar-circle">${initial}</div>
                         <div>
                             <div class="post-author">${currentUser.name}</div>
                             <div class="post-time">الآن</div>
