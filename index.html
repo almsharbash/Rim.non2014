@@ -6,341 +6,96 @@
     <title>كلمات | Kalimat</title>
     <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #f0f2f5; font-family: 'Tajawal', sans-serif; color: #1c1e21; padding-bottom: 60px; }
 
-        body {
-            background-color: #f0f2f5;
-            font-family: 'Tajawal', sans-serif;
-            color: #1c1e21;
-        }
-
-        /* --- صفحة تسجيل الدخول --- */
-        #login-page {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
+        /* --- صفحة التسجيل والدخول --- */
+        #login-page { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .header-container { text-align: center; margin-bottom: 20px; }
-        .logo-img {
-            width: 110px;
-            height: auto;
-            display: block;
-            margin: 0 auto 5px auto;
-            filter: drop-shadow(0px 6px 10px rgba(13, 71, 161, 0.15));
-            mix-blend-mode: multiply;
-        }
-        .app-title {
-            color: #0b4395;
-            font-family: 'Aref Ruqaa', serif;
-            font-size: 48px;
-            font-weight: 700;
-        }
+        .logo-img { width: 110px; height: auto; display: block; margin: 0 auto 5px auto; filter: drop-shadow(0px 6px 10px rgba(13, 71, 161, 0.15)); mix-blend-mode: multiply; }
+        .app-title { color: #0b4395; font-family: 'Aref Ruqaa', serif; font-size: 48px; font-weight: 700; }
         .app-desc { color: #555; font-size: 15px; max-width: 320px; }
-
-        .card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 400px;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        }
+        .card { background: #ffffff; width: 100%; max-width: 400px; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
         .form-group { margin-bottom: 15px; }
-        .input-field {
-            width: 100%;
-            padding: 14px 16px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 15px;
-            outline: none;
-            font-family: 'Tajawal', sans-serif;
-        }
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .forgot-pass { display: block; text-align: center; margin: 15px 0; color: #1a73e8; text-decoration: none; font-size: 14px; }
+        .form-group label { display: block; font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #444; }
+        .input-field { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; outline: none; font-family: 'Tajawal', sans-serif; }
+        .btn-primary { width: 100%; padding: 12px; background-color: #1a73e8; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn-secondary { width: 100%; padding: 12px; background-color: #2e7d32; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; }
         .divider { height: 1px; background-color: #e0e0e0; margin: 20px 0; }
-        .btn-secondary {
-            width: 100%;
-            padding: 12px;
-            background-color: #2e7d32;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
 
-        /* --- واجهة المنشورات الرئيسية --- */
-        #main-feed {
-            display: none;
-            max-width: 600px;
-            margin: 0 auto;
-            padding-bottom: 40px;
-        }
-
-        .top-navbar {
-            background: #ffffff;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
+        /* --- الهيدر وشريط التنقل العلوي --- */
+        .top-navbar { background: #ffffff; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
         .nav-logo { font-family: 'Aref Ruqaa', serif; font-size: 26px; color: #0b4395; text-decoration: none; cursor: pointer; }
-        .search-box {
-            background: #f0f2f5;
-            border-radius: 20px;
-            padding: 8px 16px;
-            border: none;
-            outline: none;
-            width: 55%;
-            font-family: 'Tajawal', sans-serif;
-        }
+        .search-box { background: #f0f2f5; border-radius: 20px; padding: 8px 16px; border: none; outline: none; width: 50%; font-family: 'Tajawal', sans-serif; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: #0b4395; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; overflow: hidden; flex-shrink: 0; }
+        .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #0b4395;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            cursor: pointer;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
+        /* --- شريط التنقل السفلي (Bottom Nav) --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; display: flex; justify-content: space-around; border-top: 1px solid #e0e0e0; padding: 8px 0; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #65676b; font-size: 11px; cursor: pointer; text-decoration: none; border: none; background: none; font-family: 'Tajawal', sans-serif; }
+        .nav-item.active { color: #1a73e8; font-weight: bold; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
 
-        .user-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        /* --- الشاشات المختلفة --- */
+        .page-screen { display: none; max-width: 600px; margin: 0 auto; padding: 10px 10px 70px 10px; }
+        .page-screen.active { display: block; }
 
-        .post-creator {
-            background: #ffffff;
-            margin: 15px 10px;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-        }
+        /* إنشاء منشور */
+        .post-creator { background: #ffffff; margin-bottom: 15px; padding: 15px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
         .creator-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-        .creator-input {
-            width: 100%;
-            border: none;
-            background: #f0f2f5;
-            padding: 10px 15px;
-            border-radius: 20px;
-            outline: none;
-            font-family: 'Tajawal', sans-serif;
-        }
-
-        .post-img-preview-container {
-            position: relative;
-            margin: 10px 0;
-            display: none;
-        }
-        .post-img-preview {
-            width: 100%;
-            max-height: 250px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .remove-img-btn {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            cursor: pointer;
-        }
-
+        .creator-input { width: 100%; border: none; background: #f0f2f5; padding: 10px 15px; border-radius: 20px; outline: none; font-family: 'Tajawal', sans-serif; }
+        .post-img-preview-container { position: relative; margin: 10px 0; display: none; }
+        .post-img-preview { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; }
+        .remove-img-btn { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; }
         .creator-actions { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
         .action-btn { background: none; border: none; color: #555; font-size: 14px; cursor: pointer; font-family: 'Tajawal', sans-serif; display: flex; align-items: center; gap: 5px; }
 
-        .post-card {
-            background: #ffffff;
-            margin: 15px 10px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-            padding: 15px;
-        }
+        /* المنشورات */
+        .post-card { background: #ffffff; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); padding: 15px; }
         .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .post-author { font-weight: bold; font-size: 15px; }
         .post-time { font-size: 12px; color: #777; }
         .post-content { font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
         .post-image { width: 100%; max-height: 350px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
-        
-        .repost-badge {
-            background: #e7f3ff;
-            color: #1877f2;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
-
+        .repost-badge { background: #e7f3ff; color: #1877f2; padding: 4px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; display: inline-block; }
         .post-footer { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
         .interaction-btn { background: none; border: none; color: #65676b; font-weight: 500; cursor: pointer; font-family: 'Tajawal', sans-serif; }
         .interaction-btn.liked { color: #1a73e8; font-weight: bold; }
 
-        /* منطقة التعليقات */
-        .comments-section {
-            display: none;
-            border-top: 1px solid #eee;
-            margin-top: 10px;
-            padding-top: 10px;
-        }
-        .comment-input-box {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .comment-input {
-            flex-grow: 1;
-            padding: 8px 12px;
-            border-radius: 15px;
-            border: 1px solid #ddd;
-            outline: none;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 13px;
-        }
-        .comment-btn {
-            background: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 6px 12px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .comment-item {
-            background: #f0f2f5;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 13px;
-        }
+        /* التعليقات */
+        .comments-section { display: none; border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px; }
+        .comment-input-box { display: flex; gap: 8px; margin-bottom: 10px; }
+        .comment-input { flex-grow: 1; padding: 8px 12px; border-radius: 15px; border: 1px solid #ddd; outline: none; font-family: 'Tajawal', sans-serif; font-size: 13px; }
+        .comment-btn { background: #1a73e8; color: white; border: none; border-radius: 12px; padding: 6px 12px; cursor: pointer; font-size: 12px; }
+        .comments-list { display: flex; flex-direction: column; gap: 8px; }
+        .comment-item { background: #f0f2f5; padding: 8px 12px; border-radius: 10px; font-size: 13px; }
         .comment-author { font-weight: bold; margin-bottom: 2px; }
 
-        /* --- واجهة تعديل الملف الشخصي --- */
-        #profile-page {
-            display: none;
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 0 10px;
-        }
+        /* --- صفحة الأصدقاء والمتابعة --- */
+        .friend-card { background: white; padding: 12px 15px; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.03); }
+        .friend-info { display: flex; align-items: center; gap: 12px; }
+        .btn-follow { background: #e7f3ff; color: #1877f2; border: none; padding: 6px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+        .btn-follow.following { background: #f0f2f5; color: #555; }
 
-        .profile-card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
+        /* --- صفحة الدردشة --- */
+        .chat-container { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); min-height: 400px; display: flex; flex-direction: column; }
+        .chat-messages { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; max-height: 320px; overflow-y: auto; padding: 5px; }
+        .msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 15px; font-size: 14px; line-height: 1.4; }
+        .msg-incoming { background: #f0f2f5; align-self: flex-start; border-bottom-right-radius: 4px; }
+        .msg-outgoing { background: #1a73e8; color: white; align-self: flex-end; border-bottom-left-radius: 4px; }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .back-btn {
-            background: #f0f4f8;
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        /* Modals & Headers */
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .back-btn { background: #f0f4f8; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .back-btn svg { width: 22px; height: 22px; fill: #0b4395; }
-
-        .card-header h2 { margin: 0; font-size: 18px; color: #333; flex-grow: 1; text-align: center; }
-
-        .avatar-edit-container { text-align: center; margin-bottom: 20px; }
-        .avatar-edit-preview {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #0b4395;
-            background-color: #eee;
-        }
-        .file-input-btn { margin-top: 8px; display: inline-block; font-size: 13px; color: #1a73e8; cursor: pointer; font-weight: bold; }
-        input[type="file"] { display: none; }
-
-        .status-msg { margin-top: 12px; text-align: center; font-size: 14px; color: #28a745; font-weight: bold; }
-
-        /* قائمة اختيارات المشاركة Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 200;
-            justify-content: center;
-            align-items: flex-end;
-        }
-        .modal-box {
-            background: white;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 16px 16px 0 0;
-            padding: 20px;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
-        }
-        .modal-option {
-            padding: 14px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .modal-option:last-child { border-bottom: none; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: flex-end; }
+        .modal-box { background: white; width: 100%; max-width: 500px; border-radius: 16px 16px 0 0; padding: 20px; }
+        .modal-option { padding: 14px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 10px; }
     </style>
 </head>
 <body>
 
+    <!-- 1. صفحة التسجيل والدخول -->
     <div id="login-page">
         <div class="header-container">
             <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="كلمات" class="logo-img">
@@ -351,33 +106,32 @@
         <div class="card">
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <input type="text" class="input-field" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+                    <input type="text" id="loginIdentifier" class="input-field" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="input-field" placeholder="كلمة السر" required>
+                    <input type="password" id="loginPassword" class="input-field" placeholder="كلمة السر" required>
                 </div>
                 <button type="submit" class="btn-primary">تسجيل الدخول</button>
             </form>
-            <a href="#" class="forgot-pass">هل نسيت كلمة السر؟</a>
             <div class="divider"></div>
             <button class="btn-secondary" onclick="handleLogin(event)">إنشاء حساب جديد</button>
         </div>
     </div>
 
-    <div id="main-feed">
-        <nav class="top-navbar">
-            <a onclick="showMainFeed()" class="nav-logo">كلمات</a>
-            <input type="text" class="search-box" placeholder="بحث في كلمات...">
-            <div class="user-avatar" onclick="showProfilePage()" title="تعديل الملف الشخصي" id="navAvatar">
-                <span id="navAvatarText">ك</span>
-            </div>
-        </nav>
+    <!-- الهيدر العلوي للمنصة -->
+    <nav class="top-navbar" id="mainHeader" style="display: none;">
+        <a onclick="switchTab('feed')" class="nav-logo">كلمات</a>
+        <input type="text" class="search-box" placeholder="بحث في كلمات...">
+        <div class="user-avatar" onclick="switchTab('profile')" title="تعديل الملف الشخصي" id="navAvatar">
+            <span id="navAvatarText">ك</span>
+        </div>
+    </nav>
 
+    <!-- 2. الشاشة الرئيسية (الخلاصة Feed) -->
+    <div id="feed-screen" class="page-screen">
         <div class="post-creator">
             <div class="creator-top">
-                <div class="user-avatar" id="creatorAvatar">
-                    <span id="creatorAvatarText">ك</span>
-                </div>
+                <div class="user-avatar" id="creatorAvatar"><span>ك</span></div>
                 <input type="text" id="postInput" class="creator-input" placeholder="بم تفكر يا صديقي؟">
             </div>
 
@@ -388,15 +142,14 @@
 
             <div class="creator-actions">
                 <label for="postImageInput" class="action-btn">📷 إضافة صورة</label>
-                <input type="file" id="postImageInput" accept="image/*" onchange="previewPostImage(event)">
-                
+                <input type="file" id="postImageInput" accept="image/*" style="display:none" onchange="previewPostImage(event)">
                 <button class="action-btn">😊 شعار/نشاط</button>
                 <button class="action-btn" onclick="addPost()" style="color:#1a73e8; font-weight:bold;">نشر</button>
             </div>
         </div>
 
         <div id="postsContainer">
-            <div class="post-card" id="post-1">
+            <div class="post-card">
                 <div class="post-header">
                     <div class="user-avatar">م</div>
                     <div>
@@ -404,9 +157,7 @@
                         <div class="post-time">منذ 15 دقيقة</div>
                     </div>
                 </div>
-                <div class="post-content">
-                    مرحباً بكم في منصة "كلمات"! هذه البداية الأولى للهيكل العظمي للمنصة، سنقوم بربطها قريباً بالسحابة وقاعدة البيانات.
-                </div>
+                <div class="post-content">مرحباً بكم في منصة "كلمات"! يسعدنا انضمامكم إلينا.</div>
                 <div class="post-footer">
                     <button class="interaction-btn" onclick="toggleLike(this)">👍 <span class="like-count">أعجبني</span></button>
                     <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
@@ -423,40 +174,128 @@
         </div>
     </div>
 
-    <div id="profile-page">
-        <div class="profile-card">
-            <div class="card-header">
-                <button class="back-btn" onclick="goBackOrMain()" aria-label="رجوع">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-                    </svg>
-                </button>
-                <h2>تعديل الملف الشخصي</h2>
-                <div style="width: 38px;"></div>
+    <!-- 3. شاشة الأصدقاء والمتابعة -->
+    <div id="friends-screen" class="page-screen">
+        <h3 style="margin-bottom: 15px;">مقترحات المتابعة والأصدقاء</h3>
+        
+        <div class="friend-card">
+            <div class="friend-info">
+                <div class="user-avatar">س</div>
+                <div>
+                    <div style="font-weight:bold;">سامر العلي</div>
+                    <div style="font-size:12px; color:#777;">صديق مشترك</div>
+                </div>
             </div>
+            <button class="btn-follow" onclick="toggleFollow(this)">متابعة</button>
+        </div>
 
-            <div class="avatar-edit-container">
-                <img id="avatarEditPreview" class="avatar-edit-preview" src="https://via.placeholder.com/90?text=صورة" alt="صورة الملف">
-                <br>
-                <label for="avatarFileInput" class="file-input-btn">📷 تغيير الصورة من المعرض</label>
-                <input type="file" id="avatarFileInput" accept="image/*" onchange="previewProfileAvatar(event)">
+        <div class="friend-card">
+            <div class="friend-info">
+                <div class="user-avatar">ن</div>
+                <div>
+                    <div style="font-weight:bold;">نور الهدى</div>
+                    <div style="font-size:12px; color:#777;">نشط الآن</div>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label style="font-weight:bold; font-size:14px; margin-bottom:5px; display:block;">الاسم الظاهر</label>
-                <input type="text" id="editDisplayName" class="input-field" placeholder="أدخل اسمك هنا...">
-            </div>
-
-            <div class="form-group">
-                <label style="font-weight:bold; font-size:14px; margin-bottom:5px; display:block;">النبذة الشخصية (Bio)</label>
-                <textarea id="editBio" class="input-field" style="height: 80px; resize: vertical;" placeholder="اكتب نبذة قصيرة عنك..."></textarea>
-            </div>
-
-            <button class="btn-primary" onclick="saveProfile()">حفظ التغييرات</button>
-            <div id="statusMsg" class="status-msg"></div>
+            <button class="btn-follow" onclick="toggleFollow(this)">متابعة</button>
         </div>
     </div>
 
+    <!-- 4. شاشة الدردشة والرسائل -->
+    <div id="chat-screen" class="page-screen">
+        <h3 style="margin-bottom: 15px;">الرسائل الخاصة</h3>
+        <div class="chat-container">
+            <div class="post-header" style="border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <div class="user-avatar">س</div>
+                <div>
+                    <div class="post-author">سامر العلي</div>
+                    <div class="post-time" style="color:green;">● متصل الآن</div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="msg-bubble msg-incoming">أهلاً بك في منصة كلمات! كيف حالك اليوم؟</div>
+            </div>
+
+            <div class="comment-input-box" style="margin-bottom:0;">
+                <input type="text" id="chatInput" class="comment-input" placeholder="اكتب رسالة خاصة...">
+                <button class="comment-btn" onclick="sendChatMessage()">إرسال</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. شاشة تعديل الملف الشخصي والإعدادات -->
+    <div id="profile-screen" class="page-screen">
+        <div class="card" style="max-width: 100%;">
+            <div class="card-header">
+                <button class="back-btn" onclick="switchTab('feed')" aria-label="رجوع">
+                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                </button>
+                <h2>تعديل الملف الشخصي والأمان</h2>
+                <div style="width: 38px;"></div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img id="avatarEditPreview" class="user-avatar" style="width:90px; height:90px; margin:0 auto; border:3px solid #0b4395;" src="https://via.placeholder.com/90?text=صورة" alt="صورة الملف">
+                <br>
+                <label for="avatarFileInput" style="margin-top:8px; display:inline-block; font-size:13px; color:#1a73e8; cursor:pointer; font-weight:bold;">📷 تغيير الصورة الشخصية</label>
+                <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="previewProfileAvatar(event)">
+            </div>
+
+            <div class="form-group">
+                <label>الاسم الظاهر</label>
+                <input type="text" id="editDisplayName" class="input-field">
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني / رقم الهاتف</label>
+                <input type="text" id="editEmail" class="input-field">
+            </div>
+
+            <div class="form-group">
+                <label>النبذة الشخصية (Bio)</label>
+                <textarea id="editBio" class="input-field" style="height: 70px; resize: vertical;"></textarea>
+            </div>
+
+            <div class="divider"></div>
+            <h4 style="margin-bottom: 12px; color:#333;">تغيير كلمة السر</h4>
+
+            <div class="form-group">
+                <label>كلمة السر الحالية</label>
+                <input type="password" id="editOldPass" class="input-field" placeholder="••••••••">
+            </div>
+
+            <div class="form-group">
+                <label>كلمة السر الجديدة</label>
+                <input type="password" id="editNewPass" class="input-field" placeholder="أدخل كلمة السر الجديدة">
+            </div>
+
+            <button class="btn-primary" onclick="saveProfile()">حفظ كافة التغييرات</button>
+            <div id="statusMsg" style="margin-top:10px; text-align:center; font-weight:bold; color:green;"></div>
+        </div>
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <div class="bottom-nav" id="bottomNav" style="display: none;">
+        <button class="nav-item active" id="nav-feed" onclick="switchTab('feed')">
+            <span class="nav-icon">🏠</span>
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" id="nav-friends" onclick="switchTab('friends')">
+            <span class="nav-icon">👥</span>
+            <span>الأصدقاء</span>
+        </button>
+        <button class="nav-item" id="nav-chat" onclick="switchTab('chat')">
+            <span class="nav-icon">💬</span>
+            <span>الدردشة</span>
+        </button>
+        <button class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+            <span class="nav-icon">👤</span>
+            <span>حسابي</span>
+        </button>
+    </div>
+
+    <!-- نافذة المشاركة -->
     <div class="modal-overlay" id="shareModal" onclick="closeShareModal(event)">
         <div class="modal-box">
             <div class="modal-option" onclick="repostToFeed()">🔁 إعادة النشر على صفحتي الشخصية</div>
@@ -468,6 +307,8 @@
     <script>
         let currentUser = {
             name: '',
+            email: '',
+            password: '',
             bio: '',
             avatarData: ''
         };
@@ -480,54 +321,63 @@
             if (savedProfile) {
                 currentUser = JSON.parse(savedProfile);
             }
-            updateUserUI();
         };
 
-        // إدارة الرجوع والتنقل بزر الهاتف والجهاز
         window.onpopstate = function(event) {
-            if (event.state && event.state.page === 'profile') {
-                document.getElementById('main-feed').style.display = 'none';
-                document.getElementById('profile-page').style.display = 'block';
-            } else {
-                document.getElementById('profile-page').style.display = 'none';
-                document.getElementById('main-feed').style.display = 'block';
+            if (event.state && event.state.tab) {
+                setActiveTabUI(event.state.tab);
             }
         };
 
         function handleLogin(e) {
             e.preventDefault();
+            const inputVal = document.getElementById('loginIdentifier').value.trim();
+            const passVal = document.getElementById('loginPassword').value.trim();
+
+            if (inputVal) {
+                currentUser.email = inputVal;
+                if (!currentUser.name) {
+                    currentUser.name = inputVal.split('@')[0];
+                }
+            }
+            if (passVal) {
+                currentUser.password = passVal;
+            }
+
+            localStorage.setItem('kalimat_user_profile', JSON.stringify(currentUser));
+            
             document.getElementById('login-page').style.display = 'none';
-            document.getElementById('profile-page').style.display = 'none';
-            document.getElementById('main-feed').style.display = 'block';
-            history.pushState({page: 'feed'}, 'Feed', '');
+            document.getElementById('mainHeader').style.display = 'flex';
+            document.getElementById('bottomNav').style.display = 'flex';
+
+            switchTab('feed');
         }
 
-        function showProfilePage() {
-            document.getElementById('main-feed').style.display = 'none';
-            document.getElementById('profile-page').style.display = 'block';
+        function switchTab(tabName) {
+            setActiveTabUI(tabName);
+            history.pushState({tab: tabName}, '', '#' + tabName);
+        }
 
-            document.getElementById('editDisplayName').value = currentUser.name || '';
-            document.getElementById('editBio').value = currentUser.bio || '';
-            if (currentUser.avatarData) {
-                document.getElementById('avatarEditPreview').src = currentUser.avatarData;
-            } else {
-                document.getElementById('avatarEditPreview').src = 'https://via.placeholder.com/90?text=صورة';
+        function setActiveTabUI(tabName) {
+            document.querySelectorAll('.page-screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            const targetScreen = document.getElementById(tabName + '-screen');
+            const targetNav = document.getElementById('nav-' + tabName);
+
+            if (targetScreen) targetScreen.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
+
+            if (tabName === 'profile') {
+                document.getElementById('editDisplayName').value = currentUser.name || '';
+                document.getElementById('editEmail').value = currentUser.email || '';
+                document.getElementById('editBio').value = currentUser.bio || '';
+                if (currentUser.avatarData) {
+                    document.getElementById('avatarEditPreview').src = currentUser.avatarData;
+                }
             }
 
-            history.pushState({page: 'profile'}, 'Profile', '#profile');
-        }
-
-        function showMainFeed() {
-            document.getElementById('profile-page').style.display = 'none';
-            document.getElementById('main-feed').style.display = 'block';
-        }
-
-        function goBackOrMain() {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                showMainFeed();
-            }
+            updateUserUI();
         }
 
         function updateUserUI() {
@@ -535,21 +385,21 @@
             const creatorAvatar = document.getElementById('creatorAvatar');
 
             if (currentUser.avatarData) {
-                navAvatar.innerHTML = `<img src="${currentUser.avatarData}" alt="صورة">`;
-                creatorAvatar.innerHTML = `<img src="${currentUser.avatarData}" alt="صورة">`;
+                navAvatar.innerHTML = `<img src="${currentUser.avatarData}">`;
+                creatorAvatar.innerHTML = `<img src="${currentUser.avatarData}">`;
             } else {
-                const firstLetter = currentUser.name ? currentUser.name.charAt(0) : 'ك';
-                navAvatar.innerHTML = `<span>${firstLetter}</span>`;
-                creatorAvatar.innerHTML = `<span>${firstLetter}</span>`;
+                const letter = currentUser.name ? currentUser.name.charAt(0) : 'ك';
+                navAvatar.innerHTML = `<span>${letter}</span>`;
+                creatorAvatar.innerHTML = `<span>${letter}</span>`;
             }
         }
 
-        function previewProfileAvatar(event) {
-            const file = event.target.files[0];
+        function previewProfileAvatar(e) {
+            const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('avatarEditPreview').src = e.target.result;
+                reader.onload = function(evt) {
+                    document.getElementById('avatarEditPreview').src = evt.target.result;
                 };
                 reader.readAsDataURL(file);
             }
@@ -557,37 +407,31 @@
 
         function saveProfile() {
             const name = document.getElementById('editDisplayName').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
             const bio = document.getElementById('editBio').value.trim();
-            const avatarPreviewSrc = document.getElementById('avatarEditPreview').src;
+            const newPass = document.getElementById('editNewPass').value.trim();
+            const avatarSrc = document.getElementById('avatarEditPreview').src;
 
-            if (!name) {
-                alert("يرجى إدخال الاسم الظاهر.");
-                return;
-            }
-
-            currentUser.name = name;
-            currentUser.bio = bio;
-            if (!avatarPreviewSrc.includes('placeholder.com')) {
-                currentUser.avatarData = avatarPreviewSrc;
-            }
+            if (name) currentUser.name = name;
+            if (email) currentUser.email = email;
+            if (bio) currentUser.bio = bio;
+            if (newPass) currentUser.password = newPass;
+            if (!avatarSrc.includes('placeholder.com')) currentUser.avatarData = avatarSrc;
 
             localStorage.setItem('kalimat_user_profile', JSON.stringify(currentUser));
             updateUserUI();
 
             const msg = document.getElementById('statusMsg');
             msg.innerText = "تم حفظ التغييرات بنجاح!";
-            setTimeout(() => {
-                msg.innerText = "";
-                goBackOrMain();
-            }, 1000);
+            setTimeout(() => { msg.innerText = ""; switchTab('feed'); }, 1000);
         }
 
-        function previewPostImage(event) {
-            const file = event.target.files[0];
+        function previewPostImage(e) {
+            const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedPostImageData = e.target.result;
+                reader.onload = function(evt) {
+                    selectedPostImageData = evt.target.result;
                     document.getElementById('postImgPreview').src = selectedPostImageData;
                     document.getElementById('postImgPreviewContainer').style.display = 'block';
                 };
@@ -597,16 +441,13 @@
 
         function removePostImage() {
             selectedPostImageData = '';
-            document.getElementById('postImgPreview').src = '';
             document.getElementById('postImgPreviewContainer').style.display = 'none';
-            document.getElementById('postImageInput').value = '';
         }
 
         function addPost() {
             const input = document.getElementById('postInput');
-            const postText = input.value.trim();
-
-            if (!postText && !selectedPostImageData) return;
+            const text = input.value.trim();
+            if (!text && !selectedPostImageData) return;
 
             const postsContainer = document.getElementById('postsContainer');
             const newPost = document.createElement('div');
@@ -616,10 +457,6 @@
                 ? `<div class="user-avatar"><img src="${currentUser.avatarData}"></div>`
                 : `<div class="user-avatar">${currentUser.name ? currentUser.name.charAt(0) : 'ك'}</div>`;
 
-            let imageHTML = selectedPostImageData 
-                ? `<img src="${selectedPostImageData}" class="post-image" alt="صورة المنشور">`
-                : '';
-
             newPost.innerHTML = `
                 <div class="post-header">
                     ${avatarHTML}
@@ -628,8 +465,8 @@
                         <div class="post-time">الآن</div>
                     </div>
                 </div>
-                ${postText ? `<div class="post-content">${postText}</div>` : ''}
-                ${imageHTML}
+                ${text ? `<div class="post-content">${text}</div>` : ''}
+                ${selectedPostImageData ? `<img src="${selectedPostImageData}" class="post-image">` : ''}
                 <div class="post-footer">
                     <button class="interaction-btn" onclick="toggleLike(this)">👍 <span class="like-count">أعجبني</span></button>
                     <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
@@ -649,19 +486,33 @@
             removePostImage();
         }
 
+        function toggleFollow(btn) {
+            btn.classList.toggle('following');
+            btn.innerText = btn.classList.contains('following') ? 'تتابعه' : 'متابعة';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const msg = document.createElement('div');
+            msg.className = 'msg-bubble msg-outgoing';
+            msg.innerText = text;
+            chatMessages.appendChild(msg);
+
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
         function toggleLike(btn) {
             btn.classList.toggle('liked');
-            const textSpan = btn.querySelector('.like-count');
-            if (btn.classList.contains('liked')) {
-                textSpan.innerText = "تم الإعجاب";
-            } else {
-                textSpan.innerText = "أعجبني";
-            }
+            btn.querySelector('.like-count').innerText = btn.classList.contains('liked') ? "تم الإعجاب" : "أعجبني";
         }
 
         function toggleComments(btn) {
-            const card = btn.closest('.post-card');
-            const section = card.querySelector('.comments-section');
+            const section = btn.closest('.post-card').querySelector('.comments-section');
             section.style.display = (section.style.display === 'block') ? 'none' : 'block';
         }
 
@@ -679,16 +530,13 @@
             input.value = '';
         }
 
-        // إدارة خيارات المشاركة وإعادة النشر
         function openShareModal(btn) {
             targetPostForShare = btn.closest('.post-card');
             document.getElementById('shareModal').style.display = 'flex';
         }
 
         function closeShareModal(e) {
-            if (e.target.id === 'shareModal') {
-                document.getElementById('shareModal').style.display = 'none';
-            }
+            if (e.target.id === 'shareModal') closeShareModalForce();
         }
 
         function closeShareModalForce() {
@@ -697,10 +545,9 @@
 
         function repostToFeed() {
             if (!targetPostForShare) return;
-
-            const authorName = targetPostForShare.querySelector('.post-author').innerText;
-            const originalContent = targetPostForShare.querySelector('.post-content') ? targetPostForShare.querySelector('.post-content').innerText : '';
-            const originalImage = targetPostForShare.querySelector('.post-image') ? targetPostForShare.querySelector('.post-image').src : '';
+            const author = targetPostForShare.querySelector('.post-author').innerText;
+            const content = targetPostForShare.querySelector('.post-content')?.innerText || '';
+            const img = targetPostForShare.querySelector('.post-image')?.src || '';
 
             const postsContainer = document.getElementById('postsContainer');
             const newPost = document.createElement('div');
@@ -710,10 +557,6 @@
                 ? `<div class="user-avatar"><img src="${currentUser.avatarData}"></div>`
                 : `<div class="user-avatar">${currentUser.name ? currentUser.name.charAt(0) : 'ك'}</div>`;
 
-            let imageHTML = originalImage 
-                ? `<img src="${originalImage}" class="post-image" alt="صورة المنشور">`
-                : '';
-
             newPost.innerHTML = `
                 <div class="post-header">
                     ${avatarHTML}
@@ -722,9 +565,9 @@
                         <div class="post-time">الآن</div>
                     </div>
                 </div>
-                <div class="repost-badge">🔁 أعاد نشر منشور لـ ${authorName}</div>
-                ${originalContent ? `<div class="post-content">${originalContent}</div>` : ''}
-                ${imageHTML}
+                <div class="repost-badge">🔁 أعاد نشر منشور لـ ${author}</div>
+                ${content ? `<div class="post-content">${content}</div>` : ''}
+                ${img ? `<img src="${img}" class="post-image">` : ''}
                 <div class="post-footer">
                     <button class="interaction-btn" onclick="toggleLike(this)">👍 <span class="like-count">أعجبني</span></button>
                     <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
