@@ -1,221 +1,35 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعديل الملف الشخصي</title>
-    <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .profile-card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-        }
-        
-        /* شريط العودة والعنوان */
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .back-btn {
-            background: none;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            color: #007bff;
-            padding: 4px 8px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-        }
-        .back-btn:hover {
-            background-color: #f0f4f8;
-        }
-        .card-header h2 {
-            margin: 0;
-            font-size: 18px;
-            color: #333;
-            flex-grow: 1;
-            text-align: center;
-        }
-        
-        .avatar-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .avatar-preview {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #007bff;
-            background-color: #eee;
-        }
-        .file-input-btn {
-            margin-top: 8px;
-            display: inline-block;
-            font-size: 13px;
-            color: #007bff;
-            cursor: pointer;
-        }
-        input[type="file"] {
-            display: none;
-        }
-        .form-group {
-            margin-bottom: 16px;
-        }
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #555;
-            font-size: 14px;
-        }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        textarea {
-            resize: vertical;
-            height: 80px;
-        }
-        button.save-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button.save-btn:hover {
-            background-color: #0056b3;
-        }
-        .status-msg {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 14px;
-            color: #28a745;
-        }
-    </style>
-</head>
-<body>
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    user-select: none; /* منع تحديد النص أو النسخ */
+    -webkit-user-select: none;
+}
 
-<div class="profile-card">
-    <!-- هيدر الصفحة يحتوي على سهم الرجوع -->
-    <div class="card-header">
-        <button class="back-btn" onclick="goBack()" title="رجوع">➔</button>
-        <h2>تعديل الملف الشخصي</h2>
-        <div style="width: 30px;"></div> <!-- لموازنة عنوان الصفحة بالمنتصف -->
-    </div>
-    
-    <!-- معاينة واختيار الصورة -->
-    <div class="avatar-container">
-        <img id="avatarPreview" class="avatar-preview" src="https://via.placeholder.com/90?text=صورة" alt="صورة الملف الشخصي">
-        <br>
-        <label for="avatarInput" class="file-input-btn">📷 تغيير الصورة من المعرض</label>
-        <input type="file" id="avatarInput" accept="image/*" onchange="previewImage(event)">
-    </div>
+.back-btn {
+    background: #f0f4f8;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
 
-    <!-- بيانات المستخدم -->
-    <div class="form-group">
-        <label for="displayName">الاسم الظاهر</label>
-        <input type="text" id="displayName" placeholder="أدخل اسمك هنا...">
-    </div>
+.back-btn:active {
+    background-color: #dbe5f1;
+}
 
-    <div class="form-group">
-        <label for="bio">النبذة الشخصية (Bio)</label>
-        <textarea id="bio" placeholder="اكتب نبذة قصيرة عنك..."></textarea>
-    </div>
-
-    <button class="save-btn" onclick="saveProfile()">حفظ التغييرات</button>
-    <div id="statusMsg" class="status-msg"></div>
-</div>
-
-<script>
-    let currentAvatarData = "";
-
-    // وظيفة زر الرجوع للنافذة السابقة
-    function goBack() {
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            // رابط العودة إلى الصفحة الرئيسية للمنصة إذا لم تتواجد صفحة سابقة
-            window.location.href = 'index.html'; 
-        }
-    }
-
-    // معاينة الصورة مباشرة من معرض الجهاز
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                currentAvatarData = e.target.result;
-                document.getElementById('avatarPreview').src = currentAvatarData;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    // حفظ البيانات
-    function saveProfile() {
-        const name = document.getElementById('displayName').value.trim();
-        const bio = document.getElementById('bio').value.trim();
-
-        if (!name) {
-            alert("يرجى إدخال الاسم الظاهر.");
-            return;
-        }
-
-        const profileData = {
-            name: name,
-            bio: bio,
-            avatar: currentAvatarData || document.getElementById('avatarPreview').src
-        };
-
-        localStorage.setItem('user_profile', JSON.stringify(profileData));
-
-        const msg = document.getElementById('statusMsg');
-        msg.innerText = "تم حفظ بيانات الملف الشخصي بنجاح!";
-        setTimeout(() => { msg.innerText = ""; }, 3000);
-    }
-
-    // تحميل البيانات تلقائياً عند فتح الصفحة
-    window.onload = function() {
-        const savedProfile = localStorage.getItem('user_profile');
-        if (savedProfile) {
-            const data = JSON.parse(savedProfile);
-            document.getElementById('displayName').value = data.name || '';
-            document.getElementById('bio').value = data.bio || '';
-            if (data.avatar) {
-                document.getElementById('avatarPreview').src = data.avatar;
-                currentAvatarData = data.avatar;
-            }
-        }
-    };
-</script>
-
-</body>
-</html>
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: #007bff;
+}
