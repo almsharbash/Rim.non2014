@@ -3,27 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تعديل الملف الشخصي</title>
+    <title>كلمات | Kalimat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: #f4f6f8;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+            padding: 0;
         }
+
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Tajawal', sans-serif;
+            color: #1c1e21;
+        }
+
+        /* --- صفحة تسجيل الدخول --- */
+        #login-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header-container { text-align: center; margin-bottom: 20px; }
+        .logo-img {
+            width: 110px;
+            height: auto;
+            display: block;
+            margin: 0 auto 5px auto;
+            filter: drop-shadow(0px 6px 10px rgba(13, 71, 161, 0.15));
+            mix-blend-mode: multiply;
+        }
+        .app-title {
+            color: #0b4395;
+            font-family: 'Aref Ruqaa', serif;
+            font-size: 48px;
+            font-weight: 700;
+        }
+        .app-desc { color: #555; font-size: 15px; max-width: 320px; }
+
+        .card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .form-group { margin-bottom: 15px; }
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .forgot-pass { display: block; text-align: center; margin: 15px 0; color: #1a73e8; text-decoration: none; font-size: 14px; }
+        .divider { height: 1px; background-color: #e0e0e0; margin: 20px 0; }
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- واجهة المنشورات الرئيسية --- */
+        #main-feed {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        .top-navbar {
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .nav-logo { font-family: 'Aref Ruqaa', serif; font-size: 26px; color: #0b4395; text-decoration: none; }
+        .search-box {
+            background: #f0f2f5;
+            border-radius: 20px;
+            padding: 8px 16px;
+            border: none;
+            outline: none;
+            width: 55%;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0b4395;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .post-creator {
+            background: #ffffff;
+            margin: 15px 10px;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+        .creator-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .creator-input {
+            width: 100%;
+            border: none;
+            background: #f0f2f5;
+            padding: 10px 15px;
+            border-radius: 20px;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .post-img-preview-container {
+            position: relative;
+            margin: 10px 0;
+            display: none;
+        }
+        .post-img-preview {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .remove-img-btn {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+        }
+
+        .creator-actions { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
+        .action-btn { background: none; border: none; color: #555; font-size: 14px; cursor: pointer; font-family: 'Tajawal', sans-serif; display: flex; align-items: center; gap: 5px; }
+
+        .post-card {
+            background: #ffffff;
+            margin: 15px 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            padding: 15px;
+        }
+        .post-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .post-author { font-weight: bold; font-size: 15px; }
+        .post-time { font-size: 12px; color: #777; }
+        .post-content { font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
+        .post-image { width: 100%; max-height: 350px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+        .post-footer { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
+        .interaction-btn { background: none; border: none; color: #65676b; font-weight: 500; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+
+        /* --- واجهة تعديل الملف الشخصي --- */
+        #profile-page {
+            display: none;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
         .profile-card {
             background: #ffffff;
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            width: 100%;
-            max-width: 400px;
-            position: relative;
         }
-        
-        /* شريط العودة والعنوان */
+
         .card-header {
             display: flex;
             align-items: center;
@@ -34,6 +224,7 @@
             user-select: none;
             -webkit-user-select: none;
         }
+
         .back-btn {
             background: #f0f4f8;
             border: none;
@@ -44,182 +235,308 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.2s;
             outline: none;
-            -webkit-tap-highlight-color: transparent;
         }
-        .back-btn:active {
-            background-color: #dbe5f1;
-        }
-        .back-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #007bff;
-        }
-        .card-header h2 {
-            margin: 0;
-            font-size: 18px;
-            color: #333;
-            flex-grow: 1;
-            text-align: center;
-        }
-        
-        .avatar-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .avatar-preview {
+        .back-btn svg { width: 20px; height: 20px; fill: #007bff; }
+
+        .card-header h2 { margin: 0; font-size: 18px; color: #333; flex-grow: 1; text-align: center; }
+
+        .avatar-edit-container { text-align: center; margin-bottom: 20px; }
+        .avatar-edit-preview {
             width: 90px;
             height: 90px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #007bff;
+            border: 3px solid #0b4395;
             background-color: #eee;
         }
-        .file-input-btn {
-            margin-top: 8px;
-            display: inline-block;
-            font-size: 13px;
-            color: #007bff;
-            cursor: pointer;
-        }
-        input[type="file"] {
-            display: none;
-        }
-        .form-group {
-            margin-bottom: 16px;
-        }
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #555;
-            font-size: 14px;
-        }
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        textarea {
-            resize: vertical;
-            height: 80px;
-        }
-        button.save-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button.save-btn:hover {
-            background-color: #0056b3;
-        }
-        .status-msg {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 14px;
-            color: #28a745;
-        }
+        .file-input-btn { margin-top: 8px; display: inline-block; font-size: 13px; color: #1a73e8; cursor: pointer; font-weight: bold; }
+        input[type="file"] { display: none; }
+
+        .status-msg { margin-top: 12px; text-align: center; font-size: 14px; color: #28a745; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="profile-card">
-    <div class="card-header">
-        <button class="back-btn" onclick="goBack()" aria-label="رجوع">
-            <svg viewBox="0 0 24 24">
-                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-            </svg>
-        </button>
-        <h2>تعديل الملف الشخصي</h2>
-        <div style="width: 36px;"></div>
-    </div>
-    
-    <div class="avatar-container">
-        <img id="avatarPreview" class="avatar-preview" src="https://via.placeholder.com/90?text=صورة" alt="صورة الملف الشخصي">
-        <br>
-        <label for="avatarInput" class="file-input-btn">📷 تغيير الصورة من المعرض</label>
-        <input type="file" id="avatarInput" accept="image/*" onchange="previewImage(event)">
-    </div>
+    <!-- 1. صفحة التسجيل والدخول -->
+    <div id="login-page">
+        <div class="header-container">
+            <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="كلمات" class="logo-img">
+            <h1 class="app-title">كلمات</h1>
+            <p class="app-desc">تواصل مع الأصدقاء والعالم من حولك عبر المنصة في مكان واحد.</p>
+        </div>
 
-    <div class="form-group">
-        <label for="displayName">الاسم الظاهر</label>
-        <input type="text" id="displayName" placeholder="أدخل اسمك هنا...">
-    </div>
-
-    <div class="form-group">
-        <label for="bio">النبذة الشخصية (Bio)</label>
-        <textarea id="bio" placeholder="اكتب نبذة قصيرة عنك..."></textarea>
+        <div class="card">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <input type="text" class="input-field" placeholder="البريد الإلكتروني أو رقم الهاتف" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="input-field" placeholder="كلمة السر" required>
+                </div>
+                <button type="submit" class="btn-primary">تسجيل الدخول</button>
+            </form>
+            <a href="#" class="forgot-pass">هل نسيت كلمة السر؟</a>
+            <div class="divider"></div>
+            <button class="btn-secondary" onclick="handleLogin(event)">إنشاء حساب جديد</button>
+        </div>
     </div>
 
-    <button class="save-btn" onclick="saveProfile()">حفظ التغييرات</button>
-    <div id="statusMsg" class="status-msg"></div>
-</div>
+    <!-- 2. واجهة المنشورات (Main Feed) -->
+    <div id="main-feed">
+        <!-- الشريط العلوي -->
+        <nav class="top-navbar">
+            <a href="#" class="nav-logo">كلمات</a>
+            <input type="text" class="search-box" placeholder="بحث في كلمات...">
+            <div class="user-avatar" onclick="showProfilePage()" title="تعديل الملف الشخصي" id="navAvatar">
+                <span id="navAvatarText">ك</span>
+            </div>
+        </nav>
 
-<script>
-    let currentAvatarData = "";
+        <!-- صندوق إنشاء منشور -->
+        <div class="post-creator">
+            <div class="creator-top">
+                <div class="user-avatar" id="creatorAvatar">
+                    <span id="creatorAvatarText">ك</span>
+                </div>
+                <input type="text" id="postInput" class="creator-input" placeholder="بم تفكر يا صديقي؟">
+            </div>
 
-    // الانتقال المباشر للصفحة الرئيسية
-    function goBack() {
-        // يمكنك تغيير 'index.html' للرابط الخاص بالصفحة الرئيسية للمنصة لديك
-        window.location.href = 'index.html';
-    }
+            <!-- معاينة الصورة المختارة للمنشور -->
+            <div class="post-img-preview-container" id="postImgPreviewContainer">
+                <button class="remove-img-btn" onclick="removePostImage()">✕</button>
+                <img id="postImgPreview" class="post-img-preview" src="" alt="معاينة الصورة">
+            </div>
 
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                currentAvatarData = e.target.result;
-                document.getElementById('avatarPreview').src = currentAvatarData;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+            <div class="creator-actions">
+                <label for="postImageInput" class="action-btn">📷 إضافة صورة</label>
+                <input type="file" id="postImageInput" accept="image/*" onchange="previewPostImage(event)">
+                
+                <button class="action-btn">😊 شعار/نشاط</button>
+                <button class="action-btn" onclick="addPost()" style="color:#1a73e8; font-weight:bold;">نشر</button>
+            </div>
+        </div>
 
-    function saveProfile() {
-        const name = document.getElementById('displayName').value.trim();
-        const bio = document.getElementById('bio').value.trim();
+        <!-- قائمة المنشورات -->
+        <div id="postsContainer">
+            <!-- منشور تجريبي 1 -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="user-avatar">م</div>
+                    <div>
+                        <div class="post-author">محمد أحمد</div>
+                        <div class="post-time">منذ 15 دقيقة</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    مرحباً بكم في منصة "كلمات"! هذه البداية الأولى للهيكل العظمي للمنصة، سنقوم بربطها قريباً بالسحابة وقاعدة البيانات.
+                </div>
+                <div class="post-footer">
+                    <button class="interaction-btn">👍 أعجبني</button>
+                    <button class="interaction-btn">💬 تعليق</button>
+                    <button class="interaction-btn">↪️ مشاركة</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        if (!name) {
-            alert("يرجى إدخال الاسم الظاهر.");
-            return;
-        }
+    <!-- 3. واجهة تعديل الملف الشخصي -->
+    <div id="profile-page">
+        <div class="profile-card">
+            <div class="card-header">
+                <button class="back-btn" onclick="showMainFeed()" aria-label="رجوع">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    </svg>
+                </button>
+                <h2>تعديل الملف الشخصي</h2>
+                <div style="width: 36px;"></div>
+            </div>
 
-        const profileData = {
-            name: name,
-            bio: bio,
-            avatar: currentAvatarData || document.getElementById('avatarPreview').src
+            <div class="avatar-edit-container">
+                <img id="avatarEditPreview" class="avatar-edit-preview" src="https://via.placeholder.com/90?text=صورة" alt="صورة الملف">
+                <br>
+                <label for="avatarFileInput" class="file-input-btn">📷 تغيير الصورة من المعرض</label>
+                <input type="file" id="avatarFileInput" accept="image/*" onchange="previewProfileAvatar(event)">
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight:bold; font-size:14px; margin-bottom:5px; display:block;">الاسم الظاهر</label>
+                <input type="text" id="editDisplayName" class="input-field" placeholder="أدخل اسمك هنا...">
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight:bold; font-size:14px; margin-bottom:5px; display:block;">النبذة الشخصية (Bio)</label>
+                <textarea id="editBio" class="input-field" style="height: 80px; resize: vertical;" placeholder="اكتب نبذة قصيرة عنك..."></textarea>
+            </div>
+
+            <button class="btn-primary" onclick="saveProfile()">حفظ التغييرات</button>
+            <div id="statusMsg" class="status-msg"></div>
+        </div>
+    </div>
+
+    <script>
+        // بيانات المستخدم الافتراضية
+        let currentUser = {
+            name: 'المستخدم',
+            bio: '',
+            avatarData: ''
         };
 
-        localStorage.setItem('user_profile', JSON.stringify(profileData));
+        let selectedPostImageData = '';
 
-        const msg = document.getElementById('statusMsg');
-        msg.innerText = "تم حفظ بيانات الملف الشخصي بنجاح!";
-        setTimeout(() => { msg.innerText = ""; }, 3000);
-    }
+        // عند تحميل الصفحة
+        window.onload = function() {
+            const savedProfile = localStorage.getItem('kalimat_user_profile');
+            if (savedProfile) {
+                currentUser = JSON.parse(savedProfile);
+            }
+            updateUserUI();
+        };
 
-    window.onload = function() {
-        const savedProfile = localStorage.getItem('user_profile');
-        if (savedProfile) {
-            const data = JSON.parse(savedProfile);
-            document.getElementById('displayName').value = data.name || '';
-            document.getElementById('bio').value = data.bio || '';
-            if (data.avatar) {
-                document.getElementById('avatarPreview').src = data.avatar;
-                currentAvatarData = data.avatar;
+        // التبديل بين الشاشات
+        function handleLogin(e) {
+            e.preventDefault();
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('profile-page').style.display = 'none';
+            document.getElementById('main-feed').style.display = 'block';
+        }
+
+        function showProfilePage() {
+            document.getElementById('main-feed').style.display = 'none';
+            document.getElementById('profile-page').style.display = 'block';
+
+            // تعبئة البيانات الحالية
+            document.getElementById('editDisplayName').value = currentUser.name || '';
+            document.getElementById('editBio').value = currentUser.bio || '';
+            if (currentUser.avatarData) {
+                document.getElementById('avatarEditPreview').src = currentUser.avatarData;
             }
         }
-    };
-</script>
 
+        function showMainFeed() {
+            document.getElementById('profile-page').style.display = 'none';
+            document.getElementById('main-feed').style.display = 'block';
+        }
+
+        // تحديث الصور والأشكال عبر المنصة
+        function updateUserUI() {
+            const navAvatar = document.getElementById('navAvatar');
+            const creatorAvatar = document.getElementById('creatorAvatar');
+
+            if (currentUser.avatarData) {
+                navAvatar.innerHTML = `<img src="${currentUser.avatarData}" alt="صورة">`;
+                creatorAvatar.innerHTML = `<img src="${currentUser.avatarData}" alt="صورة">`;
+            } else {
+                const firstLetter = currentUser.name ? currentUser.name.charAt(0) : 'ك';
+                navAvatar.innerHTML = `<span>${firstLetter}</span>`;
+                creatorAvatar.innerHTML = `<span>${firstLetter}</span>`;
+            }
+        }
+
+        // معاينة صورة البروفايل الجديدة
+        function previewProfileAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarEditPreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // حفظ بيانات البروفايل
+        function saveProfile() {
+            const name = document.getElementById('editDisplayName').value.trim();
+            const bio = document.getElementById('editBio').value.trim();
+            const avatarPreviewSrc = document.getElementById('avatarEditPreview').src;
+
+            if (!name) {
+                alert("يرجى إدخال الاسم الظاهر.");
+                return;
+            }
+
+            currentUser.name = name;
+            currentUser.bio = bio;
+            if (!avatarPreviewSrc.includes('placeholder.com')) {
+                currentUser.avatarData = avatarPreviewSrc;
+            }
+
+            localStorage.setItem('kalimat_user_profile', JSON.stringify(currentUser));
+            updateUserUI();
+
+            const msg = document.getElementById('statusMsg');
+            msg.innerText = "تم حفظ التغييرات بنجاح!";
+            setTimeout(() => {
+                msg.innerText = "";
+                showMainFeed();
+            }, 1200);
+        }
+
+        // معاينة صورة المنشور من المعرض
+        function previewPostImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedPostImageData = e.target.result;
+                    document.getElementById('postImgPreview').src = selectedPostImageData;
+                    document.getElementById('postImgPreviewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePostImage() {
+            selectedPostImageData = '';
+            document.getElementById('postImgPreview').src = '';
+            document.getElementById('postImgPreviewContainer').style.display = 'none';
+            document.getElementById('postImageInput').value = '';
+        }
+
+        // إضافة منشور جديد (نص + صورة)
+        function addPost() {
+            const input = document.getElementById('postInput');
+            const postText = input.value.trim();
+
+            if (!postText && !selectedPostImageData) return;
+
+            const postsContainer = document.getElementById('postsContainer');
+            const newPost = document.createElement('div');
+            newPost.className = 'post-card';
+
+            let avatarHTML = currentUser.avatarData 
+                ? `<div class="user-avatar"><img src="${currentUser.avatarData}"></div>`
+                : `<div class="user-avatar">${currentUser.name ? currentUser.name.charAt(0) : 'ك'}</div>`;
+
+            let imageHTML = selectedPostImageData 
+                ? `<img src="${selectedPostImageData}" class="post-image" alt="صورة المنشور">`
+                : '';
+
+            newPost.innerHTML = `
+                <div class="post-header">
+                    ${avatarHTML}
+                    <div>
+                        <div class="post-author">${currentUser.name || 'أنت'}</div>
+                        <div class="post-time">الآن</div>
+                    </div>
+                </div>
+                ${postText ? `<div class="post-content">${postText}</div>` : ''}
+                ${imageHTML}
+                <div class="post-footer">
+                    <button class="interaction-btn">👍 أعجبني</button>
+                    <button class="interaction-btn">💬 تعليق</button>
+                    <button class="interaction-btn">↪️ مشاركة</button>
+                </div>
+            `;
+
+            postsContainer.prepend(newPost);
+
+            // إعادة تعيين الحقول
+            input.value = '';
+            removePostImage();
+        }
+    </script>
 </body>
 </html>
