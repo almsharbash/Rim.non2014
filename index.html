@@ -107,7 +107,7 @@
             padding: 10px 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        .nav-logo { font-family: 'Aref Ruqaa', serif; font-size: 26px; color: #0b4395; text-decoration: none; }
+        .nav-logo { font-family: 'Aref Ruqaa', serif; font-size: 26px; color: #0b4395; text-decoration: none; cursor: pointer; }
         .search-box {
             background: #f0f2f5;
             border-radius: 20px;
@@ -196,6 +196,17 @@
         .post-time { font-size: 12px; color: #777; }
         .post-content { font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
         .post-image { width: 100%; max-height: 350px; object-fit: cover; border-radius: 8px; margin-bottom: 12px; }
+        
+        .repost-badge {
+            background: #e7f3ff;
+            color: #1877f2;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
         .post-footer { display: flex; justify-content: space-around; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
         .interaction-btn { background: none; border: none; color: #65676b; font-weight: 500; cursor: pointer; font-family: 'Tajawal', sans-serif; }
         .interaction-btn.liked { color: #1a73e8; font-weight: bold; }
@@ -270,16 +281,17 @@
         .back-btn {
             background: #f0f4f8;
             border: none;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        .back-btn svg { width: 20px; height: 20px; fill: #007bff; }
+        .back-btn svg { width: 22px; height: 22px; fill: #0b4395; }
 
         .card-header h2 { margin: 0; font-size: 18px; color: #333; flex-grow: 1; text-align: center; }
 
@@ -296,11 +308,39 @@
         input[type="file"] { display: none; }
 
         .status-msg { margin-top: 12px; text-align: center; font-size: 14px; color: #28a745; font-weight: bold; }
+
+        /* قائمة اختيارات المشاركة Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px 16px 0 0;
+            padding: 20px;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+        }
+        .modal-option {
+            padding: 14px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-option:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
 
-    <!-- 1. صفحة التسجيل والدخول -->
     <div id="login-page">
         <div class="header-container">
             <img src="https://i.ibb.co/99VxKqb7/1789866824772.png" alt="كلمات" class="logo-img">
@@ -324,10 +364,9 @@
         </div>
     </div>
 
-    <!-- 2. واجهة المنشورات (Main Feed) -->
     <div id="main-feed">
         <nav class="top-navbar">
-            <a href="#" class="nav-logo">كلمات</a>
+            <a onclick="showMainFeed()" class="nav-logo">كلمات</a>
             <input type="text" class="search-box" placeholder="بحث في كلمات...">
             <div class="user-avatar" onclick="showProfilePage()" title="تعديل الملف الشخصي" id="navAvatar">
                 <span id="navAvatarText">ك</span>
@@ -357,7 +396,7 @@
         </div>
 
         <div id="postsContainer">
-            <div class="post-card">
+            <div class="post-card" id="post-1">
                 <div class="post-header">
                     <div class="user-avatar">م</div>
                     <div>
@@ -369,9 +408,9 @@
                     مرحباً بكم في منصة "كلمات"! هذه البداية الأولى للهيكل العظمي للمنصة، سنقوم بربطها قريباً بالسحابة وقاعدة البيانات.
                 </div>
                 <div class="post-footer">
-                    <button class="interaction-btn" onclick="toggleLike(this)">👍 أعجبني</button>
+                    <button class="interaction-btn" onclick="toggleLike(this)">👍 <span class="like-count">أعجبني</span></button>
                     <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
-                    <button class="interaction-btn" onclick="sharePost()">↪️ مشاركة</button>
+                    <button class="interaction-btn" onclick="openShareModal(this)">↪️ مشاركة</button>
                 </div>
                 <div class="comments-section">
                     <div class="comment-input-box">
@@ -384,17 +423,16 @@
         </div>
     </div>
 
-    <!-- 3. واجهة تعديل الملف الشخصي -->
     <div id="profile-page">
         <div class="profile-card">
             <div class="card-header">
-                <button class="back-btn" onclick="showMainFeed()" aria-label="رجوع">
+                <button class="back-btn" onclick="goBackOrMain()" aria-label="رجوع">
                     <svg viewBox="0 0 24 24">
                         <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                     </svg>
                 </button>
                 <h2>تعديل الملف الشخصي</h2>
-                <div style="width: 36px;"></div>
+                <div style="width: 38px;"></div>
             </div>
 
             <div class="avatar-edit-container">
@@ -419,6 +457,14 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="shareModal" onclick="closeShareModal(event)">
+        <div class="modal-box">
+            <div class="modal-option" onclick="repostToFeed()">🔁 إعادة النشر على صفحتي الشخصية</div>
+            <div class="modal-option" onclick="copyPostLink()">🔗 نسخ رابط المنشور</div>
+            <div class="modal-option" onclick="closeShareModalForce()" style="color:red; justify-content:center;">إلغاء</div>
+        </div>
+    </div>
+
     <script>
         let currentUser = {
             name: '',
@@ -427,6 +473,7 @@
         };
 
         let selectedPostImageData = '';
+        let targetPostForShare = null;
 
         window.onload = function() {
             const savedProfile = localStorage.getItem('kalimat_user_profile');
@@ -436,11 +483,23 @@
             updateUserUI();
         };
 
+        // إدارة الرجوع والتنقل بزر الهاتف والجهاز
+        window.onpopstate = function(event) {
+            if (event.state && event.state.page === 'profile') {
+                document.getElementById('main-feed').style.display = 'none';
+                document.getElementById('profile-page').style.display = 'block';
+            } else {
+                document.getElementById('profile-page').style.display = 'none';
+                document.getElementById('main-feed').style.display = 'block';
+            }
+        };
+
         function handleLogin(e) {
             e.preventDefault();
             document.getElementById('login-page').style.display = 'none';
             document.getElementById('profile-page').style.display = 'none';
             document.getElementById('main-feed').style.display = 'block';
+            history.pushState({page: 'feed'}, 'Feed', '');
         }
 
         function showProfilePage() {
@@ -454,11 +513,21 @@
             } else {
                 document.getElementById('avatarEditPreview').src = 'https://via.placeholder.com/90?text=صورة';
             }
+
+            history.pushState({page: 'profile'}, 'Profile', '#profile');
         }
 
         function showMainFeed() {
             document.getElementById('profile-page').style.display = 'none';
             document.getElementById('main-feed').style.display = 'block';
+        }
+
+        function goBackOrMain() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                showMainFeed();
+            }
         }
 
         function updateUserUI() {
@@ -509,7 +578,7 @@
             msg.innerText = "تم حفظ التغييرات بنجاح!";
             setTimeout(() => {
                 msg.innerText = "";
-                showMainFeed();
+                goBackOrMain();
             }, 1000);
         }
 
@@ -562,9 +631,9 @@
                 ${postText ? `<div class="post-content">${postText}</div>` : ''}
                 ${imageHTML}
                 <div class="post-footer">
-                    <button class="interaction-btn" onclick="toggleLike(this)">👍 أعجبني</button>
+                    <button class="interaction-btn" onclick="toggleLike(this)">👍 <span class="like-count">أعجبني</span></button>
                     <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
-                    <button class="interaction-btn" onclick="sharePost()">↪️ مشاركة</button>
+                    <button class="interaction-btn" onclick="openShareModal(this)">↪️ مشاركة</button>
                 </div>
                 <div class="comments-section">
                     <div class="comment-input-box">
@@ -582,6 +651,12 @@
 
         function toggleLike(btn) {
             btn.classList.toggle('liked');
+            const textSpan = btn.querySelector('.like-count');
+            if (btn.classList.contains('liked')) {
+                textSpan.innerText = "تم الإعجاب";
+            } else {
+                textSpan.innerText = "أعجبني";
+            }
         }
 
         function toggleComments(btn) {
@@ -604,7 +679,73 @@
             input.value = '';
         }
 
-        function sharePost() {
+        // إدارة خيارات المشاركة وإعادة النشر
+        function openShareModal(btn) {
+            targetPostForShare = btn.closest('.post-card');
+            document.getElementById('shareModal').style.display = 'flex';
+        }
+
+        function closeShareModal(e) {
+            if (e.target.id === 'shareModal') {
+                document.getElementById('shareModal').style.display = 'none';
+            }
+        }
+
+        function closeShareModalForce() {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+
+        function repostToFeed() {
+            if (!targetPostForShare) return;
+
+            const authorName = targetPostForShare.querySelector('.post-author').innerText;
+            const originalContent = targetPostForShare.querySelector('.post-content') ? targetPostForShare.querySelector('.post-content').innerText : '';
+            const originalImage = targetPostForShare.querySelector('.post-image') ? targetPostForShare.querySelector('.post-image').src : '';
+
+            const postsContainer = document.getElementById('postsContainer');
+            const newPost = document.createElement('div');
+            newPost.className = 'post-card';
+
+            let avatarHTML = currentUser.avatarData 
+                ? `<div class="user-avatar"><img src="${currentUser.avatarData}"></div>`
+                : `<div class="user-avatar">${currentUser.name ? currentUser.name.charAt(0) : 'ك'}</div>`;
+
+            let imageHTML = originalImage 
+                ? `<img src="${originalImage}" class="post-image" alt="صورة المنشور">`
+                : '';
+
+            newPost.innerHTML = `
+                <div class="post-header">
+                    ${avatarHTML}
+                    <div>
+                        <div class="post-author">${currentUser.name || 'أنت'}</div>
+                        <div class="post-time">الآن</div>
+                    </div>
+                </div>
+                <div class="repost-badge">🔁 أعاد نشر منشور لـ ${authorName}</div>
+                ${originalContent ? `<div class="post-content">${originalContent}</div>` : ''}
+                ${imageHTML}
+                <div class="post-footer">
+                    <button class="interaction-btn" onclick="toggleLike(this)">👍 <span class="like-count">أعجبني</span></button>
+                    <button class="interaction-btn" onclick="toggleComments(this)">💬 تعليق</button>
+                    <button class="interaction-btn" onclick="openShareModal(this)">↪️ مشاركة</button>
+                </div>
+                <div class="comments-section">
+                    <div class="comment-input-box">
+                        <input type="text" class="comment-input" placeholder="اكتب تعليقاً...">
+                        <button class="comment-btn" onclick="addComment(this)">إرسال</button>
+                    </div>
+                    <div class="comments-list"></div>
+                </div>
+            `;
+
+            postsContainer.prepend(newPost);
+            closeShareModalForce();
+            alert("تمت إعادة نشر المنشور على صفحك بنجاح!");
+        }
+
+        function copyPostLink() {
+            closeShareModalForce();
             alert("تم نسخ رابط المنشور بنجاح!");
         }
     </script>
