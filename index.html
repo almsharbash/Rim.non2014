@@ -99,6 +99,7 @@
             font-weight: bold;
             font-size: 18px;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .container {
@@ -150,6 +151,7 @@
             color: var(--text-sub);
             font-size: 13px;
             margin: 4px 0 12px 0;
+            padding: 0 10px;
         }
 
         .btn {
@@ -185,7 +187,7 @@
         .create-post-top {
             display: flex;
             gap: 10px;
-            align-items: center;
+            align-items: flex-start;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--divider-color);
         }
@@ -194,12 +196,23 @@
             width: 100%;
             border: none;
             background: #f0f2f5;
-            border-radius: 20px;
+            border-radius: 12px;
             padding: 10px 15px;
             resize: none;
             outline: none;
             font-size: 14px;
-            min-height: 40px;
+            min-height: 45px;
+        }
+
+        .image-url-input {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            margin-top: 8px;
+            outline: none;
+            display: none;
         }
 
         .create-post-actions {
@@ -253,6 +266,14 @@
             white-space: pre-wrap;
         }
 
+        .post-image {
+            width: 100%;
+            max-height: 350px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
         .post-actions {
             display: flex;
             justify-content: space-around;
@@ -283,6 +304,47 @@
 
         .post-action-btn.liked {
             color: var(--like-color);
+        }
+
+        /* Comments Section */
+        .comments-section {
+            border-top: 1px solid var(--divider-color);
+            margin-top: 10px;
+            padding-top: 10px;
+            display: none;
+        }
+
+        .comments-section.active {
+            display: block;
+        }
+
+        .comment-item {
+            background: #f0f2f5;
+            border-radius: 12px;
+            padding: 8px 12px;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .comment-input-box input {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 6px 12px;
+            outline: none;
+            font-size: 13px;
         }
 
         .modal {
@@ -355,8 +417,8 @@
             <div class="profile-banner"></div>
             <div id="profile-avatar" class="profile-avatar-large">؟</div>
             <div id="profile-name" class="profile-name">زائر كلمات</div>
-            <div id="profile-bio" class="profile-bio">مرحباً بكم في صفقتي الشخصية على منصة كلمات!</div>
-            <div style="display: flex; justify-content me: center; gap: 8px; padding: 0 10px;">
+            <div id="profile-bio" class="profile-bio">مرحباً بكم في منصة كلمات السحابية!</div>
+            <div style="display: flex; justify-content: center; gap: 8px; padding: 0 10px;">
                 <button id="auth-btn" class="btn btn-primary" style="width: 100%;">تسجيل الدخول / حساب جديد</button>
             </div>
         </div>
@@ -365,11 +427,13 @@
         <div class="card create-post">
             <div class="create-post-top">
                 <div id="input-avatar" class="user-avatar">؟</div>
-                <textarea id="post-input" placeholder="بم تفكر يا صديقي؟"></textarea>
+                <div style="flex: 1;">
+                    <textarea id="post-input" placeholder="بم تفكر يا صديقي؟"></textarea>
+                    <input type="text" id="post-image-url" class="image-url-input" placeholder="ألصق رابط الصورة هنا (اختياري)...">
+                </div>
             </div>
             <div class="create-post-actions">
-                <div class="action-item"><i class="fas fa-video" style="color: #f3425f;"></i> صورة/فيديو</div>
-                <div class="action-item"><i class="fas fa-smile" style="color: #f7b928;"></i> شعار/نشاط</div>
+                <div class="action-item" id="toggle-image-btn"><i class="fas fa-image" style="color: #45bd62;"></i> إضافة صورة</div>
                 <div class="action-item" id="publish-btn" style="color: var(--primary-color); font-weight: bold;"><i class="fas fa-paper-plane"></i> نشر</div>
             </div>
         </div>
@@ -452,8 +516,14 @@
         const inputAvatar = document.getElementById('input-avatar');
         
         const postInput = document.getElementById('post-input');
+        const postImageUrl = document.getElementById('post-image-url');
+        const toggleImageBtn = document.getElementById('toggle-image-btn');
         const publishBtn = document.getElementById('publish-btn');
         const postsContainer = document.getElementById('posts-container');
+
+        toggleImageBtn.onclick = () => {
+            postImageUrl.style.display = postImageUrl.style.display === 'block' ? 'none' : 'block';
+        };
 
         authBtn.onclick = () => authModal.classList.add('active');
         userAvatarBtn.onclick = () => { if(!currentUser) authModal.classList.add('active'); };
@@ -491,7 +561,7 @@
                 }
                 authModal.classList.remove('active');
             } catch(err) {
-                alert("خطأ في تسجيل الدخول: البريد أو كلمة السر غير صحيحة، أو الحساب غير موجود.");
+                alert("خطأ: " + err.message);
             }
         };
 
@@ -525,17 +595,22 @@
         publishBtn.onclick = async () => {
             if(!currentUser) return alert('يرجى تسجيل الدخول أولاً لتتمكن من النشر!');
             const text = postInput.value.trim();
-            if(!text) return alert('اكتب شيئاً لنشره');
+            const imageUrl = postImageUrl.value.trim();
+            if(!text && !imageUrl) return alert('اكتب شيئاً أو أضف صورة لنشرها');
 
             try {
                 await addDoc(collection(db, "posts"), {
                     text: text,
+                    imageUrl: imageUrl,
                     authorName: currentUser.displayName || "مستخدم",
                     authorId: currentUser.uid,
                     createdAt: serverTimestamp(),
-                    likes: []
+                    likes: [],
+                    comments: []
                 });
                 postInput.value = "";
+                postImageUrl.value = "";
+                postImageUrl.style.display = "none";
                 loadPosts();
             } catch(err) {
                 alert("تعذر النشر: " + err.message);
@@ -559,6 +634,7 @@
                     const postId = docSnap.id;
                     const initial = (post.authorName || "م").charAt(0).toUpperCase();
                     const likesCount = post.likes ? post.likes.length : 0;
+                    const comments = post.comments || [];
                     const isLiked = currentUser && post.likes && post.likes.includes(currentUser.uid);
 
                     const postEl = document.createElement('div');
@@ -571,17 +647,32 @@
                                 <span class="post-time">منشور سحابي</span>
                             </div>
                         </div>
-                        <div class="post-content">${escapeHtml(post.text)}</div>
+                        <div class="post-content">${escapeHtml(post.text || '')}</div>
+                        ${post.imageUrl ? `<img src="${escapeHtml(post.imageUrl)}" class="post-image" alt="صورة المنشور">` : ''}
                         <div class="post-actions">
                             <button class="post-action-btn ${isLiked ? 'liked' : ''}" onclick="window.toggleLike('${postId}', ${isLiked})">
                                 <i class="fas fa-thumbs-up"></i> <span>${likesCount > 0 ? likesCount : ''} أعجبني</span>
                             </button>
-                            <button class="post-action-btn" onclick="alert('ميزة التعليقات قادمة قريباً')">
-                                <i class="fas fa-comment"></i> <span>تعليق</span>
+                            <button class="post-action-btn" onclick="window.toggleCommentsSection('${postId}')">
+                                <i class="fas fa-comment"></i> <span>${comments.length > 0 ? comments.length : ''} تعليق</span>
                             </button>
                             <button class="post-action-btn" onclick="navigator.clipboard.writeText(location.href); alert('تم نسخ رابط المنشور!');">
                                 <i class="fas fa-share"></i> <span>مشاركة</span>
                             </button>
+                        </div>
+                        <div id="comments-sec-${postId}" class="comments-section">
+                            <div id="comments-list-${postId}">
+                                ${comments.map(c => `
+                                    <div class="comment-item">
+                                        <div class="comment-author">${escapeHtml(c.authorName)}</div>
+                                        <div>${escapeHtml(c.text)}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="comment-input-box">
+                                <input type="text" id="comment-input-${postId}" placeholder="اكتب تعليقاً...">
+                                <button class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;" onclick="window.addComment('${postId}')">إرسال</button>
+                            </div>
                         </div>
                     `;
                     postsContainer.appendChild(postEl);
@@ -604,6 +695,34 @@
                 loadPosts();
             } catch(err) {
                 console.error(err);
+            }
+        };
+
+        window.toggleCommentsSection = (postId) => {
+            const sec = document.getElementById(`comments-sec-${postId}`);
+            if(sec) sec.classList.toggle('active');
+        };
+
+        window.addComment = async (postId) => {
+            if(!currentUser) return alert('سجل الدخول أولاً لإضافة تعليق!');
+            const input = document.getElementById(`comment-input-${postId}`);
+            const text = input.value.trim();
+            if(!text) return;
+
+            const postRef = doc(db, "posts", postId);
+            try {
+                await updateDoc(postRef, {
+                    comments: arrayUnion({
+                        authorName: currentUser.displayName || "مستخدم",
+                        authorId: currentUser.uid,
+                        text: text,
+                        createdAt: new Date().toISOString()
+                    })
+                });
+                input.value = "";
+                loadPosts();
+            } catch(err) {
+                alert("تعذر إضافة التعليق: " + err.message);
             }
         };
 
