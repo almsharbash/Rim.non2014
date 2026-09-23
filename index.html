@@ -28,7 +28,6 @@
             padding-bottom: 70px;
         }
 
-        /* Header */
         header {
             position: sticky;
             top: 0;
@@ -55,7 +54,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            width: 55%;
+            width: 45%;
             color: var(--text-secondary);
         }
 
@@ -67,7 +66,31 @@
             font-size: 14px;
         }
 
-        /* Avatars */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notif-btn {
+            position: relative;
+            font-size: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -5px;
+            right: -6px;
+            background: #e41e3f;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
         .avatar {
             width: 40px;
             height: 40px;
@@ -81,6 +104,7 @@
             font-weight: bold;
             font-size: 16px;
             flex-shrink: 0;
+            cursor: pointer;
         }
 
         .avatar-lg {
@@ -89,7 +113,6 @@
             font-size: 32px;
         }
 
-        /* Container */
         .container {
             max-width: 500px;
             margin: 10px auto;
@@ -104,7 +127,6 @@
             display: block;
         }
 
-        /* Card Component */
         .card {
             background: var(--card-bg);
             border-radius: 10px;
@@ -113,7 +135,6 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
-        /* Create Post */
         .create-post {
             display: flex;
             flex-direction: column;
@@ -151,7 +172,7 @@
             align-items: center;
             gap: 6px;
             cursor: pointer;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
         }
 
@@ -168,7 +189,6 @@
             margin-top: 5px;
         }
 
-        /* Feed Post */
         .post-header {
             display: flex;
             align-items: center;
@@ -179,6 +199,7 @@
         .post-author {
             font-weight: 600;
             font-size: 15px;
+            cursor: pointer;
         }
 
         .post-time {
@@ -208,15 +229,15 @@
             padding: 6px 0;
             font-size: 13px;
             color: var(--text-secondary);
-            cursor: pointer;
         }
 
         .post-stats .stat-item {
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 16px;
+            padding: 6px 12px;
             border-radius: 6px;
+            cursor: pointer;
             width: 33%;
             justify-content: center;
         }
@@ -267,22 +288,59 @@
             font-weight: 600;
         }
 
-        /* Items / Friends & Chat */
-        .item-list {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #e4e6eb;
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: flex-end;
         }
 
-        .item-info {
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            padding: 16px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e4e6eb;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .feeling-option {
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        /* Bottom Nav */
+        .feeling-option:hover {
+            background: #f0f2f5;
+        }
+
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
@@ -316,7 +374,6 @@
             margin-bottom: 3px;
         }
 
-        /* Auth Screen */
         .auth-card input {
             width: 100%;
             padding: 10px;
@@ -347,21 +404,39 @@
             border-radius: 6px;
             margin-top: 8px;
         }
+
+        .selected-feeling {
+            display: inline-block;
+            background: #e7f3ff;
+            color: var(--primary-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <header id="main-header">
         <div class="logo">كلمات</div>
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="global-search" placeholder="بحث..." onkeyup="filterPosts()">
         </div>
-        <div id="header-avatar-box"></div>
+        <div class="header-actions">
+            <div class="notif-btn" onclick="openNotificationsModal()">
+                <i class="fa-regular fa-bell"></i>
+                <span class="notif-badge" id="notif-count">0</span>
+            </div>
+            <div id="header-avatar-box"></div>
+        </div>
     </header>
 
     <div class="container">
 
+        <!-- 1. شاشة الدخول والتسجيل -->
         <div id="auth-view" class="view">
             <div class="card auth-card" style="text-align: center;">
                 <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام / تبديل الحساب</h3>
@@ -376,11 +451,15 @@
             </div>
         </div>
 
+        <!-- 2. الشاشة الرئيسية -->
         <div id="home-view" class="view active">
             <div class="card create-post">
                 <div class="post-input-container">
                     <div id="post-box-avatar-box"></div>
-                    <input type="text" id="new-post-text" class="post-input" placeholder="بم تفكر؟">
+                    <div style="flex: 1;">
+                        <input type="text" id="new-post-text" class="post-input" placeholder="بم تفكر؟">
+                        <div id="selected-feeling-tag" class="selected-feeling" style="display: none;"></div>
+                    </div>
                 </div>
                 <img id="post-image-preview" class="image-preview" alt="Preview">
                 <div class="post-actions">
@@ -389,7 +468,7 @@
                         <span>صورة</span>
                         <input type="file" id="post-image-input" accept="image/*" style="display: none;" onchange="previewPostImage(event)">
                     </label>
-                    <div class="action-btn" style="color: #f7b928;">
+                    <div class="action-btn" style="color: #f7b928;" onclick="openFeelingsModal()">
                         <i class="fa-solid fa-face-smile"></i>
                         <span>شعور</span>
                     </div>
@@ -400,12 +479,13 @@
             <div id="feed-container"></div>
         </div>
 
+        <!-- 3. شاشة الأصدقاء -->
         <div id="friends-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">مقترحات المتابعة</h3>
-                <div class="item-list">
-                    <div class="item-info">
-                        <div class="avatar">س</div>
+                <div class="item-list" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">س</div>
                         <div>
                             <strong>سامر العلي</strong><br>
                             <small style="color:var(--text-secondary);">صديق مشترك</small>
@@ -416,11 +496,12 @@
             </div>
         </div>
 
+        <!-- 4. شاشة الدردشة -->
         <div id="chat-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">الرسائل المباشرة</h3>
-                <div class="item-info" style="margin-bottom: 15px; border-bottom: 1px solid #e4e6eb; padding-bottom: 10px;">
-                    <div class="avatar">س</div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom: 15px; border-bottom: 1px solid #e4e6eb; padding-bottom: 10px;">
+                    <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">س</div>
                     <div>
                         <strong>سامر العلي</strong>
                     </div>
@@ -437,6 +518,7 @@
             </div>
         </div>
 
+        <!-- 5. شاشة حسابي -->
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي</h3>
@@ -464,6 +546,70 @@
 
     </div>
 
+    <!-- Modals -->
+    
+    <!-- Feelings Modal -->
+    <div id="feelings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>كيف تشعر الآن؟</h4>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('feelings-modal')"></i>
+            </div>
+            <div class="feeling-option" onclick="selectFeeling('سعيد 😊')">😊 سعيد</div>
+            <div class="feeling-option" onclick="selectFeeling('متحمس 🚀')">🚀 متحمس</div>
+            <div class="feeling-option" onclick="selectFeeling('مسترخي ☕')">☕ مسترخي</div>
+            <div class="feeling-option" onclick="selectFeeling('مفكر 💭')">💭 مفكر</div>
+            <div class="feeling-option" onclick="selectFeeling('شاكر 🙏')">🙏 شاكر</div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>خيارات المشاركة</h4>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('share-modal')"></i>
+            </div>
+            <div class="feeling-option" onclick="shareToFeed()">
+                <i class="fa-solid fa-retweet"></i>
+                <span>إعادة النشر في حسابك بـ "كلمات"</span>
+            </div>
+            <div class="feeling-option" onclick="shareExternal()">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>مشاركة عبر تطبيقات أخرى</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div id="notif-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>الإشعارات</h4>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('notif-modal')"></i>
+            </div>
+            <div id="notifications-list"></div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="user-profile-modal" class="modal">
+        <div class="modal-content" style="max-height: 90vh;">
+            <div class="modal-header">
+                <h4 id="user-modal-title">الملف الشخصي</h4>
+                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('user-profile-modal')"></i>
+            </div>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <div id="user-modal-avatar" style="margin: 0 auto 10px;"></div>
+                <h3 id="user-modal-name"></h3>
+                <small id="user-modal-email" style="color: var(--text-secondary);"></small>
+            </div>
+            <h5 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">منشورات المستخدم:</h5>
+            <div id="user-modal-posts"></div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
     <nav class="bottom-nav" id="main-nav">
         <div class="nav-item active" onclick="switchTab('home-view', this)">
             <i class="fa-solid fa-house nav-icon"></i>
@@ -484,7 +630,9 @@
     </nav>
 
     <script>
-        let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [];
+        let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
+            { name: "سامر العلي", email: "samer@kalimat.com", image: null }
+        ];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
         let posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [
             {
@@ -492,6 +640,7 @@
                 author: "محمد أحمد",
                 authorEmail: "demo@kalimat.com",
                 text: "أهلاً بك في منصة كلمات! يسعدنا انضمامك معنا.",
+                feeling: "متحمس 🚀",
                 image: null,
                 time: "منذ قليل",
                 likes: 0,
@@ -500,19 +649,28 @@
             }
         ];
 
+        let notifications = JSON.parse(localStorage.getItem('kalimat_notifs')) || [
+            { id: 1, text: "قام سامر العلي بالإعجاب بصفحتك", time: "منذ 10 دقائق", read: false },
+            { id: 2, text: "مرحباً بك في منصة كلمات!", time: "منذ ساعة", read: false }
+        ];
+
         let selectedPostImage = null;
+        let currentSelectedFeeling = null;
+        let activePostToShare = null;
 
         function getAvatarHTML(user, isLarge = false) {
             let extraClass = isLarge ? 'avatar-lg' : '';
+            let emailAttr = user && user.email ? `onclick="openUserProfile('${user.email}')"` : '';
             if (user && user.image) {
-                return `<img src="${user.image}" class="avatar ${extraClass}" alt="User">`;
+                return `<img src="${user.image}" class="avatar ${extraClass}" ${emailAttr} alt="User">`;
             } else {
                 let initial = user && user.name ? user.name.trim().charAt(0).toUpperCase() : '؟';
-                return `<div class="avatar ${extraClass}">${initial}</div>`;
+                return `<div class="avatar ${extraClass}" ${emailAttr}>${initial}</div>`;
             }
         }
 
         function initApp() {
+            updateNotifBadge();
             if (!currentEmail || accounts.length === 0) {
                 showAuthScreen();
             } else {
@@ -527,7 +685,6 @@
             }
         }
 
-        // التعامل مع زر الرجوع في الهاتف
         window.onpopstate = function(event) {
             if (event.state && event.state.viewId) {
                 switchTab(event.state.viewId, null, false);
@@ -611,6 +768,19 @@
             document.getElementById('prof-email-input').value = user.email;
         }
 
+        /* Feelings Handlers */
+        function openFeelingsModal() {
+            document.getElementById('feelings-modal').style.display = 'flex';
+        }
+
+        function selectFeeling(feeling) {
+            currentSelectedFeeling = feeling;
+            let tag = document.getElementById('selected-feeling-tag');
+            tag.innerText = `يشعر بـ ${feeling}`;
+            tag.style.display = 'inline-block';
+            closeModal('feelings-modal');
+        }
+
         function previewPostImage(event) {
             let file = event.target.files[0];
             if (!file) return;
@@ -636,6 +806,7 @@
                 author: currentUser.name,
                 authorEmail: currentUser.email,
                 text: text,
+                feeling: currentSelectedFeeling,
                 image: selectedPostImage,
                 time: "الآن",
                 likes: 0,
@@ -648,7 +819,9 @@
 
             document.getElementById('new-post-text').value = '';
             document.getElementById('post-image-preview').style.display = 'none';
+            document.getElementById('selected-feeling-tag').style.display = 'none';
             selectedPostImage = null;
+            currentSelectedFeeling = null;
 
             renderPosts();
         }
@@ -658,7 +831,7 @@
             container.innerHTML = '';
 
             posts.forEach(post => {
-                let authorObj = accounts.find(a => a.email === post.authorEmail) || { name: post.author, image: null };
+                let authorObj = accounts.find(a => a.email === post.authorEmail) || { name: post.author, email: post.authorEmail, image: null };
                 let isLiked = post.likedBy && post.likedBy.includes(currentEmail);
 
                 let commentsHTML = post.comments.map(c => `
@@ -672,7 +845,7 @@
                         <div class="post-header">
                             ${getAvatarHTML(authorObj)}
                             <div>
-                                <div class="post-author">${post.author}</div>
+                                <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— يشعر بـ ${post.feeling}</small>` : ''}</div>
                                 <div class="post-time">${post.time}</div>
                             </div>
                         </div>
@@ -686,9 +859,9 @@
                             </div>
                             <div class="stat-item">
                                 <i class="fa-regular fa-comment"></i>
-                                <span>تعليق</span>
+                                <span>${post.comments.length} تعليق</span>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item" onclick="openShareModal(${post.id})">
                                 <i class="fa-solid fa-share"></i>
                                 <span>مشاركة</span>
                             </div>
@@ -714,9 +887,16 @@
             if (!post.likedBy) post.likedBy = [];
 
             let index = post.likedBy.indexOf(currentEmail);
+            let currentUser = accounts.find(a => a.email === currentEmail);
+
             if (index === -1) {
                 post.likedBy.push(currentEmail);
                 post.likes = (post.likes || 0) + 1;
+
+                // إضافة إشعار لكاتب المنشور إذا لم يكن هو صاحب الإعجاب
+                if (post.authorEmail !== currentEmail) {
+                    addNotification(`قام ${currentUser.name} بالإعجاب بمنشورك.`);
+                }
             } else {
                 post.likedBy.splice(index, 1);
                 post.likes = Math.max(0, (post.likes || 1) - 1);
@@ -740,9 +920,134 @@
                     author: currentUser.name,
                     text: text
                 });
+
+                if (post.authorEmail !== currentEmail) {
+                    addNotification(`علق ${currentUser.name} على منشورك: "${text.substring(0, 20)}..."`);
+                }
+
                 localStorage.setItem('kalimat_posts', JSON.stringify(posts));
                 renderPosts();
             }
+        }
+
+        /* Share Options */
+        function openShareModal(postId) {
+            activePostToShare = posts.find(p => p.id === postId);
+            document.getElementById('share-modal').style.display = 'flex';
+        }
+
+        function shareToFeed() {
+            if (!activePostToShare) return;
+            let currentUser = accounts.find(a => a.email === currentEmail);
+
+            let newPost = {
+                id: Date.now(),
+                author: currentUser.name,
+                authorEmail: currentUser.email,
+                text: `🔁 منشور مشارك عن (${activePostToShare.author}):\n"${activePostToShare.text || ''}"`,
+                image: activePostToShare.image,
+                time: "الآن",
+                likes: 0,
+                likedBy: [],
+                comments: []
+            };
+
+            posts.unshift(newPost);
+            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+            closeModal('share-modal');
+            renderPosts();
+            alert('تمت مشاركة المنشور في حسابك بنجاح!');
+        }
+
+        function shareExternal() {
+            if (!activePostToShare) return;
+            let shareText = `${activePostToShare.author}: ${activePostToShare.text || 'منشور على منصة كلمات'}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'منصة كلمات',
+                    text: shareText,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareText);
+                alert('تم نسخ نص المنشور إلى الحافظة!');
+            }
+            closeModal('share-modal');
+        }
+
+        /* User Profile Modal */
+        function openUserProfile(email) {
+            let user = accounts.find(a => a.email === email) || { name: "مستخدم", email: email, image: null };
+            document.getElementById('user-modal-name').innerText = user.name;
+            document.getElementById('user-modal-email').innerText = user.email;
+            document.getElementById('user-modal-avatar').innerHTML = getAvatarHTML(user, true);
+
+            let userPosts = posts.filter(p => p.authorEmail === email);
+            let postsContainer = document.getElementById('user-modal-posts');
+            postsContainer.innerHTML = '';
+
+            if (userPosts.length === 0) {
+                postsContainer.innerHTML = '<p style="text-align:center; color:#888; font-size:13px;">لا توجد منشورات لهذا المستخدم بعد.</p>';
+            } else {
+                userPosts.forEach(p => {
+                    postsContainer.innerHTML += `
+                        <div class="card" style="box-shadow:none; border:1px solid #eee; margin-bottom:8px;">
+                            <small style="color:var(--text-secondary);">${p.time}</small>
+                            <p style="font-size:14px; margin-top:5px;">${p.text || ''}</p>
+                            ${p.image ? `<img src="${p.image}" style="width:100%; max-height:180px; object-fit:cover; border-radius:6px; margin-top:6px;">` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('user-profile-modal').style.display = 'flex';
+        }
+
+        /* Notifications */
+        function addNotification(text) {
+            notifications.unshift({
+                id: Date.now(),
+                text: text,
+                time: "الآن",
+                read: false
+            });
+            localStorage.setItem('kalimat_notifs', JSON.stringify(notifications));
+            updateNotifBadge();
+        }
+
+        function updateNotifBadge() {
+            let unread = notifications.filter(n => !n.read).length;
+            let badge = document.getElementById('notif-count');
+            badge.innerText = unread;
+            badge.style.display = unread > 0 ? 'inline-block' : 'none';
+        }
+
+        function openNotificationsModal() {
+            let list = document.getElementById('notifications-list');
+            list.innerHTML = '';
+
+            if (notifications.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#888;">لا توجد إشعارات حالياً.</p>';
+            } else {
+                notifications.forEach(n => {
+                    list.innerHTML += `
+                        <div style="padding: 10px; border-bottom: 1px solid #eee; background: ${n.read ? '#fff' : '#e7f3ff'}; border-radius: 6px; margin-bottom: 5px;">
+                            <div style="font-size: 13px;">${n.text}</div>
+                            <small style="color: var(--text-secondary); font-size: 11px;">${n.time}</small>
+                        </div>
+                    `;
+                    n.read = true;
+                });
+            }
+
+            localStorage.setItem('kalimat_notifs', JSON.stringify(notifications));
+            updateNotifBadge();
+            document.getElementById('notif-modal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         function handleImageUpload(event) {
