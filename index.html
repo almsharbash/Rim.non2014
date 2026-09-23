@@ -62,13 +62,14 @@
             font-size: 14px;
         }
 
-        /* CSS Avatar Component */
-        .avatar-circle {
+        /* Avatar Container System */
+        .avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            object-fit: cover;
             background-color: var(--primary-color);
-            color: #ffffff;
+            color: #fff;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -80,10 +81,10 @@
         .avatar-lg {
             width: 80px;
             height: 80px;
-            font-size: 32px;
+            font-size: 30px;
         }
 
-        /* Container */
+        /* Layout Container */
         .container {
             max-width: 500px;
             margin: 10px auto;
@@ -98,7 +99,7 @@
             display: block;
         }
 
-        /* Card Styles */
+        /* Card Component */
         .card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -127,6 +128,7 @@
             padding: 10px 15px;
             border-radius: 20px;
             outline: none;
+            font-size: 14px;
         }
 
         .post-actions {
@@ -139,7 +141,7 @@
             color: #555;
         }
 
-        /* Feed Post */
+        /* Feed Post Structure */
         .post-header {
             display: flex;
             align-items: center;
@@ -174,6 +176,20 @@
             cursor: pointer;
         }
 
+        .comments-list {
+            margin-top: 10px;
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .comment-item {
+            background: #f0f2f5;
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
         .comment-box {
             display: flex;
             gap: 8px;
@@ -197,9 +213,10 @@
             border-radius: 15px;
             cursor: pointer;
             font-size: 13px;
+            font-weight: bold;
         }
 
-        /* Chat / Friends List */
+        /* Friends & Chat UI */
         .item-list {
             display: flex;
             align-items: center;
@@ -214,7 +231,32 @@
             gap: 10px;
         }
 
-        /* Bottom Nav */
+        .chat-messages {
+            max-height: 250px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding-right: 5px;
+        }
+
+        .message-bubble {
+            background: #e7f1ff;
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 80%;
+            font-size: 13px;
+            align-self: flex-start;
+        }
+
+        .message-bubble.my-msg {
+            background: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+        }
+
+        /* Bottom Navigation */
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
@@ -287,18 +329,16 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header id="main-header">
         <div class="logo">كلمات</div>
         <div class="search-box">
-            <input type="text" placeholder="بحث في كلمات...">
+            <input type="text" id="global-search" placeholder="بحث في كلمات..." onkeyup="filterPosts()">
         </div>
-        <div class="avatar-circle" id="header-avatar">؟</div>
+        <div id="header-avatar-box"></div>
     </header>
 
     <div class="container">
 
-        <!-- 1. شاشة تسجيل الدخول / التبديل -->
         <div id="auth-view" class="view">
             <div class="card auth-card">
                 <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام / تبديل الحساب</h3>
@@ -313,16 +353,15 @@
             </div>
         </div>
 
-        <!-- 2. الشاشة الرئيسية -->
         <div id="home-view" class="view active">
             <div class="card create-post">
                 <div class="post-input-container">
-                    <div class="avatar-circle" id="post-box-avatar">؟</div>
+                    <div id="post-box-avatar-box"></div>
                     <input type="text" id="new-post-text" class="post-input" placeholder="بم تفكر يا صديقي؟">
                 </div>
                 <div class="post-actions">
-                    <span>📷 إضافة صورة</span>
-                    <span>😊 شعار/نشاط</span>
+                    <span>📷 صورة</span>
+                    <span>😊 نشاط</span>
                     <button class="btn-small" onclick="publishPost()">نشر</button>
                 </div>
             </div>
@@ -330,91 +369,91 @@
             <div id="feed-container">
                 <div class="card post">
                     <div class="post-header">
-                        <div class="avatar-circle">م</div>
+                        <div class="avatar">م</div>
                         <div>
                             <div class="post-author">محمد أحمد</div>
-                            <div class="post-time">منذ 15 دقيقة</div>
+                            <div class="post-time">منذ 10 دقائق</div>
                         </div>
                     </div>
-                    <div class="post-content">
-                        مرحباً بكم في منصة "كلمات"! يسعدنا انضمامكم إلينا.
-                    </div>
+                    <div class="post-content">أهلاً بك في منصة "كلمات"! يسعدنا انضمامك معنا في هذه التجربة.</div>
                     <div class="post-stats">
                         <span onclick="toggleLike(this)">👍 إعجاب</span>
                         <span>💬 تعليق</span>
                         <span>↪️ مشاركة</span>
                     </div>
+                    <div class="comments-list"></div>
                     <div class="comment-box">
                         <input type="text" placeholder="اكتب تعليقاً...">
-                        <button class="btn-small">إرسال</button>
+                        <button class="btn-small" onclick="addComment(this)">إرسال</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. شاشة الأصدقاء -->
         <div id="friends-view" class="view">
             <div class="card">
-                <h3>مقترحات المتابعة والأصدقاء</h3>
+                <h3>مقترحات المتابعة للأصدقاء</h3>
                 <div class="item-list">
                     <div class="item-info">
-                        <div class="avatar-circle">س</div>
+                        <div class="avatar">س</div>
                         <div>
                             <strong>سامر العلي</strong><br>
                             <small style="color:#777;">صديق مشترك</small>
                         </div>
                     </div>
-                    <button class="btn-small" onclick="this.innerText='تتابعه'">متابعة</button>
+                    <button class="btn-small" onclick="toggleFollow(this)">متابعة</button>
                 </div>
                 <div class="item-list">
                     <div class="item-info">
-                        <div class="avatar-circle">ن</div>
+                        <div class="avatar">ن</div>
                         <div>
                             <strong>نور الهدى</strong><br>
                             <small style="color:#777;">نشط الآن</small>
                         </div>
                     </div>
-                    <button class="btn-small" onclick="this.innerText='تتابعه'">متابعة</button>
+                    <button class="btn-small" onclick="toggleFollow(this)">متابعة</button>
                 </div>
             </div>
         </div>
 
-        <!-- 4. شاشة الدردشة -->
         <div id="chat-view" class="view">
             <div class="card">
-                <h3>الرسائل الخاصة</h3>
-                <div class="item-list" style="cursor: pointer;">
-                    <div class="item-info">
-                        <div class="avatar-circle">س</div>
-                        <div>
-                            <strong>سامر العلي</strong> 🟢<br>
-                            <small style="color:#777;">أهلاً بك في منصة كلمات! كيف حالك اليوم؟</small>
-                        </div>
+                <h3 style="margin-bottom: 10px;">الرسائل المباشرة</h3>
+                <div class="item-info" style="margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                    <div class="avatar">س</div>
+                    <div>
+                        <strong>سامر العلي</strong> 🟢
                     </div>
                 </div>
-                <div class="comment-box" style="margin-top: 15px;">
-                    <input type="text" placeholder="اكتب رسالة خاصة...">
-                    <button class="btn-small">إرسال</button>
+                
+                <div class="chat-messages" id="chat-messages-box">
+                    <div class="message-bubble">أهلاً بك في منصة كلمات! كيف حالك اليوم؟</div>
+                </div>
+
+                <div class="comment-box">
+                    <input type="text" id="chat-input" placeholder="اكتب رسالة خاصة...">
+                    <button class="btn-small" onclick="sendMessage()">إرسال</button>
                 </div>
             </div>
         </div>
 
-        <!-- 5. شاشة حسابي والملف الشخصي -->
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
-                <h3 style="margin-bottom: 15px;">تعديل الملف الشخصي والأمان</h3>
-                <div class="avatar-circle avatar-lg" id="prof-img" style="margin: 0 auto 10px;">؟</div>
-                <br>
+                <h3 style="margin-bottom: 15px;">الملف الشخصي والحساب</h3>
+                
+                <div id="prof-img-box" style="margin: 0 auto 10px;"></div>
 
-                <div style="text-align: right; margin-top: 20px;">
+                <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                <button class="btn-small" style="background: #6c757d; margin-bottom: 15px;" onclick="document.getElementById('image-upload').click()">📸 تغيير الصورة الشخصية</button>
+
+                <div style="text-align: right; margin-top: 10px;">
                     <label style="font-size: 13px; color: #555;">الاسم الظاهر:</label>
                     <input type="text" id="prof-name-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);">
 
                     <label style="font-size: 13px; color: #555;">البريد الإلكتروني:</label>
                     <input type="text" id="prof-email-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);" readonly>
 
-                    <label style="font-size: 13px; color: #555;">النبذة الشخصية (Bio):</label>
-                    <textarea id="prof-bio-input" class="post-input" style="height: 60px; border: 1px solid var(--border-color);"></textarea>
+                    <button class="btn-small" style="width: 100%; margin-top: 5px;" onclick="saveProfileChanges()">حفظ التعديلات</button>
                 </div>
 
                 <button class="btn-danger" onclick="logout()">تسجيل الخروج 🚪</button>
@@ -423,7 +462,6 @@
 
     </div>
 
-    <!-- Navigation Bar -->
     <nav class="bottom-nav" id="main-nav">
         <div class="nav-item active" onclick="switchTab('home-view', this)">
             <span class="nav-icon">🏠</span>
@@ -447,8 +485,15 @@
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
 
-        function getInitial(name) {
-            return name ? name.trim().charAt(0).toUpperCase() : '؟';
+        // Render Avatar (HTML Image or Initial Letter)
+        function getAvatarHTML(user, isLarge = false) {
+            let extraClass = isLarge ? 'avatar-lg' : '';
+            if (user && user.image) {
+                return `<img src="${user.image}" class="avatar ${extraClass}" alt="User">`;
+            } else {
+                let initial = user && user.name ? user.name.trim().charAt(0).toUpperCase() : '؟';
+                return `<div class="avatar ${extraClass}">${initial}</div>`;
+            }
         }
 
         function initApp() {
@@ -478,13 +523,13 @@
             let email = document.getElementById('reg-email').value.trim();
 
             if (!name || !email) {
-                alert('يرجى إدخال الاسم والبريد الإلكتروني');
+                alert('يرجى كتابة الاسم والبريد الإلكتروني');
                 return;
             }
 
             let existing = accounts.find(a => a.email === email);
             if (!existing) {
-                let newUser = { name: name, email: email, bio: '' };
+                let newUser = { name: name, email: email, image: null };
                 accounts.push(newUser);
                 localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
             }
@@ -513,13 +558,42 @@
         }
 
         function loadUserData(user) {
-            let initial = getInitial(user.name);
-            document.getElementById('header-avatar').innerText = initial;
-            document.getElementById('post-box-avatar').innerText = initial;
-            document.getElementById('prof-img').innerText = initial;
+            document.getElementById('header-avatar-box').innerHTML = getAvatarHTML(user);
+            document.getElementById('post-box-avatar-box').innerHTML = getAvatarHTML(user);
+            document.getElementById('prof-img-box').innerHTML = getAvatarHTML(user, true);
             document.getElementById('prof-name-input').value = user.name;
             document.getElementById('prof-email-input').value = user.email;
-            document.getElementById('prof-bio-input').value = user.bio || '';
+        }
+
+        function handleImageUpload(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let base64Image = e.target.result;
+                let userIndex = accounts.findIndex(a => a.email === currentEmail);
+                if (userIndex !== -1) {
+                    accounts[userIndex].image = base64Image;
+                    localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
+                    loadUserData(accounts[userIndex]);
+                    alert('تم تغيير الصورة الشخصية بنجاح!');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveProfileChanges() {
+            let newName = document.getElementById('prof-name-input').value.trim();
+            if (!newName) return;
+
+            let userIndex = accounts.findIndex(a => a.email === currentEmail);
+            if (userIndex !== -1) {
+                accounts[userIndex].name = newName;
+                localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
+                loadUserData(accounts[userIndex]);
+                alert('تم حفظ التعديلات!');
+            }
         }
 
         function logout() {
@@ -542,7 +616,7 @@
                 div.className = 'account-badge';
                 div.innerHTML = `
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <div class="avatar-circle" style="width:30px; height:30px; font-size:12px;">${getInitial(acc.name)}</div>
+                        ${getAvatarHTML(acc)}
                         <div>
                             <strong style="font-size:13px;">${acc.name}</strong><br>
                             <small style="color:#777; font-size:11px;">${acc.email}</small>
@@ -569,12 +643,12 @@
             if (!text) return;
 
             let currentUser = accounts.find(a => a.email === currentEmail);
-            let initial = getInitial(currentUser.name);
+            let avatarHTML = getAvatarHTML(currentUser);
 
             let postHTML = `
                 <div class="card post">
                     <div class="post-header">
-                        <div class="avatar-circle">${initial}</div>
+                        ${avatarHTML}
                         <div>
                             <div class="post-author">${currentUser.name}</div>
                             <div class="post-time">الآن</div>
@@ -586,9 +660,10 @@
                         <span>💬 تعليق</span>
                         <span>↪️ مشاركة</span>
                     </div>
+                    <div class="comments-list"></div>
                     <div class="comment-box">
                         <input type="text" placeholder="اكتب تعليقاً...">
-                        <button class="btn-small">إرسال</button>
+                        <button class="btn-small" onclick="addComment(this)">إرسال</button>
                     </div>
                 </div>
             `;
@@ -606,6 +681,55 @@
                 el.style.color = '#0d6efd';
                 el.innerText = '👍 تم الإعجاب';
             }
+        }
+
+        function addComment(btn) {
+            let input = btn.previousElementSibling;
+            let text = input.value.trim();
+            if (!text) return;
+
+            let currentUser = accounts.find(a => a.email === currentEmail);
+            let commentsList = btn.closest('.post').querySelector('.comments-list');
+
+            let commentHTML = `
+                <div class="comment-item">
+                    <strong>${currentUser.name}:</strong> ${text}
+                </div>
+            `;
+
+            commentsList.insertAdjacentHTML('beforeend', commentHTML);
+            input.value = '';
+        }
+
+        function sendMessage() {
+            let input = document.getElementById('chat-input');
+            let text = input.value.trim();
+            if (!text) return;
+
+            let box = document.getElementById('chat-messages-box');
+            let msgHTML = `<div class="message-bubble my-msg">${text}</div>`;
+            box.insertAdjacentHTML('beforeend', msgHTML);
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function toggleFollow(btn) {
+            if (btn.innerText === 'متابعة') {
+                btn.innerText = 'تتابعه ✔️';
+                btn.style.background = '#28a745';
+            } else {
+                btn.innerText = 'متابعة';
+                btn.style.background = '#0d6efd';
+            }
+        }
+
+        function filterPosts() {
+            let query = document.getElementById('global-search').value.toLowerCase();
+            let posts = document.querySelectorAll('#feed-container .post');
+            posts.forEach(post => {
+                let content = post.innerText.toLowerCase();
+                post.style.display = content.includes(query) ? 'block' : 'none';
+            });
         }
 
         initApp();
