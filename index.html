@@ -199,8 +199,14 @@
         .post-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             margin-bottom: 10px;
+        }
+
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .post-author {
@@ -212,6 +218,19 @@
         .post-time {
             font-size: 12px;
             color: var(--text-secondary);
+        }
+
+        .delete-post-btn {
+            color: #dc3545;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .delete-post-btn:hover {
+            background: #ffe6e6;
         }
 
         .post-content {
@@ -642,6 +661,7 @@
                 <div id="user-modal-avatar" style="margin: 0 auto 10px;"></div>
                 <h3 id="user-modal-name"></h3>
                 <small id="user-modal-email" style="color: var(--text-secondary);"></small>
+                <div id="block-action-container" style="margin-top: 10px;"></div>
             </div>
             <h5 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">منشورات المستخدم:</h5>
             <div id="user-modal-posts"></div>
@@ -670,7 +690,7 @@
 
     <script>
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
-            { name: "سامر العلي", email: "samer@kalimat.com", image: null }
+            { name: "سامر العلي", email: "samer@kalimat.com", image: null, blockedUsers: [] }
         ];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
         let posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [
@@ -773,7 +793,7 @@
 
             let existing = accounts.find(a => a.email === email);
             if (!existing) {
-                let newUser = { name: name, email: email, image: null };
+                let newUser = { name: name, email: email, image: null, blockedUsers: [] };
                 accounts.push(newUser);
                 localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
             }
@@ -869,13 +889,56 @@
             renderPosts();
         }
 
+        function deletePost(postId) {
+            if (confirm("هل أنت تأكد من أنك تريد حذف هذا المنشور؟")) {
+                posts = posts.filter(p => p.id !== postId);
+                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+                renderPosts();
+            }
+        }
+
+        function toggleBlockUser(targetEmail) {
+            let currentUser = accounts.find(a => a.email === currentEmail);
+            if (!currentUser) return;
+
+            if (!currentUser.blockedUsers) {
+                currentUser.blockedUsers = [];
+            }
+
+            let index = currentUser.blockedUsers.indexOf(targetEmail);
+            if (index === -1) {
+                if (confirm("هل تريد حظر هذا العضو؟ لن تظهر منشوراته بعد الآن.")) {
+                    currentUser.blockedUsers.push(targetEmail);
+                    alert("تم حظر العضو بنجاح.");
+                }
+            } else {
+                if (confirm("هل تريد إلغاء حظر هذا العضو؟")) {
+                    currentUser.blockedUsers.splice(index, 1);
+                    alert("تم إلغاء الحظر.");
+                }
+            }
+
+            localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
+            closeModal('user-profile-modal');
+            renderPosts();
+        }
+
         function renderPosts() {
             let container = document.getElementById('feed-container');
             container.innerHTML = '';
 
+            let currentUser = accounts.find(a => a.email === currentEmail);
+            let blockedList = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
+
             posts.forEach(post => {
+                // إخفاء منشورات المستخدمين المحظورين
+                if (blockedList.includes(post.authorEmail)) {
+                    return;
+                }
+
                 let authorObj = accounts.find(a => a.email === post.authorEmail) || { name: post.author, email: post.authorEmail, image: null };
                 let isLiked = post.likedBy && post.likedBy.includes(currentEmail);
+                let isOwner = post.authorEmail === currentEmail;
 
                 let commentsHTML = post.comments.map(c => `
                     <div class="comment-item">
@@ -886,11 +949,14 @@
                 let postHTML = `
                     <div class="card post" data-id="${post.id}">
                         <div class="post-header">
-                            ${getAvatarHTML(authorObj)}
-                            <div>
-                                <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— يشعر بـ ${post.feeling}</small>` : ''}</div>
-                                <div class="post-time">${post.time}</div>
+                            <div class="post-author-info">
+                                ${getAvatarHTML(authorObj)}
+                                <div>
+                                    <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— يشعر بـ ${post.feeling}</small>` : ''}</div>
+                                    <div class="post-time">${post.time}</div>
+                                </div>
                             </div>
+                            ${isOwner ? `<i class="fa-solid fa-trash-can delete-post-btn" title="حذف المنشور" onclick="deletePost(${post.id})"></i>` : ''}
                         </div>
                         ${post.text ? `<div class="post-content">${post.text}</div>` : ''}
                         ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
@@ -1024,6 +1090,22 @@
             document.getElementById('user-modal-name').innerText = user.name;
             document.getElementById('user-modal-email').innerText = user.email;
             document.getElementById('user-modal-avatar').innerHTML = getAvatarHTML(user, true);
+
+            // زر الحظر / إلغاء الحظر
+            let blockContainer = document.getElementById('block-action-container');
+            if (email !== currentEmail) {
+                let currentUser = accounts.find(a => a.email === currentEmail);
+                let isBlocked = currentUser && currentUser.blockedUsers && currentUser.blockedUsers.includes(email);
+                
+                blockContainer.innerHTML = `
+                    <button class="btn-small" style="background: ${isBlocked ? '#28a745' : '#dc3545'}; margin-top: 5px;" onclick="toggleBlockUser('${email}')">
+                        <i class="fa-solid ${isBlocked ? 'fa-user-check' : 'fa-user-slash'}"></i> 
+                        ${isBlocked ? 'إلغاء حظر العضو' : 'حظر العضو'}
+                    </button>
+                `;
+            } else {
+                blockContainer.innerHTML = '';
+            }
 
             let userPosts = posts.filter(p => p.authorEmail === email);
             let postsContainer = document.getElementById('user-modal-posts');
