@@ -45,6 +45,13 @@
             font-weight: 800;
             color: var(--primary-color);
             letter-spacing: -0.5px;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
         }
 
         .search-box {
@@ -420,7 +427,7 @@
 
     <!-- Header -->
     <header id="main-header">
-        <div class="logo">كلمات</div>
+        <div class="logo" onclick="openWelcomeModal()" title="انقر لمعرفة المزيد عن المنصة">كلمات</div>
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="global-search" placeholder="بحث..." onkeyup="filterPosts()">
@@ -547,6 +554,38 @@
     </div>
 
     <!-- Modals -->
+
+    <!-- Welcome / Info Modal (يظهر عند الضغط على الشعار كلمات) -->
+    <div id="welcome-modal" class="modal">
+        <div class="modal-content" style="text-align: center; padding: 20px; border-radius: 16px;">
+            <div class="modal-header" style="justify-content: center; border: none; padding-bottom: 0;">
+                <h2 style="color: var(--primary-color); font-size: 28px; font-weight: 800;">كلمات</h2>
+            </div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">منصة للتواصل الإنساني والكلمة الطيبة</p>
+            
+            <hr style="border: none; border-top: 1px solid #e4e6eb; margin: 10px 0;">
+
+            <div style="text-align: right; font-size: 14px; line-height: 1.6; color: var(--text-color); margin: 15px 0;">
+                <p style="margin-bottom: 8px;"><strong>عن المنصة:</strong></p>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 14px; text-align: justify;">
+                    تأسست منصة <strong>"كلمات"</strong> برؤية وتطوير من <strong>ياسر الحسين</strong>، لتكون مساحة عربية مستقلاّ وشخصية تهدف إلى إعلاء قيمة الحوار الراقي وتبادل الأفكار بعيداً عن الضوضاء.
+                </p>
+
+                <p style="margin-bottom: 8px;"><strong>🤝 الشرط والميثاق الأخلاقي للاستخدام:</strong></p>
+                <ul style="padding-right: 20px; font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                    <li>أن تكون الكلمة نابعة من احترام ونافعة للجميع.</li>
+                    <li>احترام اختلاف الآراء والابتعاد عن التعصب والخلافات.</li>
+                    <li>الحفاظ على بيئة إيجابية تجمع القلوب ولا تفرقها.</li>
+                </ul>
+            </div>
+
+            <blockquote style="background: #f0f7ff; border-right: 4px solid var(--primary-color); padding: 8px 12px; font-size: 12px; font-style: italic; color: #1877f2; border-radius: 4px; margin-bottom: 15px; text-align: right;">
+                "الكلمة الطيبة أصلها ثابت وفرعها في السماء"
+            </blockquote>
+
+            <button class="btn-small" style="width: 100%; padding: 10px; font-size: 14px;" onclick="closeModal('welcome-modal')">أوافق وأستمر</button>
+        </div>
+    </div>
     
     <!-- Feelings Modal -->
     <div id="feelings-modal" class="modal">
@@ -657,6 +696,10 @@
         let selectedPostImage = null;
         let currentSelectedFeeling = null;
         let activePostToShare = null;
+
+        function openWelcomeModal() {
+            document.getElementById('welcome-modal').style.display = 'flex';
+        }
 
         function getAvatarHTML(user, isLarge = false) {
             let extraClass = isLarge ? 'avatar-lg' : '';
@@ -893,7 +936,6 @@
                 post.likedBy.push(currentEmail);
                 post.likes = (post.likes || 0) + 1;
 
-                // إضافة إشعار لكاتب المنشور إذا لم يكن هو صاحب الإعجاب
                 if (post.authorEmail !== currentEmail) {
                     addNotification(`قام ${currentUser.name} بالإعجاب بمنشورك.`);
                 }
