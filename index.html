@@ -274,6 +274,7 @@
             font-size: 14px;
             line-height: 1.4;
             margin-bottom: 10px;
+            word-break: break-word;
         }
 
         .post-image {
@@ -490,7 +491,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header id="main-header">
         <div class="logo" onclick="openWelcomeModal()" title="انقر لمعرفة المزيد">كلمات</div>
         <div class="search-box">
@@ -508,7 +508,6 @@
 
     <div class="container">
 
-        <!-- 1. شاشة الدخول والتسجيل -->
         <div id="auth-view" class="view">
             <div class="card auth-card" style="text-align: center;">
                 <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام / تبديل الحساب</h3>
@@ -523,7 +522,6 @@
             </div>
         </div>
 
-        <!-- 2. الشاشة الرئيسية -->
         <div id="home-view" class="view active">
             <div class="card create-post">
                 <div class="post-input-container">
@@ -544,14 +542,13 @@
                         <i class="fa-solid fa-face-smile"></i>
                         <span>شعور</span>
                     </div>
-                    <button class="btn-small" onclick="publishPost()">نشر</button>
+                    <button class="btn-small" id="publish-btn" onclick="publishPost()">نشر</button>
                 </div>
             </div>
 
             <div id="feed-container"></div>
         </div>
 
-        <!-- 3. شاشة الأصدقاء -->
         <div id="friends-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">مقترحات المتابعة</h3>
@@ -568,7 +565,6 @@
             </div>
         </div>
 
-        <!-- 4. شاشة الدردشة -->
         <div id="chat-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">الرسائل المباشرة</h3>
@@ -590,7 +586,6 @@
             </div>
         </div>
 
-        <!-- 5. شاشة حسابي مع إدارة الحظر وسلة المحذوفات -->
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي والإعدادات</h3>
@@ -612,11 +607,9 @@
                     <button class="btn-small" style="width: 100%; margin-top: 5px;" onclick="saveProfileChanges()">حفظ التعديلات</button>
                 </div>
 
-                <!-- قائمة المحذوفات -->
                 <div class="settings-section-title"><i class="fa-solid fa-trash-arrow-up"></i> سلة المحذوفات</div>
                 <div id="trash-list-box" style="text-align: right; font-size: 13px;"></div>
 
-                <!-- قائمة الحظر -->
                 <div class="settings-section-title"><i class="fa-solid fa-user-slash"></i> قائمة الحظر</div>
                 <div id="blocked-list-box" style="text-align: right; font-size: 13px;"></div>
 
@@ -628,7 +621,6 @@
 
     <!-- Modals -->
 
-    <!-- Welcome / Info Modal -->
     <div id="welcome-modal" class="modal">
         <div class="modal-content" style="text-align: center; padding: 20px; border-radius: 16px;">
             <div class="modal-header" style="justify-content: center; border: none; padding-bottom: 0;">
@@ -652,7 +644,6 @@
         </div>
     </div>
     
-    <!-- Feelings Modal -->
     <div id="feelings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -667,7 +658,6 @@
         </div>
     </div>
 
-    <!-- Share Modal -->
     <div id="share-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -685,7 +675,6 @@
         </div>
     </div>
 
-    <!-- Notifications Modal -->
     <div id="notif-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -696,7 +685,6 @@
         </div>
     </div>
 
-    <!-- User Profile Modal -->
     <div id="user-profile-modal" class="modal">
         <div class="modal-content" style="max-height: 90vh;">
             <div class="modal-header">
@@ -714,7 +702,6 @@
         </div>
     </div>
 
-    <!-- Navigation Bar -->
     <nav class="bottom-nav" id="main-nav">
         <div class="nav-item active" onclick="switchTab('home-view', this)">
             <i class="fa-solid fa-house nav-icon"></i>
@@ -739,7 +726,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // إعدادات Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDummyKeyReplaceMeIfRequired",
             authDomain: "kalimat-app.firebaseapp.com",
@@ -770,7 +756,27 @@
         let currentSelectedFeeling = null;
         let activePostToShare = null;
 
-        // مزامنة المنشورات لحظياً مع Firebase
+        // ضغط الصور تلقائياً لتفادي رفض Firebase لحجم البيانات
+        function compressImage(file, maxWidth, quality, callback) {
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (event) {
+                let img = new Image();
+                img.src = event.target.result;
+                img.onload = function () {
+                    let canvas = document.createElement('canvas');
+                    let scaleSize = maxWidth / img.width;
+                    if (scaleSize > 1) scaleSize = 1;
+                    canvas.width = img.width * scaleSize;
+                    canvas.height = img.height * scaleSize;
+                    let ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    let base64 = canvas.toDataURL('image/jpeg', quality);
+                    callback(base64);
+                };
+            };
+        }
+
         db.ref('posts').on('value', (snapshot) => {
             const data = snapshot.val();
             posts = [];
@@ -780,6 +786,7 @@
                 });
             }
             renderPosts();
+            filterPosts();
         });
 
         function openWelcomeModal() {
@@ -919,14 +926,12 @@
             let file = event.target.files[0];
             if (!file) return;
 
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                selectedPostImage = e.target.result;
+            compressImage(file, 800, 0.7, function(base64) {
+                selectedPostImage = base64;
                 let img = document.getElementById('post-image-preview');
                 img.src = selectedPostImage;
                 img.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+            });
         }
 
         function publishPost() {
@@ -934,6 +939,9 @@
             if (!text && !selectedPostImage) return;
 
             let currentUser = accounts.find(a => a.email === currentEmail);
+            let publishBtn = document.getElementById('publish-btn');
+            publishBtn.disabled = true;
+            publishBtn.innerText = 'جاري النشر...';
 
             let newPost = {
                 author: currentUser.name,
@@ -947,13 +955,22 @@
                 comments: []
             };
 
-            db.ref('posts').push(newPost);
+            db.ref('posts').push(newPost, (error) => {
+                publishBtn.disabled = false;
+                publishBtn.innerText = 'نشر';
 
-            document.getElementById('new-post-text').value = '';
-            document.getElementById('post-image-preview').style.display = 'none';
-            document.getElementById('selected-feeling-tag').style.display = 'none';
-            selectedPostImage = null;
-            currentSelectedFeeling = null;
+                if (error) {
+                    alert('فشل النشر: يرجى التأكد من صلاحيات Firebase (Rules)');
+                } else {
+                    document.getElementById('new-post-text').value = '';
+                    document.getElementById('post-image-preview').style.display = 'none';
+                    document.getElementById('selected-feeling-tag').style.display = 'none';
+                    document.getElementById('global-search').value = ''; // تفريغ حقل البحث
+                    selectedPostImage = null;
+                    currentSelectedFeeling = null;
+                    document.getElementById('post-image-input').value = '';
+                }
+            });
         }
 
         function toggleOptionsMenu(postId, event) {
@@ -1314,18 +1331,15 @@
             let file = event.target.files[0];
             if (!file) return;
 
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let base64Image = e.target.result;
+            compressImage(file, 300, 0.8, function(base64) {
                 let userIndex = accounts.findIndex(a => a.email === currentEmail);
                 if (userIndex !== -1) {
-                    accounts[userIndex].image = base64Image;
+                    accounts[userIndex].image = base64;
                     localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
                     loadUserData(accounts[userIndex]);
                     renderPosts();
                 }
-            };
-            reader.readAsDataURL(file);
+            });
         }
 
         function saveProfileChanges() {
@@ -1397,11 +1411,15 @@
         }
 
         function filterPosts() {
-            let query = document.getElementById('global-search').value.toLowerCase();
+            let query = document.getElementById('global-search').value.toLowerCase().trim();
             let postsEls = document.querySelectorAll('#feed-container .post');
             postsEls.forEach(post => {
-                let content = post.innerText.toLowerCase();
-                post.style.display = content.includes(query) ? 'block' : 'none';
+                if(!query) {
+                    post.style.display = 'block';
+                } else {
+                    let content = post.innerText.toLowerCase();
+                    post.style.display = content.includes(query) ? 'block' : 'none';
+                }
             });
         }
 
