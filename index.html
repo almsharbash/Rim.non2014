@@ -734,7 +734,27 @@
         </div>
     </nav>
 
+    <!-- مكتبات وتربيط Firebase المحدث -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBznOsrwmvtWDFKTbqz3bFry94J7hJFn0c",
+            authDomain: "gogo1982-2026.firebaseapp.com",
+            projectId: "gogo1982-2026",
+            storageBucket: "gogo1982-2026.firebasestorage.app",
+            messagingSenderId: "79409104235",
+            appId: "1:79409104235:web:5d7ad5dcda013b32f6f82e",
+            measurementId: "G-5V553NQLDK",
+            databaseURL: "https://gogo1982-2026-default-rtdb.firebaseio.com"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
             { name: "سامر العلي", email: "samer@kalimat.com", image: null, blockedUsers: [] }
         ];
@@ -955,7 +975,6 @@
             if (menu) menu.classList.toggle('active');
         }
 
-        /* نقل المنشور إلى سلة المحذوفات */
         function movePostToTrash(postId) {
             let postIndex = posts.findIndex(p => p.id === postId);
             if (postIndex !== -1) {
@@ -967,7 +986,6 @@
             }
         }
 
-        /* استعادة من السلة */
         function restorePost(postId) {
             let trashIndex = trashPosts.findIndex(p => p.id === postId);
             if (trashIndex !== -1) {
@@ -980,7 +998,6 @@
             }
         }
 
-        /* حذف نهائي من السلة */
         function deletePermanently(postId) {
             if (confirm("هل أنت تأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا إجراء.")) {
                 trashPosts = trashPosts.filter(p => p.id !== postId);
@@ -1082,7 +1099,6 @@
         }
 
         function renderSettingsLists() {
-            // 1. عرض سلة المحذوفات الخاصة بالمستخدم
             let trashContainer = document.getElementById('trash-list-box');
             let myTrash = trashPosts.filter(p => p.authorEmail === currentEmail);
             trashContainer.innerHTML = '';
@@ -1105,7 +1121,6 @@
                 });
             }
 
-            // 2. عرض قائمة الحظر الخاصة بالمستخدم
             let blockedContainer = document.getElementById('blocked-list-box');
             let currentUser = accounts.find(a => a.email === currentEmail);
             let blockedEmails = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
