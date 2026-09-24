@@ -38,12 +38,14 @@
       align-items: center;
       border-bottom: 1px solid var(--border-color);
       z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .logo {
       color: var(--primary-color);
-      font-size: 22px;
+      font-size: 24px;
       font-weight: bold;
+      letter-spacing: -0.5px;
     }
 
     .search-box {
@@ -60,7 +62,7 @@
       background: transparent;
       outline: none;
       font-size: 14px;
-      width: 120px;
+      width: 130px;
     }
 
     .main-container {
@@ -69,9 +71,17 @@
       padding: 0 10px;
     }
 
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
     .create-post {
       background: var(--card-bg);
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 15px;
       margin-bottom: 15px;
       box-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -85,8 +95,8 @@
     }
 
     .avatar {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: var(--primary-color);
       color: white;
@@ -94,6 +104,8 @@
       align-items: center;
       justify-content: center;
       font-weight: bold;
+      font-size: 18px;
+      flex-shrink: 0;
     }
 
     textarea {
@@ -103,22 +115,28 @@
       padding: 10px 15px;
       resize: none;
       outline: none;
-      height: 40px;
+      height: 45px;
+      font-size: 14px;
     }
 
     .btn-publish {
       background: var(--primary-color);
       color: white;
       border: none;
-      padding: 8px 20px;
-      border-radius: 6px;
+      padding: 8px 24px;
+      border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
+      float: left;
+    }
+
+    .clear-fix {
+      clear: both;
     }
 
     .post-card {
       background: var(--card-bg);
-      border-radius: 8px;
+      border-radius: 12px;
       padding: 15px;
       margin-bottom: 15px;
       box-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -128,11 +146,12 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .post-author {
       font-weight: bold;
+      font-size: 15px;
     }
 
     .post-time {
@@ -143,7 +162,32 @@
     .post-content {
       margin-bottom: 12px;
       font-size: 15px;
-      line-height: 1.4;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .action-btn.liked {
+      color: var(--primary-color);
     }
 
     .nav-bar {
@@ -155,6 +199,7 @@
       justify-content: space-around;
       padding: 10px 0;
       border-top: 1px solid var(--border-color);
+      z-index: 100;
     }
 
     .nav-item {
@@ -163,12 +208,38 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 12px;
+      font-size: 11px;
       gap: 4px;
+      cursor: pointer;
     }
 
     .nav-item.active {
       color: var(--primary-color);
+    }
+
+    .profile-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .profile-card .avatar {
+      width: 80px;
+      height: 80px;
+      font-size: 32px;
+      margin: 0 auto 15px auto;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -178,35 +249,85 @@
     <div class="logo">كلمات</div>
     <div class="search-box">
       <i class="fas fa-search"></i>
-      <input type="text" id="searchInput" placeholder="بحث..." onkeyup="filterPosts()">
+      <input type="text" id="searchInput" placeholder="بحث بالمنشورات..." onkeyup="filterPosts()">
     </div>
   </header>
 
   <div class="main-container">
-    <div class="create-post">
-      <div class="post-input-container">
-        <div class="avatar" id="userAvatar">ع</div>
-        <textarea id="postContent" placeholder="بم تفكر؟"></textarea>
+    
+    <!-- قسم الرئيسية -->
+    <div id="homeSection" class="page-section active">
+      <div class="create-post">
+        <div class="post-input-container">
+          <div class="avatar" id="currentAvatar">م</div>
+          <textarea id="postContent" placeholder="بم تفكر اليوم؟"></textarea>
+        </div>
+        <button class="btn-publish" onclick="submitPost()">نشر</button>
+        <div class="clear-fix"></div>
       </div>
-      <button class="btn-publish" onclick="submitPost()">نشر</button>
+
+      <div id="postsFeed">
+        <p style="text-align:center; color:gray; padding:20px;">جاري تحميل المنشورات...</p>
+      </div>
     </div>
 
-    <div id="postsFeed">
-      <!-- ستظهر المنشورات الحقيقية هنا مباشرة من Firebase -->
+    <!-- قسم الأصدقاء -->
+    <div id="friendsSection" class="page-section">
+      <div class="profile-card">
+        <h3><i class="fas fa-user-friends"></i> قائمة الأصدقاء</h3>
+        <p style="color:var(--text-secondary); margin-top:10px;">المستخدمون النشطون في منصة كلمات ينضمون بمرور الوقت!</p>
+      </div>
     </div>
+
+    <!-- قسم الدردشة -->
+    <div id="chatSection" class="page-section">
+      <div class="profile-card">
+        <h3><i class="fas fa-comments"></i> غرف الدردشة</h3>
+        <p style="color:var(--text-secondary); margin-top:10px;">قريباً: المحادثات المباشرة بين أعضاء المنصة.</p>
+      </div>
+    </div>
+
+    <!-- قسم حسابي -->
+    <div id="accountSection" class="page-section">
+      <div class="profile-card">
+        <div class="avatar" id="profileAvatar">م</div>
+        <h2 id="profileNameDisplay">مستخدم</h2>
+        <p style="color:var(--text-secondary); font-size:13px; margin-top:5px;">عضو في منصة كلمات</p>
+        
+        <div style="margin-top: 20px; text-align: right;">
+          <label style="font-weight:bold; font-size:14px;">تعديل اسمك في المنصة:</label>
+          <input type="text" id="usernameInput" class="input-field" placeholder="أدخل اسمك الجديد...">
+          <button class="btn-publish" style="float:none; width:100%;" onclick="saveUsername()">حفظ الاسم</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
+  <!-- شريط التنقل السفلي -->
   <div class="nav-bar">
-    <a href="#" class="nav-item active"><i class="fas fa-home fa-lg"></i>الرئيسية</a>
-    <a href="#" class="nav-item"><i class="fas fa-user-friends fa-lg"></i>الأصدقاء</a>
-    <a href="#" class="nav-item"><i class="fas fa-comments fa-lg"></i>الدردشة</a>
-    <a href="#" class="nav-item"><i class="fas fa-user fa-lg"></i>حسابي</a>
+    <div class="nav-item active" onclick="switchTab('homeSection', this)">
+      <i class="fas fa-home fa-lg"></i>
+      <span>الرئيسية</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('friendsSection', this)">
+      <i class="fas fa-user-friends fa-lg"></i>
+      <span>الأصدقاء</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('chatSection', this)">
+      <i class="fas fa-comments fa-lg"></i>
+      <span>الدردشة</span>
+    </div>
+    <div class="nav-item" onclick="switchTab('accountSection', this)">
+      <i class="fas fa-user fa-lg"></i>
+      <span>حسابي</span>
+    </div>
   </div>
 
-  <!-- Firebase Web SDK v9 -->
+  <!-- Firebase Integration -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBznOsrwmvtWDFKTbqz3bFry94J7hJFn0c",
@@ -222,7 +343,37 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // دالة نشر منشور جديد في Firebase
+    // إدارة اسم المستخدم محلياً مع Firebase
+    let currentUserName = localStorage.getItem('kalimat_username') || "مستخدم كلمات";
+
+    function updateProfileUI() {
+      document.getElementById('profileNameDisplay').innerText = currentUserName;
+      document.getElementById('usernameInput').value = currentUserName;
+      const initial = currentUserName.charAt(0).toUpperCase();
+      document.getElementById('currentAvatar').innerText = initial;
+      document.getElementById('profileAvatar').innerText = initial;
+    }
+    updateProfileUI();
+
+    window.saveUsername = function() {
+      const newName = document.getElementById('usernameInput').value.trim();
+      if (newName !== "") {
+        currentUserName = newName;
+        localStorage.setItem('kalimat_username', newName);
+        updateProfileUI();
+        alert("تم تحديث اسمك بنجاح!");
+      }
+    };
+
+    // التنقل بين أزرار القائمة السفلية
+    window.switchTab = function(sectionId, element) {
+      document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+      element.classList.add('active');
+    };
+
+    // نشر منشور جديد
     window.submitPost = function() {
       const textInput = document.getElementById('postContent');
       const text = textInput.value.trim();
@@ -230,18 +381,27 @@
       if (text !== "") {
         const postsRef = ref(db, 'posts');
         push(postsRef, {
-          author: "مستخدم كلمات",
+          author: currentUserName,
           content: text,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          likes: 0
         }).then(() => {
           textInput.value = '';
-        }).catch((error) => {
-          alert("خطأ في النشر: " + error.message);
+        }).catch((err) => {
+          alert("حدث خطأ أثناء النشر: " + err.message);
         });
       }
     };
 
-    // الاستماع المباشر وجلب كافة المنشورات الحقيقية
+    // التفاعل مع زر الإعجاب
+    window.toggleLike = function(postId, currentLikes, btn) {
+      const postRef = ref(db, `posts/${postId}`);
+      update(postRef, {
+        likes: currentLikes + 1
+      });
+    };
+
+    // الاستماع الحقيقي للمنشورات وتحديث الشاشة فوراً
     const postsRef = ref(db, 'posts');
     onValue(postsRef, (snapshot) => {
       const postsFeed = document.getElementById('postsFeed');
@@ -249,28 +409,42 @@
       const data = snapshot.val();
 
       if (data) {
-        const postsArray = Object.values(data).reverse();
-        postsArray.forEach(post => {
+        const postsArray = [];
+        Object.keys(data).forEach(key => {
+          postsArray.push({ id: key, ...data[key] });
+        });
+        
+        postsArray.reverse().forEach(post => {
           const postElement = document.createElement('div');
           postElement.className = 'post-card';
+          const authorInitial = post.author ? post.author.charAt(0).toUpperCase() : 'م';
+          
           postElement.innerHTML = `
             <div class="post-header">
-              <div class="avatar">${post.author ? post.author.charAt(0) : 'م'}</div>
+              <div class="avatar">${authorInitial}</div>
               <div>
                 <div class="post-author">${post.author || "مستخدم"}</div>
-                <div class="post-time">${new Date(post.timestamp).toLocaleTimeString('ar-EG')}</div>
+                <div class="post-time">${new Date(post.timestamp).toLocaleString('ar-EG')}</div>
               </div>
             </div>
             <div class="post-content">${post.content}</div>
+            <div class="post-actions">
+              <button class="action-btn" onclick="toggleLike('${post.id}', ${post.likes || 0}, this)">
+                <i class="far fa-thumbs-up"></i> إعجاب (${post.likes || 0})
+              </button>
+              <button class="action-btn" onclick="alert('ميزة التعليقات ستكون متاحة للتجربة في التحديث القادم!')">
+                <i class="far fa-comment"></i> تعليق
+              </button>
+            </div>
           `;
           postsFeed.appendChild(postElement);
         });
       } else {
-        postsFeed.innerHTML = '<p style="text-align:center; color:gray;">لا توجد منشورات حتى الآن. كن أول من ينشر!</p>';
+        postsFeed.innerHTML = '<p style="text-align:center; color:gray; padding:20px;">لا توجد منشورات حتى الآن. كن أول من يشارك كلماته!</p>';
       }
     });
 
-    // دالة التصفية عند البحث
+    // تصفية المنشورات
     window.filterPosts = function() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       const posts = document.querySelectorAll('.post-card');
