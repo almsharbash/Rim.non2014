@@ -6,7 +6,7 @@
     <title>منصة كلمات | Kalimat</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- SDK مكتبات Firebase -->
+    <!-- SDK مكتبات Firebase المتوافقة -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -425,23 +425,25 @@
     </nav>
 
     <script>
-        // Firebase Setup
+        // إعدادات مشروع Firebase الخاص بك
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "kalimat-project.firebaseapp.com",
-            databaseURL: "https://kalimat-project-default-rtdb.firebaseio.com",
-            projectId: "kalimat-project",
-            storageBucket: "kalimat-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBznOsrwmvtWDFKTbqz3bFry94J7hJFn0c",
+            authDomain: "gogo1982-2026.firebaseapp.com",
+            databaseURL: "https://gogo1982-2026-default-rtdb.firebaseio.com",
+            projectId: "gogo1982-2026",
+            storageBucket: "gogo1982-2026.firebasestorage.app",
+            messagingSenderId: "79409104235",
+            appId: "1:79409104235:web:5d7ad5dcda013b32f6f82e",
+            measurementId: "G-5V553NQLDK"
         };
 
+        // تهيئة Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
-        // Account State
+        // حالة الحساب المستخدم
         let activeUser = JSON.parse(localStorage.getItem('kalimat_active_user')) || {
             name: "جوجو",
             email: "rim2020h.com@gmail.com",
