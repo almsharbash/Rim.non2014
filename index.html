@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalimat</title>
+    <title>Kalimat | كلمات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -238,7 +238,7 @@
             display: none;
             position: absolute;
             top: 30px;
-            right: 10px;
+            left: 10px;
             background: white;
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -484,7 +484,7 @@
             margin: 15px 0 8px;
             border-bottom: 1px solid #e4e6eb;
             padding-bottom: 4px;
-            text-align: left;
+            text-align: right;
         }
     </style>
 </head>
@@ -492,10 +492,10 @@
 
     <!-- Header -->
     <header id="main-header">
-        <div class="logo" onclick="openWelcomeModal()" title="Click to learn more">Kalimat</div>
+        <div class="logo" onclick="openWelcomeModal()" title="انقر لمعرفة المزيد">كلمات</div>
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="global-search" placeholder="Search..." onkeyup="filterPosts()">
+            <input type="text" id="global-search" placeholder="بحث..." onkeyup="filterPosts()">
         </div>
         <div class="header-actions">
             <div class="notif-btn" onclick="openNotificationsModal()">
@@ -508,28 +508,28 @@
 
     <div class="container">
 
-        <!-- 1. Auth View -->
+        <!-- 1. شاشة الدخول والتسجيل -->
         <div id="auth-view" class="view">
             <div class="card auth-card" style="text-align: center;">
-                <h3 style="color: var(--primary-color); margin-bottom: 10px;">Login / Switch Account</h3>
-                <input type="text" id="reg-name" placeholder="Display Name">
-                <input type="email" id="reg-email" placeholder="Email Address">
-                <button class="btn-small" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="registerNewAccount()">Login / Sign Up</button>
+                <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام / تبديل الحساب</h3>
+                <input type="text" id="reg-name" placeholder="الاسم الظاهر">
+                <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="registerNewAccount()">دخول / إنشاء حساب</button>
 
-                <div style="margin-top: 20px; text-align: left;">
-                    <h5 style="margin-bottom: 8px; color: var(--text-secondary);">Saved Accounts:</h5>
+                <div style="margin-top: 20px; text-align: right;">
+                    <h5 style="margin-bottom: 8px; color: var(--text-secondary);">الحسابات المسجلة:</h5>
                     <div id="saved-accounts-list"></div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. Home View -->
+        <!-- 2. الشاشة الرئيسية -->
         <div id="home-view" class="view active">
             <div class="card create-post">
                 <div class="post-input-container">
                     <div id="post-box-avatar-box"></div>
                     <div style="flex: 1;">
-                        <input type="text" id="new-post-text" class="post-input" placeholder="What's on your mind?">
+                        <input type="text" id="new-post-text" class="post-input" placeholder="بم تفكر؟">
                         <div id="selected-feeling-tag" class="selected-feeling" style="display: none;"></div>
                     </div>
                 </div>
@@ -537,90 +537,90 @@
                 <div class="post-actions">
                     <label class="action-btn" style="color: #45bd62;">
                         <i class="fa-solid fa-image"></i>
-                        <span>Photo</span>
+                        <span>صورة</span>
                         <input type="file" id="post-image-input" accept="image/*" style="display: none;" onchange="previewPostImage(event)">
                     </label>
                     <div class="action-btn" style="color: #f7b928;" onclick="openFeelingsModal()">
                         <i class="fa-solid fa-face-smile"></i>
-                        <span>Feeling</span>
+                        <span>شعور</span>
                     </div>
-                    <button class="btn-small" onclick="publishPost()">Post</button>
+                    <button class="btn-small" onclick="publishPost()">نشر</button>
                 </div>
             </div>
 
             <div id="feed-container"></div>
         </div>
 
-        <!-- 3. Friends View -->
+        <!-- 3. شاشة الأصدقاء -->
         <div id="friends-view" class="view">
             <div class="card">
-                <h3 style="margin-bottom: 10px; font-size: 16px;">Suggested Follows</h3>
+                <h3 style="margin-bottom: 10px; font-size: 16px;">مقترحات المتابعة</h3>
                 <div class="item-list" style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">S</div>
+                        <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">س</div>
                         <div>
-                            <strong>Samer Al-Ali</strong><br>
-                            <small style="color:var(--text-secondary);">Mutual friend</small>
+                            <strong>سامر العلي</strong><br>
+                            <small style="color:var(--text-secondary);">صديق مشترك</small>
                         </div>
                     </div>
-                    <button class="btn-small" onclick="toggleFollow(this)"><i class="fa-solid fa-user-plus"></i> Follow</button>
+                    <button class="btn-small" onclick="toggleFollow(this)"><i class="fa-solid fa-user-plus"></i> متابعة</button>
                 </div>
             </div>
         </div>
 
-        <!-- 4. Chat View -->
+        <!-- 4. شاشة الدردشة -->
         <div id="chat-view" class="view">
             <div class="card">
-                <h3 style="margin-bottom: 10px; font-size: 16px;">Direct Messages</h3>
+                <h3 style="margin-bottom: 10px; font-size: 16px;">الرسائل المباشرة</h3>
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom: 15px; border-bottom: 1px solid #e4e6eb; padding-bottom: 10px;">
-                    <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">S</div>
+                    <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">س</div>
                     <div>
-                        <strong>Samer Al-Ali</strong>
+                        <strong>سامر العلي</strong>
                     </div>
                 </div>
                 
                 <div class="chat-messages" id="chat-messages-box" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 10px;">
-                    <div style="background: #e4e6eb; padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; align-self: flex-start;">Welcome to Kalimat!</div>
+                    <div style="background: #e4e6eb; padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; align-self: flex-start;">مرحباً بك في كلمات!</div>
                 </div>
 
                 <div class="comment-box">
-                    <input type="text" id="chat-input" placeholder="Write a message...">
+                    <input type="text" id="chat-input" placeholder="اكتب رسالة...">
                     <button class="btn-small" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- 5. Profile View -->
+        <!-- 5. شاشة حسابي مع إدارة الحظر وسلة المحذوفات -->
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
-                <h3 style="margin-bottom: 15px; font-size: 16px;">Profile & Settings</h3>
+                <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي والإعدادات</h3>
                 
                 <div id="prof-img-box" style="margin: 0 auto 10px;"></div>
 
                 <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
                 <button class="btn-small" style="background: #e4e6eb; color: #050505; margin-bottom: 15px;" onclick="document.getElementById('image-upload').click()">
-                    <i class="fa-solid fa-camera"></i> Change Avatar
+                    <i class="fa-solid fa-camera"></i> تغيير الصورة الشخصية
                 </button>
 
-                <div style="text-align: left; margin-top: 10px;">
-                    <label style="font-size: 13px; color: var(--text-secondary);">Display Name:</label>
+                <div style="text-align: right; margin-top: 10px;">
+                    <label style="font-size: 13px; color: var(--text-secondary);">الاسم الظاهر:</label>
                     <input type="text" id="prof-name-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);">
 
-                    <label style="font-size: 13px; color: var(--text-secondary);">Email Address:</label>
+                    <label style="font-size: 13px; color: var(--text-secondary);">البريد الإلكتروني:</label>
                     <input type="text" id="prof-email-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);" readonly>
 
-                    <button class="btn-small" style="width: 100%; margin-top: 5px;" onclick="saveProfileChanges()">Save Changes</button>
+                    <button class="btn-small" style="width: 100%; margin-top: 5px;" onclick="saveProfileChanges()">حفظ التعديلات</button>
                 </div>
 
-                <!-- Trash Section -->
-                <div class="settings-section-title"><i class="fa-solid fa-trash-arrow-up"></i> Recycle Bin</div>
-                <div id="trash-list-box" style="text-align: left; font-size: 13px;"></div>
+                <!-- قائمة المحذوفات -->
+                <div class="settings-section-title"><i class="fa-solid fa-trash-arrow-up"></i> سلة المحذوفات</div>
+                <div id="trash-list-box" style="text-align: right; font-size: 13px;"></div>
 
-                <!-- Blocked List Section -->
-                <div class="settings-section-title"><i class="fa-solid fa-user-slash"></i> Blocked Users</div>
-                <div id="blocked-list-box" style="text-align: left; font-size: 13px;"></div>
+                <!-- قائمة الحظر -->
+                <div class="settings-section-title"><i class="fa-solid fa-user-slash"></i> قائمة الحظر</div>
+                <div id="blocked-list-box" style="text-align: right; font-size: 13px;"></div>
 
-                <button class="btn-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                <button class="btn-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
             </div>
         </div>
 
@@ -632,23 +632,23 @@
     <div id="welcome-modal" class="modal">
         <div class="modal-content" style="text-align: center; padding: 20px; border-radius: 16px;">
             <div class="modal-header" style="justify-content: center; border: none; padding-bottom: 0;">
-                <h2 style="color: var(--primary-color); font-size: 28px; font-weight: 800;">Kalimat</h2>
+                <h2 style="color: var(--primary-color); font-size: 28px; font-weight: 800;">كلمات</h2>
             </div>
-            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">A Platform for Human Connection and Kind Words</p>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">منصة للتواصل الإنساني والكلمة الطيبة</p>
             <hr style="border: none; border-top: 1px solid #e4e6eb; margin: 10px 0;">
-            <div style="text-align: left; font-size: 14px; line-height: 1.6; color: var(--text-color); margin: 15px 0;">
-                <p style="margin-bottom: 8px;"><strong>About Platform:</strong></p>
+            <div style="text-align: right; font-size: 14px; line-height: 1.6; color: var(--text-color); margin: 15px 0;">
+                <p style="margin-bottom: 8px;"><strong>عن المنصة:</strong></p>
                 <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 14px; text-align: justify;">
-                    Founded with a vision by <strong>Yasser Al-Hussein</strong>, <strong>"Kalimat"</strong> is designed to be an independent personal space aimed at promoting constructive dialogue and sharing meaningful thoughts away from noise.
+                    تأسست منصة <strong>"كلمات"</strong> برؤية وتطوير من <strong>ياسر الحسين</strong>، لتكون مساحة عربية مستقلاّ وشخصية تهدف إلى إعلاء قيمة الحوار الراقي وتبادل الأفكار بعيداً عن الضوضاء.
                 </p>
-                <p style="margin-bottom: 8px;"><strong>🤝 Ethical Code & Guidelines:</strong></p>
-                <ul style="padding-left: 20px; font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
-                    <li>Express thoughts with respect and constructiveness.</li>
-                    <li>Respect diverse opinions and avoid conflict.</li>
-                    <li>Maintain a positive space that connects people.</li>
+                <p style="margin-bottom: 8px;"><strong>🤝 الشرط والميثاق الأخلاقي للاستخدام:</strong></p>
+                <ul style="padding-right: 20px; font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                    <li>أن تكون الكلمة نابعة من احترام ونافعة للجميع.</li>
+                    <li>احترام اختلاف الآراء والابتعاد عن التعصب والخلافات.</li>
+                    <li>الحفاظ على بيئة إيجابية تجمع القلوب ولا تفرقها.</li>
                 </ul>
             </div>
-            <button class="btn-small" style="width: 100%; padding: 10px; font-size: 14px;" onclick="closeModal('welcome-modal')">I Agree & Continue</button>
+            <button class="btn-small" style="width: 100%; padding: 10px; font-size: 14px;" onclick="closeModal('welcome-modal')">أوافق وأستمر</button>
         </div>
     </div>
     
@@ -656,14 +656,14 @@
     <div id="feelings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h4>How are you feeling?</h4>
+                <h4>كيف تشعر الآن؟</h4>
                 <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('feelings-modal')"></i>
             </div>
-            <div class="feeling-option" onclick="selectFeeling('Happy 😊')">😊 Happy</div>
-            <div class="feeling-option" onclick="selectFeeling('Excited 🚀')">🚀 Excited</div>
-            <div class="feeling-option" onclick="selectFeeling('Relaxed ☕')">☕ Relaxed</div>
-            <div class="feeling-option" onclick="selectFeeling('Thoughtful 💭')">💭 Thoughtful</div>
-            <div class="feeling-option" onclick="selectFeeling('Grateful 🙏')">🙏 Grateful</div>
+            <div class="feeling-option" onclick="selectFeeling('سعيد 😊')">😊 سعيد</div>
+            <div class="feeling-option" onclick="selectFeeling('متحمس 🚀')">🚀 متحمس</div>
+            <div class="feeling-option" onclick="selectFeeling('مسترخي ☕')">☕ مسترخي</div>
+            <div class="feeling-option" onclick="selectFeeling('مفكر 💭')">💭 مفكر</div>
+            <div class="feeling-option" onclick="selectFeeling('شاكر 🙏')">🙏 شاكر</div>
         </div>
     </div>
 
@@ -671,16 +671,16 @@
     <div id="share-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h4>Share Options</h4>
+                <h4>خيارات المشاركة</h4>
                 <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('share-modal')"></i>
             </div>
             <div class="feeling-option" onclick="shareToFeed()">
                 <i class="fa-solid fa-retweet"></i>
-                <span>Repost on your Kalimat feed</span>
+                <span>إعادة النشر في حسابك بـ "كلمات"</span>
             </div>
             <div class="feeling-option" onclick="shareExternal()">
                 <i class="fa-solid fa-share-nodes"></i>
-                <span>Share via other apps</span>
+                <span>مشاركة عبر تطبيقات أخرى</span>
             </div>
         </div>
     </div>
@@ -689,7 +689,7 @@
     <div id="notif-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h4>Notifications</h4>
+                <h4>الإشعارات</h4>
                 <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('notif-modal')"></i>
             </div>
             <div id="notifications-list"></div>
@@ -700,7 +700,7 @@
     <div id="user-profile-modal" class="modal">
         <div class="modal-content" style="max-height: 90vh;">
             <div class="modal-header">
-                <h4 id="user-modal-title">User Profile</h4>
+                <h4 id="user-modal-title">الملف الشخصي</h4>
                 <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('user-profile-modal')"></i>
             </div>
             <div style="text-align: center; margin-bottom: 15px;">
@@ -709,7 +709,7 @@
                 <small id="user-modal-email" style="color: var(--text-secondary);"></small>
                 <div id="block-action-container" style="margin-top: 10px;"></div>
             </div>
-            <h5 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">User Posts:</h5>
+            <h5 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">منشورات المستخدم:</h5>
             <div id="user-modal-posts"></div>
         </div>
     </div>
@@ -718,36 +718,36 @@
     <nav class="bottom-nav" id="main-nav">
         <div class="nav-item active" onclick="switchTab('home-view', this)">
             <i class="fa-solid fa-house nav-icon"></i>
-            <span>Home</span>
+            <span>الرئيسية</span>
         </div>
         <div class="nav-item" onclick="switchTab('friends-view', this)">
             <i class="fa-solid fa-user-group nav-icon"></i>
-            <span>Friends</span>
+            <span>الأصدقاء</span>
         </div>
         <div class="nav-item" onclick="switchTab('chat-view', this)">
             <i class="fa-solid fa-comment-dots nav-icon"></i>
-            <span>Chat</span>
+            <span>الدردشة</span>
         </div>
         <div class="nav-item" onclick="switchTab('profile-view', this)">
             <i class="fa-solid fa-user nav-icon"></i>
-            <span>Profile</span>
+            <span>حسابي</span>
         </div>
     </nav>
 
     <script>
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
-            { name: "Samer Al-Ali", email: "samer@kalimat.com", image: null, blockedUsers: [] }
+            { name: "سامر العلي", email: "samer@kalimat.com", image: null, blockedUsers: [] }
         ];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
         let posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [
             {
                 id: 1,
-                author: "Mohammed Ahmed",
+                author: "محمد أحمد",
                 authorEmail: "demo@kalimat.com",
-                text: "Welcome to Kalimat! Glad to have you here.",
-                feeling: "Excited 🚀",
+                text: "أهلاً بك في منصة كلمات! يسعدنا انضمامك معنا.",
+                feeling: "متحمس 🚀",
                 image: null,
-                time: "Just now",
+                time: "منذ قليل",
                 likes: 0,
                 likedBy: [],
                 comments: []
@@ -757,8 +757,8 @@
         let trashPosts = JSON.parse(localStorage.getItem('kalimat_trash')) || [];
 
         let notifications = JSON.parse(localStorage.getItem('kalimat_notifs')) || [
-            { id: 1, text: "Samer Al-Ali liked your page", time: "10 mins ago", read: false },
-            { id: 2, text: "Welcome to Kalimat platform!", time: "1 hour ago", read: false }
+            { id: 1, text: "قام سامر العلي بالإعجاب بصفحتك", time: "منذ 10 دقائق", read: false },
+            { id: 2, text: "مرحباً بك في منصة كلمات!", time: "منذ ساعة", read: false }
         ];
 
         let selectedPostImage = null;
@@ -775,7 +775,7 @@
             if (user && user.image) {
                 return `<img src="${user.image}" class="avatar ${extraClass}" ${emailAttr} alt="User">`;
             } else {
-                let initial = user && user.name ? user.name.trim().charAt(0).toUpperCase() : '?';
+                let initial = user && user.name ? user.name.trim().charAt(0).toUpperCase() : '؟';
                 return `<div class="avatar ${extraClass}" ${emailAttr}>${initial}</div>`;
             }
         }
@@ -845,7 +845,7 @@
             let email = document.getElementById('reg-email').value.trim();
 
             if (!name || !email) {
-                alert('Please enter your name and email');
+                alert('يرجى كتابة الاسم والبريد الإلكتروني');
                 return;
             }
 
@@ -896,7 +896,7 @@
         function selectFeeling(feeling) {
             currentSelectedFeeling = feeling;
             let tag = document.getElementById('selected-feeling-tag');
-            tag.innerText = `Feeling ${feeling}`;
+            tag.innerText = `يشعر بـ ${feeling}`;
             tag.style.display = 'inline-block';
             closeModal('feelings-modal');
         }
@@ -928,7 +928,7 @@
                 text: text,
                 feeling: currentSelectedFeeling,
                 image: selectedPostImage,
-                time: "Just now",
+                time: "الآن",
                 likes: 0,
                 likedBy: [],
                 comments: []
@@ -955,6 +955,7 @@
             if (menu) menu.classList.toggle('active');
         }
 
+        /* نقل المنشور إلى سلة المحذوفات */
         function movePostToTrash(postId) {
             let postIndex = posts.findIndex(p => p.id === postId);
             if (postIndex !== -1) {
@@ -966,6 +967,7 @@
             }
         }
 
+        /* استعادة من السلة */
         function restorePost(postId) {
             let trashIndex = trashPosts.findIndex(p => p.id === postId);
             if (trashIndex !== -1) {
@@ -978,8 +980,9 @@
             }
         }
 
+        /* حذف نهائي من السلة */
         function deletePermanently(postId) {
-            if (confirm("Are you sure you want to delete permanently? This action cannot be undone.")) {
+            if (confirm("هل أنت تأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا إجراء.")) {
                 trashPosts = trashPosts.filter(p => p.id !== postId);
                 localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
                 renderSettingsLists();
@@ -995,10 +998,10 @@
             let index = currentUser.blockedUsers.indexOf(targetEmail);
             if (index === -1) {
                 currentUser.blockedUsers.push(targetEmail);
-                alert("User blocked successfully.");
+                alert("تم حظر العضو بنجاح.");
             } else {
                 currentUser.blockedUsers.splice(index, 1);
-                alert("User unblocked.");
+                alert("تم إلغاء الحظر.");
             }
 
             localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
@@ -1033,7 +1036,7 @@
                             <div class="post-author-info">
                                 ${getAvatarHTML(authorObj)}
                                 <div>
-                                    <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— Feeling ${post.feeling}</small>` : ''}</div>
+                                    <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— يشعر بـ ${post.feeling}</small>` : ''}</div>
                                     <div class="post-time">${post.time}</div>
                                 </div>
                             </div>
@@ -1042,7 +1045,7 @@
                                 <i class="fa-solid fa-ellipsis post-options-btn" onclick="toggleOptionsMenu(${post.id}, event)"></i>
                                 <div class="options-menu" id="options-menu-${post.id}">
                                     <div class="options-menu-item danger" onclick="movePostToTrash(${post.id})">
-                                        <i class="fa-solid fa-trash-can"></i> Delete Post
+                                        <i class="fa-solid fa-trash-can"></i> حذف المنشور
                                     </div>
                                 </div>
                             ` : ''}
@@ -1053,22 +1056,22 @@
                         <div class="post-stats">
                             <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
                                 <i class="fa-thumbs-up ${isLiked ? 'fa-solid' : 'fa-regular'}"></i>
-                                <span>${post.likes || 0} Likes</span>
+                                <span>${post.likes || 0} إعجاب</span>
                             </div>
                             <div class="stat-item">
                                 <i class="fa-regular fa-comment"></i>
-                                <span>${post.comments.length} Comments</span>
+                                <span>${post.comments.length} تعليق</span>
                             </div>
                             <div class="stat-item" onclick="openShareModal(${post.id})">
                                 <i class="fa-solid fa-share"></i>
-                                <span>Share</span>
+                                <span>مشاركة</span>
                             </div>
                         </div>
 
                         <div class="comments-list">${commentsHTML}</div>
 
                         <div class="comment-box">
-                            <input type="text" placeholder="Write a comment...">
+                            <input type="text" placeholder="اكتب تعليقاً...">
                             <button class="btn-small" onclick="addComment(${post.id}, this)"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>
                     </div>
@@ -1079,35 +1082,37 @@
         }
 
         function renderSettingsLists() {
+            // 1. عرض سلة المحذوفات الخاصة بالمستخدم
             let trashContainer = document.getElementById('trash-list-box');
             let myTrash = trashPosts.filter(p => p.authorEmail === currentEmail);
             trashContainer.innerHTML = '';
 
             if (myTrash.length === 0) {
-                trashContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">No deleted items.</p>';
+                trashContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">لا توجد عناصر محذوفة.</p>';
             } else {
                 myTrash.forEach(p => {
                     trashContainer.innerHTML += `
                         <div class="account-badge">
                             <div style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;">
-                                <strong>${p.text || 'Image'}</strong>
+                                <strong>${p.text || 'صورة'}</strong>
                             </div>
                             <div style="display:flex; gap:5px;">
-                                <button class="btn-small" style="background:#28a745; padding:4px 8px; font-size:11px;" onclick="restorePost(${p.id})">Restore</button>
-                                <button class="btn-small" style="background:#dc3545; padding:4px 8px; font-size:11px;" onclick="deletePermanently(${p.id})">Delete</button>
+                                <button class="btn-small" style="background:#28a745; padding:4px 8px; font-size:11px;" onclick="restorePost(${p.id})">استعادة</button>
+                                <button class="btn-small" style="background:#dc3545; padding:4px 8px; font-size:11px;" onclick="deletePermanently(${p.id})">حذف نهائي</button>
                             </div>
                         </div>
                     `;
                 });
             }
 
+            // 2. عرض قائمة الحظر الخاصة بالمستخدم
             let blockedContainer = document.getElementById('blocked-list-box');
             let currentUser = accounts.find(a => a.email === currentEmail);
             let blockedEmails = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
             blockedContainer.innerHTML = '';
 
             if (blockedEmails.length === 0) {
-                blockedContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">No blocked users.</p>';
+                blockedContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">لا توجد أعضاء محظورين.</p>';
             } else {
                 blockedEmails.forEach(bEmail => {
                     let bUser = accounts.find(a => a.email === bEmail) || { name: bEmail, email: bEmail };
@@ -1116,7 +1121,7 @@
                             <div>
                                 <strong>${bUser.name}</strong>
                             </div>
-                            <button class="btn-small" style="background:#45bd62; padding:4px 8px; font-size:11px;" onclick="toggleBlockUser('${bEmail}')">Unblock</button>
+                            <button class="btn-small" style="background:#45bd62; padding:4px 8px; font-size:11px;" onclick="toggleBlockUser('${bEmail}')">إلغاء الحظر</button>
                         </div>
                     `;
                 });
@@ -1137,7 +1142,7 @@
                 post.likes = (post.likes || 0) + 1;
 
                 if (post.authorEmail !== currentEmail) {
-                    addNotification(`${currentUser.name} liked your post.`);
+                    addNotification(`قام ${currentUser.name} بالإعجاب بمنشورك.`);
                 }
             } else {
                 post.likedBy.splice(index, 1);
@@ -1164,7 +1169,7 @@
                 });
 
                 if (post.authorEmail !== currentEmail) {
-                    addNotification(`${currentUser.name} commented on your post: "${text.substring(0, 20)}..."`);
+                    addNotification(`علق ${currentUser.name} على منشورك: "${text.substring(0, 20)}..."`);
                 }
 
                 localStorage.setItem('kalimat_posts', JSON.stringify(posts));
@@ -1185,9 +1190,9 @@
                 id: Date.now(),
                 author: currentUser.name,
                 authorEmail: currentUser.email,
-                text: `🔁 Shared post from (${activePostToShare.author}):\n"${activePostToShare.text || ''}"`,
+                text: `🔁 منشور مشارك عن (${activePostToShare.author}):\n"${activePostToShare.text || ''}"`,
                 image: activePostToShare.image,
-                time: "Just now",
+                time: "الآن",
                 likes: 0,
                 likedBy: [],
                 comments: []
@@ -1197,28 +1202,28 @@
             localStorage.setItem('kalimat_posts', JSON.stringify(posts));
             closeModal('share-modal');
             renderPosts();
-            alert('Post shared to your feed successfully!');
+            alert('تمت مشاركة المنشور في حسابك بنجاح!');
         }
 
         function shareExternal() {
             if (!activePostToShare) return;
-            let shareText = `${activePostToShare.author}: ${activePostToShare.text || 'Post on Kalimat platform'}`;
+            let shareText = `${activePostToShare.author}: ${activePostToShare.text || 'منشور على منصة كلمات'}`;
             
             if (navigator.share) {
                 navigator.share({
-                    title: 'Kalimat Platform',
+                    title: 'منصة كلمات',
                     text: shareText,
                     url: window.location.href
                 }).catch(() => {});
             } else {
                 navigator.clipboard.writeText(shareText);
-                alert('Post content copied to clipboard!');
+                alert('تم نسخ نص المنشور إلى الحافظة!');
             }
             closeModal('share-modal');
         }
 
         function openUserProfile(email) {
-            let user = accounts.find(a => a.email === email) || { name: "User", email: email, image: null };
+            let user = accounts.find(a => a.email === email) || { name: "مستخدم", email: email, image: null };
             document.getElementById('user-modal-name').innerText = user.name;
             document.getElementById('user-modal-email').innerText = user.email;
             document.getElementById('user-modal-avatar').innerHTML = getAvatarHTML(user, true);
@@ -1231,7 +1236,7 @@
                 blockContainer.innerHTML = `
                     <button class="btn-small" style="background: ${isBlocked ? '#28a745' : '#dc3545'}; margin-top: 5px;" onclick="toggleBlockUser('${email}')">
                         <i class="fa-solid ${isBlocked ? 'fa-user-check' : 'fa-user-slash'}"></i> 
-                        ${isBlocked ? 'Unblock User' : 'Block User'}
+                        ${isBlocked ? 'إلغاء حظر العضو' : 'حظر العضو'}
                     </button>
                 `;
             } else {
@@ -1243,7 +1248,7 @@
             postsContainer.innerHTML = '';
 
             if (userPosts.length === 0) {
-                postsContainer.innerHTML = '<p style="text-align:center; color:#888; font-size:13px;">No posts from this user yet.</p>';
+                postsContainer.innerHTML = '<p style="text-align:center; color:#888; font-size:13px;">لا توجد منشورات لهذا المستخدم بعد.</p>';
             } else {
                 userPosts.forEach(p => {
                     postsContainer.innerHTML += `
@@ -1263,7 +1268,7 @@
             notifications.unshift({
                 id: Date.now(),
                 text: text,
-                time: "Just now",
+                time: "الآن",
                 read: false
             });
             localStorage.setItem('kalimat_notifs', JSON.stringify(notifications));
@@ -1282,7 +1287,7 @@
             list.innerHTML = '';
 
             if (notifications.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color:#888;">No notifications currently.</p>';
+                list.innerHTML = '<p style="text-align:center; color:#888;">لا توجد إشعارات حالياً.</p>';
             } else {
                 notifications.forEach(n => {
                     list.innerHTML += `
@@ -1332,7 +1337,7 @@
                 localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
                 loadUserData(accounts[userIndex]);
                 renderPosts();
-                alert('Changes saved!');
+                alert('تم حفظ التعديلات!');
             }
         }
 
@@ -1347,7 +1352,7 @@
             container.innerHTML = '';
 
             if (accounts.length === 0) {
-                container.innerHTML = '<small style="color:#888;">No saved accounts.</small>';
+                container.innerHTML = '<small style="color:#888;">لا توجد حسابات مسجلة.</small>';
                 return;
             }
 
@@ -1362,7 +1367,7 @@
                             <small style="color:#777; font-size:11px;">${acc.email}</small>
                         </div>
                     </div>
-                    <button class="btn-small" onclick="switchAccount('${acc.email}')">Login</button>
+                    <button class="btn-small" onclick="switchAccount('${acc.email}')">دخول</button>
                 `;
                 container.appendChild(div);
             });
@@ -1381,11 +1386,11 @@
         }
 
         function toggleFollow(btn) {
-            if (btn.innerText.includes('Follow')) {
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Following';
+            if (btn.innerText.includes('متابعة')) {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> تتابعه';
                 btn.style.background = '#45bd62';
             } else {
-                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Follow';
+                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> متابعة';
                 btn.style.background = '#1877f2';
             }
         }
