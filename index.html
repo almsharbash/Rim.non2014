@@ -2,8 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>منصة كلمات | Kalimat</title>
+    <!-- FontAwesome للأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- SDK مكتبات Firebase المتوافقة -->
@@ -13,24 +14,29 @@
     <style>
         :root {
             --primary: #1877f2;
+            --primary-hover: #166fe5;
             --bg: #f0f2f5;
             --card-bg: #ffffff;
             --text-main: #050505;
             --text-sub: #65676b;
-            --border: #ced0d4;
+            --border: #e4e6eb;
+            --radius: 14px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg);
             color: var(--text-main);
             padding-bottom: 75px;
+            direction: rtl;
         }
 
         /* 1. Header */
@@ -38,57 +44,31 @@
             position: sticky;
             top: 0;
             background: var(--card-bg);
-            padding: 10px 14px;
+            padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            z-index: 100;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            z-index: 1000;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            background: #ddd;
-        }
-
-        .notif-icon {
-            position: relative;
-            font-size: 18px;
-            color: var(--text-sub);
-            cursor: pointer;
-            padding: 6px;
-        }
-
-        .notif-badge {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: #e41e3f;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            border-radius: 50%;
-            padding: 1px 5px;
+        .brand-logo {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -0.5px;
         }
 
         .search-bar {
             background: #f0f2f5;
             border-radius: 20px;
-            padding: 6px 12px;
+            padding: 7px 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            width: 42%;
+            gap: 8px;
+            flex: 1;
+            max-width: 200px;
+            margin: 0 10px;
         }
 
         .search-bar input {
@@ -97,19 +77,60 @@
             outline: none;
             width: 100%;
             font-size: 13px;
+            color: var(--text-main);
         }
 
-        .brand-logo {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--primary);
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #e4e6eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:active {
+            background: #d8dadf;
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #e41e3f;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 2px 5px;
+            border: 2px solid var(--card-bg);
+        }
+
+        .user-avatar-small {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #e4e6eb;
+            border: 1px solid var(--border);
         }
 
         /* 2. Main Layout */
         .container {
-            max-width: 480px;
+            max-width: 500px;
             margin: 12px auto;
-            padding: 0 8px;
+            padding: 0 10px;
         }
 
         .tab-view {
@@ -122,10 +143,11 @@
 
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px 14px;
+            border-radius: var(--radius);
+            padding: 14px;
             margin-bottom: 12px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
         }
 
         /* 3. Create Post Box */
@@ -138,12 +160,18 @@
 
         .create-input {
             flex: 1;
-            border: none;
+            border: 1px solid var(--border);
             background: #f0f2f5;
-            padding: 10px 14px;
-            border-radius: 20px;
+            padding: 10px 16px;
+            border-radius: 25px;
             outline: none;
-            font-size: 13.5px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .create-input:focus {
+            border-color: var(--primary);
+            background: #fff;
         }
 
         .create-box-bottom {
@@ -156,27 +184,34 @@
 
         .post-options {
             display: flex;
-            gap: 15px;
+            gap: 16px;
         }
 
         .opt-btn {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 12.5px;
+            gap: 6px;
+            font-size: 13px;
             color: var(--text-sub);
             cursor: pointer;
+            font-weight: 600;
         }
 
         .btn-publish {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 6px 18px;
-            border-radius: 6px;
+            padding: 8px 20px;
+            border-radius: 20px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 13.5px;
             cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-publish:active {
+            transform: scale(0.97);
+            background: var(--primary-hover);
         }
 
         /* 4. Posts Feed */
@@ -184,7 +219,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .post-user {
@@ -194,27 +229,23 @@
         }
 
         .post-user-name {
-            font-weight: bold;
+            font-weight: 700;
             font-size: 14px;
+            color: var(--text-main);
         }
 
         .post-time {
             font-size: 11px;
             color: var(--text-sub);
+            margin-top: 1px;
         }
 
         .post-text {
-            font-size: 14px;
-            line-height: 1.4;
-            margin-bottom: 10px;
-        }
-
-        .post-image {
-            width: 100%;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            max-height: 380px;
-            object-fit: cover;
+            font-size: 14.5px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            color: #1c1e21;
+            white-space: pre-wrap;
         }
 
         .post-stats-bar {
@@ -223,16 +254,24 @@
             border-top: 1px solid #f0f2f5;
             border-bottom: 1px solid #f0f2f5;
             padding: 8px 0;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .stat-btn {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 12.5px;
+            font-size: 13px;
             color: var(--text-sub);
             cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+
+        .stat-btn:active {
+            background: #f0f2f5;
         }
 
         .comment-input-wrap {
@@ -243,42 +282,73 @@
 
         .comment-input-wrap input {
             flex: 1;
-            border: 1px solid #e4e6eb;
+            border: 1px solid var(--border);
             background: #f0f2f5;
-            padding: 8px 14px;
+            padding: 9px 16px;
             border-radius: 20px;
             outline: none;
-            font-size: 12.5px;
+            font-size: 13px;
         }
 
         .btn-send-icon {
             background: var(--primary);
             color: white;
             border: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            font-size: 13px;
         }
 
-        /* 5. Account Switcher */
+        /* 5. Accounts Section */
         .account-card {
             display: flex;
             align-items: center;
             justify-content: space-between;
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 8px;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            background: #fafafa;
         }
 
         .account-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .account-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        .form-input:focus {
+            background: #fff;
+            border-color: var(--primary);
         }
 
         /* 6. Navigation Bar */
@@ -291,8 +361,9 @@
             display: flex;
             justify-content: space-around;
             padding: 8px 0;
-            box-shadow: 0 -1px 3px rgba(0,0,0,0.08);
-            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+            z-index: 1000;
+            border-top: 1px solid var(--border);
         }
 
         .nav-link {
@@ -303,26 +374,16 @@
             color: var(--text-sub);
             cursor: pointer;
             width: 25%;
+            gap: 3px;
+            font-weight: 600;
         }
 
         .nav-link.active {
             color: var(--primary);
-            font-weight: bold;
         }
 
         .nav-link i {
-            font-size: 18px;
-            margin-bottom: 3px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-size: 13px;
-            outline: none;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -330,20 +391,20 @@
 
     <!-- Header -->
     <header>
-        <div class="header-right">
-            <img src="https://via.placeholder.com/40" class="header-avatar" id="header-user-img" alt="Profile">
-            <div class="notif-icon">
-                <i class="fa-regular fa-bell"></i>
-                <span class="notif-badge">2</span>
-            </div>
-        </div>
+        <div class="brand-logo">كلمات</div>
 
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass" style="color: var(--text-sub);"></i>
             <input type="text" placeholder="بحث...">
         </div>
 
-        <div class="brand-logo">كلمات</div>
+        <div class="header-actions">
+            <div class="icon-btn">
+                <i class="fa-regular fa-bell"></i>
+                <span class="notif-badge">2</span>
+            </div>
+            <img src="https://ui-avatars.com/api/?name=User&background=1877f2&color=fff" class="user-avatar-small" id="header-user-img" alt="Profile">
+        </div>
     </header>
 
     <div class="container">
@@ -353,15 +414,15 @@
             <!-- Box Create Post -->
             <div class="card">
                 <div class="create-box-top">
-                    <img src="https://via.placeholder.com/40" class="header-avatar" id="create-user-img" alt="Profile">
-                    <input type="text" id="post-input-field" class="create-input" placeholder="بم تفكر؟">
+                    <img src="https://ui-avatars.com/api/?name=User&background=1877f2&color=fff" class="user-avatar-small" id="create-user-img" alt="Profile">
+                    <input type="text" id="post-input-field" class="create-input" placeholder="بم تفكر اليوم؟">
                 </div>
                 <div class="create-box-bottom">
-                    <button class="btn-publish" onclick="submitPost()">نشر</button>
                     <div class="post-options">
-                        <div class="opt-btn"><i class="fa-regular fa-face-smile" style="color: #f7b928;"></i> شعور</div>
                         <div class="opt-btn"><i class="fa-regular fa-image" style="color: #45bd62;"></i> صورة</div>
+                        <div class="opt-btn"><i class="fa-regular fa-face-smile" style="color: #f7b928;"></i> حالة</div>
                     </div>
+                    <button class="btn-publish" onclick="submitPost()">نشر</button>
                 </div>
             </div>
 
@@ -371,19 +432,20 @@
 
         <!-- Tab 2: الأصدقاء -->
         <div id="friends-tab" class="tab-view">
-            <div class="card">
-                <h3>الأصدقاء والطلبات</h3>
-                <p style="color: var(--text-sub); font-size: 13px; margin-top: 8px;">قائمة الأصدقاء متوفرة قريباً...</p>
+            <div class="card" style="text-align: center; padding: 30px 15px;">
+                <i class="fa-solid fa-user-group" style="font-size: 40px; color: var(--primary); margin-bottom: 12px;"></i>
+                <h3>قائمة الأصدقاء</h3>
+                <p style="color: var(--text-sub); font-size: 13px; margin-top: 6px;">ستتمكن من البحث عن أصدقاء وإضافتهم هنا قريباً.</p>
             </div>
         </div>
 
         <!-- Tab 3: الدردشة -->
         <div id="chat-tab" class="tab-view">
             <div class="card">
-                <h3 style="margin-bottom: 10px;">الدردشة المباشرة</h3>
-                <div id="chat-box" style="height: 280px; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
+                <h3 style="margin-bottom: 12px; font-size: 16px;">الدردشة المباشرة</h3>
+                <div id="chat-box" style="height: 320px; overflow-y: auto; background: #f8f9fa; padding: 12px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border);"></div>
                 <div class="comment-input-wrap">
-                    <input type="text" id="chat-msg-input" placeholder="اكتب رسالتك...">
+                    <input type="text" id="chat-msg-input" placeholder="اكتب رسالتك العامة...">
                     <button class="btn-send-icon" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -392,12 +454,12 @@
         <!-- Tab 4: حسابي -->
         <div id="profile-tab" class="tab-view">
             <div class="card">
-                <h3 style="color: var(--primary); text-align: center; margin-bottom: 15px;">انضمام / تبديل الحساب</h3>
+                <h3 style="color: var(--primary); text-align: center; margin-bottom: 18px; font-size: 18px;">تبديل أو إضافة حساب</h3>
                 <input type="text" id="login-name" class="form-input" placeholder="الاسم الظاهر">
                 <input type="email" id="login-email" class="form-input" placeholder="البريد الإلكتروني">
-                <button class="btn-publish" style="width: 100%; padding: 10px;" onclick="handleLogin()">دخول / إنشاء حساب</button>
+                <button class="btn-publish" style="width: 100%; padding: 12px; border-radius: 10px;" onclick="handleLogin()">دخول / تسجيل حساب</button>
 
-                <h4 style="margin: 15px 0 10px 0; color: var(--text-sub); font-size: 13px;">الحسابات المسجلة:</h4>
+                <h4 style="margin: 20px 0 10px 0; color: var(--text-sub); font-size: 13px;">الحسابات المسجلة على الجهاز:</h4>
                 <div id="accounts-list"></div>
             </div>
         </div>
@@ -425,7 +487,7 @@
     </nav>
 
     <script>
-        // إعدادات مشروع Firebase الخاص بك
+        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyBznOsrwmvtWDFKTbqz3bFry94J7hJFn0c",
             authDomain: "gogo1982-2026.firebaseapp.com",
@@ -443,21 +505,25 @@
         }
         const db = firebase.database();
 
-        // حالة الحساب المستخدم
+        // الحساب الفعال المبدئي
         let activeUser = JSON.parse(localStorage.getItem('kalimat_active_user')) || {
             name: "جوجو",
-            email: "rim2020h.com@gmail.com",
-            avatar: "https://via.placeholder.com/40"
+            email: "rim2020h.com@gmail.com"
         };
 
         let savedAccounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
-            { name: "جوجو", email: "non1975.com@gmail.com", avatar: "https://via.placeholder.com/40" },
-            { name: "جوجو", email: "rim2020h.com@gmail.com", avatar: "https://via.placeholder.com/40" }
+            { name: "جوجو", email: "non1975.com@gmail.com" },
+            { name: "Rim", email: "rim2020h.com@gmail.com" }
         ];
 
+        function getAvatarUrl(name) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=1877f2&color=fff&bold=true`;
+        }
+
         function initUI() {
-            document.getElementById('header-user-img').src = activeUser.avatar;
-            document.getElementById('create-user-img').src = activeUser.avatar;
+            const avatarUrl = getAvatarUrl(activeUser.name);
+            document.getElementById('header-user-img').src = avatarUrl;
+            document.getElementById('create-user-img').src = avatarUrl;
             renderAccountsList();
             listenToFirebase();
         }
@@ -473,16 +539,17 @@
             const list = document.getElementById('accounts-list');
             list.innerHTML = '';
             savedAccounts.forEach((acc, index) => {
+                const isActive = acc.email === activeUser.email;
                 list.innerHTML += `
-                    <div class="account-card">
-                        <button class="btn-publish" style="padding: 5px 12px;" onclick="selectAccount(${index})">دخول</button>
+                    <div class="account-card" style="${isActive ? 'border-color: var(--primary); background: #e7f3ff;' : ''}">
                         <div class="account-info">
+                            <div class="account-avatar">${acc.name.charAt(0).toUpperCase()}</div>
                             <div>
-                                <div style="font-weight: bold; font-size: 13px;">${acc.name}</div>
+                                <div style="font-weight: bold; font-size: 13.5px;">${acc.name} ${isActive ? '<span style="color:var(--primary); font-size:11px;">(حالي)</span>' : ''}</div>
                                 <div style="font-size: 11px; color: var(--text-sub);">${acc.email}</div>
                             </div>
-                            <img src="${acc.avatar}" style="width: 35px; height: 35px; border-radius: 50%;">
                         </div>
+                        <button class="btn-publish" style="padding: 6px 14px; font-size: 12px;" onclick="selectAccount(${index})">دخول</button>
                     </div>
                 `;
             });
@@ -493,9 +560,14 @@
             const email = document.getElementById('login-email').value.trim();
             if(!name || !email) return;
 
-            const newUser = { name, email, avatar: "https://via.placeholder.com/40" };
+            const newUser = { name, email };
             activeUser = newUser;
-            savedAccounts.push(newUser);
+            
+            // إضافة إن لم يكن موجوداً
+            if(!savedAccounts.some(a => a.email === email)) {
+                savedAccounts.push(newUser);
+            }
+            
             localStorage.setItem('kalimat_active_user', JSON.stringify(activeUser));
             localStorage.setItem('kalimat_accounts', JSON.stringify(savedAccounts));
             initUI();
@@ -515,11 +587,9 @@
 
             db.ref('posts').push({
                 author: activeUser.name,
-                avatar: activeUser.avatar,
                 text: text,
                 timestamp: firebase.database.ServerValue.TIMESTAMP,
-                likes: 0,
-                commentsCount: 0
+                likes: 0
             });
 
             document.getElementById('post-input-field').value = '';
@@ -551,24 +621,19 @@
                             <div class="card">
                                 <div class="post-header">
                                     <div class="post-user">
-                                        <img src="${p.avatar || 'https://via.placeholder.com/40'}" class="header-avatar">
+                                        <img src="${getAvatarUrl(p.author)}" class="user-avatar-small">
                                         <div>
                                             <div class="post-user-name">${p.author}</div>
-                                            <div class="post-time">الآن</div>
+                                            <div class="post-time">منذ قليل</div>
                                         </div>
                                     </div>
-                                    <i class="fa-solid fa-ellipsis" style="color: var(--text-sub);"></i>
+                                    <i class="fa-solid fa-ellipsis" style="color: var(--text-sub); cursor:pointer;"></i>
                                 </div>
                                 <div class="post-text">${p.text}</div>
-                                ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-image">` : ''}
                                 <div class="post-stats-bar">
+                                    <div class="stat-btn"><i class="fa-regular fa-thumbs-up"></i> إعجاب</div>
+                                    <div class="stat-btn"><i class="fa-regular fa-comment"></i> تعليق</div>
                                     <div class="stat-btn"><i class="fa-regular fa-share-from-square"></i> مشاركة</div>
-                                    <div class="stat-btn"><span>${p.commentsCount || 0}</span> <i class="fa-regular fa-comment"></i> تعليق</div>
-                                    <div class="stat-btn"><span>${p.likes || 0}</span> <i class="fa-regular fa-thumbs-up"></i> إعجاب</div>
-                                </div>
-                                <div class="comment-input-wrap">
-                                    <button class="btn-send-icon"><i class="fa-solid fa-paper-plane"></i></button>
-                                    <input type="text" placeholder="اكتب تعليقاً...">
                                 </div>
                             </div>
                         `;
@@ -583,7 +648,15 @@
                 if(data) {
                     Object.keys(data).forEach(k => {
                         const m = data[k];
-                        box.innerHTML += `<div style="margin-bottom: 8px; font-size: 12.5px;"><strong>${m.sender}:</strong> ${m.text}</div>`;
+                        const isMe = m.sender === activeUser.name;
+                        box.innerHTML += `
+                            <div style="margin-bottom: 10px; text-align: ${isMe ? 'left' : 'right'};">
+                                <div style="display: inline-block; background: ${isMe ? 'var(--primary)' : '#e4e6eb'}; color: ${isMe ? '#fff' : '#000'}; padding: 8px 14px; border-radius: 14px; font-size: 13px; max-width: 80%;">
+                                    <strong style="display:block; font-size: 11px; margin-bottom: 2px; opacity: 0.8;">${m.sender}</strong>
+                                    ${m.text}
+                                </div>
+                            </div>
+                        `;
                     });
                     box.scrollTop = box.scrollHeight;
                 }
