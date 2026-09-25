@@ -199,8 +199,15 @@
         .post-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             margin-bottom: 10px;
+            position: relative;
+        }
+
+        .post-author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .post-author {
@@ -212,6 +219,55 @@
         .post-time {
             font-size: 12px;
             color: var(--text-secondary);
+        }
+
+        .post-options-btn {
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 50%;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .post-options-btn:hover {
+            background: #f0f2f5;
+        }
+
+        .options-menu {
+            display: none;
+            position: absolute;
+            top: 30px;
+            left: 10px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10;
+            overflow: hidden;
+            min-width: 140px;
+        }
+
+        .options-menu.active {
+            display: block;
+        }
+
+        .options-menu-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .options-menu-item:hover {
+            background: #f0f2f5;
+        }
+
+        .options-menu-item.danger {
+            color: #dc3545;
         }
 
         .post-content {
@@ -295,7 +351,6 @@
             font-weight: 600;
         }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -421,13 +476,23 @@
             font-size: 12px;
             margin-top: 4px;
         }
+
+        .settings-section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            margin: 15px 0 8px;
+            border-bottom: 1px solid #e4e6eb;
+            padding-bottom: 4px;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
 
     <!-- Header -->
     <header id="main-header">
-        <div class="logo" onclick="openWelcomeModal()" title="انقر لمعرفة المزيد عن المنصة">كلمات</div>
+        <div class="logo" onclick="openWelcomeModal()" title="انقر لمعرفة المزيد">كلمات</div>
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="global-search" placeholder="بحث..." onkeyup="filterPosts()">
@@ -525,10 +590,10 @@
             </div>
         </div>
 
-        <!-- 5. شاشة حسابي -->
+        <!-- 5. شاشة حسابي مع إدارة الحظر وسلة المحذوفات -->
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
-                <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي</h3>
+                <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي والإعدادات</h3>
                 
                 <div id="prof-img-box" style="margin: 0 auto 10px;"></div>
 
@@ -547,6 +612,14 @@
                     <button class="btn-small" style="width: 100%; margin-top: 5px;" onclick="saveProfileChanges()">حفظ التعديلات</button>
                 </div>
 
+                <!-- قائمة المحذوفات -->
+                <div class="settings-section-title"><i class="fa-solid fa-trash-arrow-up"></i> سلة المحذوفات</div>
+                <div id="trash-list-box" style="text-align: right; font-size: 13px;"></div>
+
+                <!-- قائمة الحظر -->
+                <div class="settings-section-title"><i class="fa-solid fa-user-slash"></i> قائمة الحظر</div>
+                <div id="blocked-list-box" style="text-align: right; font-size: 13px;"></div>
+
                 <button class="btn-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
             </div>
         </div>
@@ -555,22 +628,19 @@
 
     <!-- Modals -->
 
-    <!-- Welcome / Info Modal (يظهر عند الضغط على الشعار كلمات) -->
+    <!-- Welcome / Info Modal -->
     <div id="welcome-modal" class="modal">
         <div class="modal-content" style="text-align: center; padding: 20px; border-radius: 16px;">
             <div class="modal-header" style="justify-content: center; border: none; padding-bottom: 0;">
                 <h2 style="color: var(--primary-color); font-size: 28px; font-weight: 800;">كلمات</h2>
             </div>
             <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">منصة للتواصل الإنساني والكلمة الطيبة</p>
-            
             <hr style="border: none; border-top: 1px solid #e4e6eb; margin: 10px 0;">
-
             <div style="text-align: right; font-size: 14px; line-height: 1.6; color: var(--text-color); margin: 15px 0;">
                 <p style="margin-bottom: 8px;"><strong>عن المنصة:</strong></p>
                 <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 14px; text-align: justify;">
                     تأسست منصة <strong>"كلمات"</strong> برؤية وتطوير من <strong>ياسر الحسين</strong>، لتكون مساحة عربية مستقلاّ وشخصية تهدف إلى إعلاء قيمة الحوار الراقي وتبادل الأفكار بعيداً عن الضوضاء.
                 </p>
-
                 <p style="margin-bottom: 8px;"><strong>🤝 الشرط والميثاق الأخلاقي للاستخدام:</strong></p>
                 <ul style="padding-right: 20px; font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
                     <li>أن تكون الكلمة نابعة من احترام ونافعة للجميع.</li>
@@ -578,11 +648,6 @@
                     <li>الحفاظ على بيئة إيجابية تجمع القلوب ولا تفرقها.</li>
                 </ul>
             </div>
-
-            <blockquote style="background: #f0f7ff; border-right: 4px solid var(--primary-color); padding: 8px 12px; font-size: 12px; font-style: italic; color: #1877f2; border-radius: 4px; margin-bottom: 15px; text-align: right;">
-                "الكلمة الطيبة أصلها ثابت وفرعها في السماء"
-            </blockquote>
-
             <button class="btn-small" style="width: 100%; padding: 10px; font-size: 14px;" onclick="closeModal('welcome-modal')">أوافق وأستمر</button>
         </div>
     </div>
@@ -642,6 +707,7 @@
                 <div id="user-modal-avatar" style="margin: 0 auto 10px;"></div>
                 <h3 id="user-modal-name"></h3>
                 <small id="user-modal-email" style="color: var(--text-secondary);"></small>
+                <div id="block-action-container" style="margin-top: 10px;"></div>
             </div>
             <h5 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">منشورات المستخدم:</h5>
             <div id="user-modal-posts"></div>
@@ -670,7 +736,7 @@
 
     <script>
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
-            { name: "سامر العلي", email: "samer@kalimat.com", image: null }
+            { name: "سامر العلي", email: "samer@kalimat.com", image: null, blockedUsers: [] }
         ];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
         let posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [
@@ -687,6 +753,8 @@
                 comments: []
             }
         ];
+
+        let trashPosts = JSON.parse(localStorage.getItem('kalimat_trash')) || [];
 
         let notifications = JSON.parse(localStorage.getItem('kalimat_notifs')) || [
             { id: 1, text: "قام سامر العلي بالإعجاب بصفحتك", time: "منذ 10 دقائق", read: false },
@@ -726,6 +794,12 @@
                     showAuthScreen();
                 }
             }
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.post-options-btn')) {
+                    document.querySelectorAll('.options-menu').forEach(m => m.classList.remove('active'));
+                }
+            });
         }
 
         window.onpopstate = function(event) {
@@ -752,6 +826,10 @@
             if (navMap[viewId] !== undefined) {
                 document.querySelectorAll('.nav-item')[navMap[viewId]].classList.add('active');
             }
+
+            if (viewId === 'profile-view') {
+                renderSettingsLists();
+            }
         }
 
         function showAuthScreen() {
@@ -773,7 +851,7 @@
 
             let existing = accounts.find(a => a.email === email);
             if (!existing) {
-                let newUser = { name: name, email: email, image: null };
+                let newUser = { name: name, email: email, image: null, blockedUsers: [] };
                 accounts.push(newUser);
                 localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
             }
@@ -811,7 +889,6 @@
             document.getElementById('prof-email-input').value = user.email;
         }
 
-        /* Feelings Handlers */
         function openFeelingsModal() {
             document.getElementById('feelings-modal').style.display = 'flex';
         }
@@ -869,13 +946,83 @@
             renderPosts();
         }
 
+        function toggleOptionsMenu(postId, event) {
+            event.stopPropagation();
+            document.querySelectorAll('.options-menu').forEach(m => {
+                if (m.id !== `options-menu-${postId}`) m.classList.remove('active');
+            });
+            let menu = document.getElementById(`options-menu-${postId}`);
+            if (menu) menu.classList.toggle('active');
+        }
+
+        /* نقل المنشور إلى سلة المحذوفات */
+        function movePostToTrash(postId) {
+            let postIndex = posts.findIndex(p => p.id === postId);
+            if (postIndex !== -1) {
+                let [deletedPost] = posts.splice(postIndex, 1);
+                trashPosts.unshift(deletedPost);
+                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+                localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
+                renderPosts();
+            }
+        }
+
+        /* استعادة من السلة */
+        function restorePost(postId) {
+            let trashIndex = trashPosts.findIndex(p => p.id === postId);
+            if (trashIndex !== -1) {
+                let [restoredPost] = trashPosts.splice(trashIndex, 1);
+                posts.unshift(restoredPost);
+                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+                localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
+                renderPosts();
+                renderSettingsLists();
+            }
+        }
+
+        /* حذف نهائي من السلة */
+        function deletePermanently(postId) {
+            if (confirm("هل أنت تأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا إجراء.")) {
+                trashPosts = trashPosts.filter(p => p.id !== postId);
+                localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
+                renderSettingsLists();
+            }
+        }
+
+        function toggleBlockUser(targetEmail) {
+            let currentUser = accounts.find(a => a.email === currentEmail);
+            if (!currentUser) return;
+
+            if (!currentUser.blockedUsers) currentUser.blockedUsers = [];
+
+            let index = currentUser.blockedUsers.indexOf(targetEmail);
+            if (index === -1) {
+                currentUser.blockedUsers.push(targetEmail);
+                alert("تم حظر العضو بنجاح.");
+            } else {
+                currentUser.blockedUsers.splice(index, 1);
+                alert("تم إلغاء الحظر.");
+            }
+
+            localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
+            closeModal('user-profile-modal');
+            renderPosts();
+            renderSettingsLists();
+        }
+
         function renderPosts() {
             let container = document.getElementById('feed-container');
             container.innerHTML = '';
 
+            let currentUser = accounts.find(a => a.email === currentEmail);
+            let blockedList = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
+
             posts.forEach(post => {
+                if (blockedList.includes(post.authorEmail)) return;
+
                 let authorObj = accounts.find(a => a.email === post.authorEmail) || { name: post.author, email: post.authorEmail, image: null };
                 let isLiked = post.likedBy && post.likedBy.includes(currentEmail);
+                let isOwner = post.authorEmail === currentEmail;
 
                 let commentsHTML = post.comments.map(c => `
                     <div class="comment-item">
@@ -886,11 +1033,22 @@
                 let postHTML = `
                     <div class="card post" data-id="${post.id}">
                         <div class="post-header">
-                            ${getAvatarHTML(authorObj)}
-                            <div>
-                                <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— يشعر بـ ${post.feeling}</small>` : ''}</div>
-                                <div class="post-time">${post.time}</div>
+                            <div class="post-author-info">
+                                ${getAvatarHTML(authorObj)}
+                                <div>
+                                    <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— يشعر بـ ${post.feeling}</small>` : ''}</div>
+                                    <div class="post-time">${post.time}</div>
+                                </div>
                             </div>
+                            
+                            ${isOwner ? `
+                                <i class="fa-solid fa-ellipsis post-options-btn" onclick="toggleOptionsMenu(${post.id}, event)"></i>
+                                <div class="options-menu" id="options-menu-${post.id}">
+                                    <div class="options-menu-item danger" onclick="movePostToTrash(${post.id})">
+                                        <i class="fa-solid fa-trash-can"></i> حذف المنشور
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
                         ${post.text ? `<div class="post-content">${post.text}</div>` : ''}
                         ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
@@ -921,6 +1079,53 @@
 
                 container.insertAdjacentHTML('beforeend', postHTML);
             });
+        }
+
+        function renderSettingsLists() {
+            // 1. عرض سلة المحذوفات الخاصة بالمستخدم
+            let trashContainer = document.getElementById('trash-list-box');
+            let myTrash = trashPosts.filter(p => p.authorEmail === currentEmail);
+            trashContainer.innerHTML = '';
+
+            if (myTrash.length === 0) {
+                trashContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">لا توجد عناصر محذوفة.</p>';
+            } else {
+                myTrash.forEach(p => {
+                    trashContainer.innerHTML += `
+                        <div class="account-badge">
+                            <div style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;">
+                                <strong>${p.text || 'صورة'}</strong>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <button class="btn-small" style="background:#28a745; padding:4px 8px; font-size:11px;" onclick="restorePost(${p.id})">استعادة</button>
+                                <button class="btn-small" style="background:#dc3545; padding:4px 8px; font-size:11px;" onclick="deletePermanently(${p.id})">حذف نهائي</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // 2. عرض قائمة الحظر الخاصة بالمستخدم
+            let blockedContainer = document.getElementById('blocked-list-box');
+            let currentUser = accounts.find(a => a.email === currentEmail);
+            let blockedEmails = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
+            blockedContainer.innerHTML = '';
+
+            if (blockedEmails.length === 0) {
+                blockedContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">لا توجد أعضاء محظورين.</p>';
+            } else {
+                blockedEmails.forEach(bEmail => {
+                    let bUser = accounts.find(a => a.email === bEmail) || { name: bEmail, email: bEmail };
+                    blockedContainer.innerHTML += `
+                        <div class="account-badge">
+                            <div>
+                                <strong>${bUser.name}</strong>
+                            </div>
+                            <button class="btn-small" style="background:#45bd62; padding:4px 8px; font-size:11px;" onclick="toggleBlockUser('${bEmail}')">إلغاء الحظر</button>
+                        </div>
+                    `;
+                });
+            }
         }
 
         function toggleLike(postId) {
@@ -972,7 +1177,6 @@
             }
         }
 
-        /* Share Options */
         function openShareModal(postId) {
             activePostToShare = posts.find(p => p.id === postId);
             document.getElementById('share-modal').style.display = 'flex';
@@ -1018,12 +1222,26 @@
             closeModal('share-modal');
         }
 
-        /* User Profile Modal */
         function openUserProfile(email) {
             let user = accounts.find(a => a.email === email) || { name: "مستخدم", email: email, image: null };
             document.getElementById('user-modal-name').innerText = user.name;
             document.getElementById('user-modal-email').innerText = user.email;
             document.getElementById('user-modal-avatar').innerHTML = getAvatarHTML(user, true);
+
+            let blockContainer = document.getElementById('block-action-container');
+            if (email !== currentEmail) {
+                let currentUser = accounts.find(a => a.email === currentEmail);
+                let isBlocked = currentUser && currentUser.blockedUsers && currentUser.blockedUsers.includes(email);
+                
+                blockContainer.innerHTML = `
+                    <button class="btn-small" style="background: ${isBlocked ? '#28a745' : '#dc3545'}; margin-top: 5px;" onclick="toggleBlockUser('${email}')">
+                        <i class="fa-solid ${isBlocked ? 'fa-user-check' : 'fa-user-slash'}"></i> 
+                        ${isBlocked ? 'إلغاء حظر العضو' : 'حظر العضو'}
+                    </button>
+                `;
+            } else {
+                blockContainer.innerHTML = '';
+            }
 
             let userPosts = posts.filter(p => p.authorEmail === email);
             let postsContainer = document.getElementById('user-modal-posts');
@@ -1046,7 +1264,6 @@
             document.getElementById('user-profile-modal').style.display = 'flex';
         }
 
-        /* Notifications */
         function addNotification(text) {
             notifications.unshift({
                 id: Date.now(),
