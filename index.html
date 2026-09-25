@@ -3,226 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalimat | كلمات</title>
+    <title>منصة كلمات | Kalimat</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- مكتبات Firebase (SDK v9 Compatibility) -->
+    <!-- SDK مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
     <style>
         :root {
-            --primary-color: #1877f2;
-            --bg-color: #f0f2f5;
+            --primary: #1877f2;
+            --bg: #f0f2f5;
             --card-bg: #ffffff;
-            --text-color: #050505;
-            --text-secondary: #65676b;
-            --border-color: #ced0d4;
+            --text-main: #050505;
+            --text-sub: #65676b;
+            --border: #ced0d4;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: 70px;
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 75px;
         }
 
+        /* 1. Header */
         header {
             position: sticky;
             top: 0;
             background: var(--card-bg);
-            padding: 10px 15px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             z-index: 100;
         }
 
-        .logo {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--primary-color);
-            letter-spacing: -0.5px;
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
             cursor: pointer;
-            user-select: none;
+            background: #ddd;
         }
 
-        .search-box {
-            background: #f0f2f5;
-            border-radius: 20px;
-            padding: 8px 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 45%;
-            color: var(--text-secondary);
-        }
-
-        .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            width: 100%;
-            font-size: 14px;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .notif-btn {
+        .notif-icon {
             position: relative;
-            font-size: 20px;
-            color: var(--text-secondary);
+            font-size: 18px;
+            color: var(--text-sub);
             cursor: pointer;
+            padding: 6px;
         }
 
         .notif-badge {
             position: absolute;
-            top: -5px;
-            right: -6px;
+            top: 2px;
+            right: 2px;
             background: #e41e3f;
             color: white;
-            border-radius: 50%;
-            padding: 2px 5px;
             font-size: 10px;
             font-weight: bold;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
             border-radius: 50%;
-            object-fit: cover;
-            background-color: var(--primary-color);
-            color: #fff;
-            display: inline-flex;
+            padding: 1px 5px;
+        }
+
+        .search-bar {
+            background: #f0f2f5;
+            border-radius: 20px;
+            padding: 6px 12px;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 16px;
-            flex-shrink: 0;
-            cursor: pointer;
+            gap: 6px;
+            width: 42%;
         }
 
-        .avatar-lg {
-            width: 80px;
-            height: 80px;
-            font-size: 32px;
+        .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 13px;
         }
 
+        .brand-logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* 2. Main Layout */
         .container {
-            max-width: 500px;
-            margin: 10px auto;
-            padding: 0 10px;
+            max-width: 480px;
+            margin: 12px auto;
+            padding: 0 8px;
         }
 
-        .view {
+        .tab-view {
             display: none;
         }
 
-        .view.active {
+        .tab-view.active {
             display: block;
         }
 
         .card {
             background: var(--card-bg);
-            border-radius: 10px;
-            padding: 12px 16px;
+            border-radius: 12px;
+            padding: 12px 14px;
             margin-bottom: 12px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        .create-post {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .post-input-container {
+        /* 3. Create Post Box */
+        .create-box-top {
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-bottom: 12px;
         }
 
-        .post-input {
-            width: 100%;
+        .create-input {
+            flex: 1;
             border: none;
             background: #f0f2f5;
-            padding: 10px 16px;
+            padding: 10px 14px;
             border-radius: 20px;
             outline: none;
-            font-size: 14px;
+            font-size: 13.5px;
         }
 
-        .post-actions {
+        .create-box-bottom {
             display: flex;
-            justify-content: space-around;
             align-items: center;
-            border-top: 1px solid #e4e6eb;
+            justify-content: space-between;
+            border-top: 1px solid #f0f2f5;
             padding-top: 10px;
-            font-size: 13px;
-            color: var(--text-secondary);
         }
 
-        .action-btn {
+        .post-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .opt-btn {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
+            font-size: 12.5px;
+            color: var(--text-sub);
             cursor: pointer;
-            padding: 6px 10px;
+        }
+
+        .btn-publish {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 18px;
             border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
         }
 
-        .action-btn:hover {
-            background: #f2f2f2;
-        }
-
-        .image-preview {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
-            object-fit: cover;
-            display: none;
-            margin-top: 5px;
-        }
-
+        /* 4. Posts Feed */
         .post-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 10px;
-            position: relative;
         }
 
-        .post-author-info {
+        .post-user {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .post-author {
-            font-weight: 600;
-            font-size: 15px;
-            cursor: pointer;
+        .post-user-name {
+            font-weight: bold;
+            font-size: 14px;
         }
 
         .post-time {
-            font-size: 12px;
-            color: var(--text-secondary);
+            font-size: 11px;
+            color: var(--text-sub);
         }
 
-        .post-content {
+        .post-text {
             font-size: 14px;
             line-height: 1.4;
             margin-bottom: 10px;
@@ -230,74 +211,77 @@
 
         .post-image {
             width: 100%;
-            max-height: 350px;
-            object-fit: cover;
             border-radius: 8px;
             margin-bottom: 10px;
+            max-height: 380px;
+            object-fit: cover;
         }
 
-        .post-stats {
+        .post-stats-bar {
             display: flex;
             justify-content: space-around;
-            border-top: 1px solid #e4e6eb;
-            border-bottom: 1px solid #e4e6eb;
-            padding: 6px 0;
-            font-size: 13px;
-            color: var(--text-secondary);
+            border-top: 1px solid #f0f2f5;
+            border-bottom: 1px solid #f0f2f5;
+            padding: 8px 0;
+            margin-bottom: 8px;
         }
 
-        .post-stats .stat-item {
+        .stat-btn {
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 12px;
-            border-radius: 6px;
+            font-size: 12.5px;
+            color: var(--text-sub);
             cursor: pointer;
-            width: 33%;
-            justify-content: center;
         }
 
-        .comments-list {
-            margin-top: 10px;
-            font-size: 13px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .comment-item {
-            background: #f0f2f5;
-            padding: 8px 12px;
-            border-radius: 12px;
-        }
-
-        .comment-box {
+        .comment-input-wrap {
             display: flex;
             gap: 8px;
-            margin-top: 10px;
+            align-items: center;
         }
 
-        .comment-box input {
+        .comment-input-wrap input {
             flex: 1;
+            border: 1px solid #e4e6eb;
+            background: #f0f2f5;
             padding: 8px 14px;
-            border: 1px solid var(--border-color);
             border-radius: 20px;
             outline: none;
-            font-size: 13px;
-            background: #f0f2f5;
+            font-size: 12.5px;
         }
 
-        .btn-small {
-            background: var(--primary-color);
+        .btn-send-icon {
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 6px 16px;
-            border-radius: 6px;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
         }
 
+        /* 5. Account Switcher */
+        .account-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .account-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 6. Navigation Bar */
         nav.bottom-nav {
             position: fixed;
             bottom: 0;
@@ -307,113 +291,141 @@
             display: flex;
             justify-content: space-around;
             padding: 8px 0;
-            box-shadow: 0 -1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 -1px 3px rgba(0,0,0,0.08);
             z-index: 100;
         }
 
-        .nav-item {
+        .nav-link {
             display: flex;
             flex-direction: column;
             align-items: center;
             font-size: 11px;
-            color: var(--text-secondary);
+            color: var(--text-sub);
             cursor: pointer;
+            width: 25%;
         }
 
-        .nav-item.active {
-            color: var(--primary-color);
+        .nav-link.active {
+            color: var(--primary);
             font-weight: bold;
         }
 
-        .nav-icon {
-            font-size: 20px;
+        .nav-link i {
+            font-size: 18px;
             margin-bottom: 3px;
         }
 
-        .status-badge {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            background: #28a745;
-            color: white;
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            outline: none;
         }
     </style>
 </head>
 <body>
 
     <!-- Header -->
-    <header id="main-header">
-        <div class="logo">
-            كلمات <span class="status-badge" id="firebase-status">Firebase Live</span>
+    <header>
+        <div class="header-right">
+            <img src="https://via.placeholder.com/40" class="header-avatar" id="header-user-img" alt="Profile">
+            <div class="notif-icon">
+                <i class="fa-regular fa-bell"></i>
+                <span class="notif-badge">2</span>
+            </div>
         </div>
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="global-search" placeholder="بحث..." onkeyup="filterPosts()">
+
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass" style="color: var(--text-sub);"></i>
+            <input type="text" placeholder="بحث...">
         </div>
-        <div class="header-actions">
-            <div id="header-avatar-box"></div>
-        </div>
+
+        <div class="brand-logo">كلمات</div>
     </header>
 
     <div class="container">
 
-        <!-- 1. الشاشة الرئيسية (Feed) -->
-        <div id="home-view" class="view active">
-            <div class="card create-post">
-                <div class="post-input-container">
-                    <div id="post-box-avatar-box"></div>
-                    <input type="text" id="new-post-text" class="post-input" placeholder="بم تفكر في كلمات اليوم؟">
-                </div>
-                <div class="post-actions">
-                    <button class="btn-small" onclick="publishPostToFirebase()">نشر عبر السحابة</button>
-                </div>
-            </div>
-
-            <div id="feed-container"></div>
-        </div>
-
-        <!-- 2. شاشة الدردشة المباشرة مع Firebase Realtime -->
-        <div id="chat-view" class="view">
+        <!-- Tab 1: الرئيسية -->
+        <div id="home-tab" class="tab-view active">
+            <!-- Box Create Post -->
             <div class="card">
-                <h3 style="margin-bottom: 10px; font-size: 16px;">الدردشة العامة (Firebase Realtime)</h3>
-                <div class="chat-messages" id="chat-messages-box" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; margin-bottom: 10px;"></div>
-                <div class="comment-box">
-                    <input type="text" id="chat-input" placeholder="اكتب رسالتك...">
-                    <button class="btn-small" onclick="sendFirebaseMessage()"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
+                <div class="create-box-top">
+                    <img src="https://via.placeholder.com/40" class="header-avatar" id="create-user-img" alt="Profile">
+                    <input type="text" id="post-input-field" class="create-input" placeholder="بم تفكر؟">
+                </div>
+                <div class="create-box-bottom">
+                    <button class="btn-publish" onclick="submitPost()">نشر</button>
+                    <div class="post-options">
+                        <div class="opt-btn"><i class="fa-regular fa-face-smile" style="color: #f7b928;"></i> شعور</div>
+                        <div class="opt-btn"><i class="fa-regular fa-image" style="color: #45bd62;"></i> صورة</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posts List -->
+            <div id="posts-feed"></div>
+        </div>
+
+        <!-- Tab 2: الأصدقاء -->
+        <div id="friends-tab" class="tab-view">
+            <div class="card">
+                <h3>الأصدقاء والطلبات</h3>
+                <p style="color: var(--text-sub); font-size: 13px; margin-top: 8px;">قائمة الأصدقاء متوفرة قريباً...</p>
+            </div>
+        </div>
+
+        <!-- Tab 3: الدردشة -->
+        <div id="chat-tab" class="tab-view">
+            <div class="card">
+                <h3 style="margin-bottom: 10px;">الدردشة المباشرة</h3>
+                <div id="chat-box" style="height: 280px; overflow-y: auto; background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px;"></div>
+                <div class="comment-input-wrap">
+                    <input type="text" id="chat-msg-input" placeholder="اكتب رسالتك...">
+                    <button class="btn-send-icon" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- 3. حسابي -->
-        <div id="profile-view" class="view">
-            <div class="card" style="text-align: center;">
-                <h3 style="margin-bottom: 15px;">منصة كلمات - GitHub Pages</h3>
-                <p style="color: var(--text-secondary); font-size: 13px;">تم ربط هذا التطبيق بـ Firebase Realtime Database لضمان تزامن المنشورات والرسائل فورياً بين كافة الزوار.</p>
+        <!-- Tab 4: حسابي -->
+        <div id="profile-tab" class="tab-view">
+            <div class="card">
+                <h3 style="color: var(--primary); text-align: center; margin-bottom: 15px;">انضمام / تبديل الحساب</h3>
+                <input type="text" id="login-name" class="form-input" placeholder="الاسم الظاهر">
+                <input type="email" id="login-email" class="form-input" placeholder="البريد الإلكتروني">
+                <button class="btn-publish" style="width: 100%; padding: 10px;" onclick="handleLogin()">دخول / إنشاء حساب</button>
+
+                <h4 style="margin: 15px 0 10px 0; color: var(--text-sub); font-size: 13px;">الحسابات المسجلة:</h4>
+                <div id="accounts-list"></div>
             </div>
         </div>
 
     </div>
 
-    <!-- Navigation Bar -->
+    <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home-view', this)">
-            <i class="fa-solid fa-house nav-icon"></i>
+        <div class="nav-link active" onclick="switchTab('home-tab', this)">
+            <i class="fa-solid fa-house"></i>
             <span>الرئيسية</span>
         </div>
-        <div class="nav-item" onclick="switchTab('chat-view', this)">
-            <i class="fa-solid fa-comment-dots nav-icon"></i>
+        <div class="nav-link" onclick="switchTab('friends-tab', this)">
+            <i class="fa-solid fa-user-group"></i>
+            <span>الأصدقاء</span>
+        </div>
+        <div class="nav-link" onclick="switchTab('chat-tab', this)">
+            <i class="fa-solid fa-comment-dots"></i>
             <span>الدردشة</span>
         </div>
-        <div class="nav-item" onclick="switchTab('profile-view', this)">
-            <i class="fa-solid fa-user nav-icon"></i>
+        <div class="nav-link" onclick="switchTab('profile-tab', this)">
+            <i class="fa-solid fa-user"></i>
             <span>حسابي</span>
         </div>
     </nav>
 
     <script>
-        // ==========================================
-        // 🔥 إعدادات Firebase الخاص بمشروع "كلمات"
-        // ==========================================
+        // Firebase Setup
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "kalimat-project.firebaseapp.com",
@@ -424,92 +436,100 @@
             appId: "YOUR_APP_ID"
         };
 
-        // تهيئة Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
-        let currentUser = {
-            name: "زائر كلمات",
-            email: "user@kalimat.com"
+        // Account State
+        let activeUser = JSON.parse(localStorage.getItem('kalimat_active_user')) || {
+            name: "جوجو",
+            email: "rim2020h.com@gmail.com",
+            avatar: "https://via.placeholder.com/40"
         };
 
-        // ==========================================
-        // 📡 الربط المباشر وقراءة البيانات
-        // ==========================================
-        function initFirebaseListeners() {
-            // 1. الاستماع للمنشورات المباشرة
-            db.ref('posts').on('value', (snapshot) => {
-                const data = snapshot.val();
-                let container = document.getElementById('feed-container');
-                container.innerHTML = '';
-                
-                if (data) {
-                    Object.keys(data).reverse().forEach(key => {
-                        let post = data[key];
-                        let postHTML = `
-                            <div class="card post">
-                                <div class="post-header">
-                                    <div class="post-author-info">
-                                        <div class="avatar">${post.author ? post.author.charAt(0) : 'ك'}</div>
-                                        <div>
-                                            <div class="post-author">${post.author}</div>
-                                            <div class="post-time">${new Date(post.timestamp).toLocaleTimeString('ar-EG')}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="post-content">${post.text}</div>
-                            </div>
-                        `;
-                        container.insertAdjacentHTML('beforeend', postHTML);
-                    });
-                }
-            });
+        let savedAccounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
+            { name: "جوجو", email: "non1975.com@gmail.com", avatar: "https://via.placeholder.com/40" },
+            { name: "جوجو", email: "rim2020h.com@gmail.com", avatar: "https://via.placeholder.com/40" }
+        ];
 
-            // 2. الاستماع لرسائل الدردشة المباشرة
-            db.ref('chat_messages').on('value', (snapshot) => {
-                const messages = snapshot.val();
-                let box = document.getElementById('chat-messages-box');
-                box.innerHTML = '';
-                
-                if (messages) {
-                    Object.keys(messages).forEach(key => {
-                        let msg = messages[key];
-                        let msgHTML = `
-                            <div style="background: #e4e6eb; padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px;">
-                                <strong>${msg.sender}:</strong> ${msg.text}
+        function initUI() {
+            document.getElementById('header-user-img').src = activeUser.avatar;
+            document.getElementById('create-user-img').src = activeUser.avatar;
+            renderAccountsList();
+            listenToFirebase();
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-view').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function renderAccountsList() {
+            const list = document.getElementById('accounts-list');
+            list.innerHTML = '';
+            savedAccounts.forEach((acc, index) => {
+                list.innerHTML += `
+                    <div class="account-card">
+                        <button class="btn-publish" style="padding: 5px 12px;" onclick="selectAccount(${index})">دخول</button>
+                        <div class="account-info">
+                            <div>
+                                <div style="font-weight: bold; font-size: 13px;">${acc.name}</div>
+                                <div style="font-size: 11px; color: var(--text-sub);">${acc.email}</div>
                             </div>
-                        `;
-                        box.insertAdjacentHTML('beforeend', msgHTML);
-                    });
-                    box.scrollTop = box.scrollHeight;
-                }
+                            <img src="${acc.avatar}" style="width: 35px; height: 35px; border-radius: 50%;">
+                        </div>
+                    </div>
+                `;
             });
         }
 
-        // إرسال منشور جديد لـ Firebase
-        function publishPostToFirebase() {
-            let text = document.getElementById('new-post-text').value.trim();
-            if (!text) return;
+        function handleLogin() {
+            const name = document.getElementById('login-name').value.trim();
+            const email = document.getElementById('login-email').value.trim();
+            if(!name || !email) return;
+
+            const newUser = { name, email, avatar: "https://via.placeholder.com/40" };
+            activeUser = newUser;
+            savedAccounts.push(newUser);
+            localStorage.setItem('kalimat_active_user', JSON.stringify(activeUser));
+            localStorage.setItem('kalimat_accounts', JSON.stringify(savedAccounts));
+            initUI();
+            switchTab('home-tab', document.querySelectorAll('.nav-link')[0]);
+        }
+
+        function selectAccount(index) {
+            activeUser = savedAccounts[index];
+            localStorage.setItem('kalimat_active_user', JSON.stringify(activeUser));
+            initUI();
+            switchTab('home-tab', document.querySelectorAll('.nav-link')[0]);
+        }
+
+        function submitPost() {
+            const text = document.getElementById('post-input-field').value.trim();
+            if(!text) return;
 
             db.ref('posts').push({
-                author: currentUser.name,
+                author: activeUser.name,
+                avatar: activeUser.avatar,
                 text: text,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                likes: 0,
+                commentsCount: 0
             });
 
-            document.getElementById('new-post-text').value = '';
+            document.getElementById('post-input-field').value = '';
         }
 
-        // إرسال رسالة دردشة جديدة لـ Firebase
-        function sendFirebaseMessage() {
-            let input = document.getElementById('chat-input');
-            let text = input.value.trim();
-            if (!text) return;
+        function sendChatMessage() {
+            const input = document.getElementById('chat-msg-input');
+            const text = input.value.trim();
+            if(!text) return;
 
-            db.ref('chat_messages').push({
-                sender: currentUser.name,
+            db.ref('chat').push({
+                sender: activeUser.name,
                 text: text,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
@@ -517,15 +537,58 @@
             input.value = '';
         }
 
-        function switchTab(viewId, element) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            element.classList.add('active');
+        function listenToFirebase() {
+            db.ref('posts').on('value', (snap) => {
+                const data = snap.val();
+                const feed = document.getElementById('posts-feed');
+                feed.innerHTML = '';
+                if(data) {
+                    Object.keys(data).reverse().forEach(key => {
+                        const p = data[key];
+                        feed.innerHTML += `
+                            <div class="card">
+                                <div class="post-header">
+                                    <div class="post-user">
+                                        <img src="${p.avatar || 'https://via.placeholder.com/40'}" class="header-avatar">
+                                        <div>
+                                            <div class="post-user-name">${p.author}</div>
+                                            <div class="post-time">الآن</div>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-ellipsis" style="color: var(--text-sub);"></i>
+                                </div>
+                                <div class="post-text">${p.text}</div>
+                                ${p.imageUrl ? `<img src="${p.imageUrl}" class="post-image">` : ''}
+                                <div class="post-stats-bar">
+                                    <div class="stat-btn"><i class="fa-regular fa-share-from-square"></i> مشاركة</div>
+                                    <div class="stat-btn"><span>${p.commentsCount || 0}</span> <i class="fa-regular fa-comment"></i> تعليق</div>
+                                    <div class="stat-btn"><span>${p.likes || 0}</span> <i class="fa-regular fa-thumbs-up"></i> إعجاب</div>
+                                </div>
+                                <div class="comment-input-wrap">
+                                    <button class="btn-send-icon"><i class="fa-solid fa-paper-plane"></i></button>
+                                    <input type="text" placeholder="اكتب تعليقاً...">
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            });
+
+            db.ref('chat').on('value', (snap) => {
+                const data = snap.val();
+                const box = document.getElementById('chat-box');
+                box.innerHTML = '';
+                if(data) {
+                    Object.keys(data).forEach(k => {
+                        const m = data[k];
+                        box.innerHTML += `<div style="margin-bottom: 8px; font-size: 12.5px;"><strong>${m.sender}:</strong> ${m.text}</div>`;
+                    });
+                    box.scrollTop = box.scrollHeight;
+                }
+            });
         }
 
-        // تشغيل التزامن المباشر عند الفتح
-        initFirebaseListeners();
+        window.onload = initUI;
     </script>
 </body>
 </html>
