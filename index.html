@@ -274,7 +274,6 @@
             font-size: 14px;
             line-height: 1.4;
             margin-bottom: 10px;
-            word-break: break-word;
         }
 
         .post-image {
@@ -491,6 +490,7 @@
 </head>
 <body>
 
+    <!-- Header -->
     <header id="main-header">
         <div class="logo" onclick="openWelcomeModal()" title="انقر لمعرفة المزيد">كلمات</div>
         <div class="search-box">
@@ -508,6 +508,7 @@
 
     <div class="container">
 
+        <!-- 1. شاشة الدخول والتسجيل -->
         <div id="auth-view" class="view">
             <div class="card auth-card" style="text-align: center;">
                 <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام / تبديل الحساب</h3>
@@ -522,6 +523,7 @@
             </div>
         </div>
 
+        <!-- 2. الشاشة الرئيسية -->
         <div id="home-view" class="view active">
             <div class="card create-post">
                 <div class="post-input-container">
@@ -542,13 +544,14 @@
                         <i class="fa-solid fa-face-smile"></i>
                         <span>شعور</span>
                     </div>
-                    <button class="btn-small" id="publish-btn" onclick="publishPost()">نشر</button>
+                    <button class="btn-small" onclick="publishPost()">نشر</button>
                 </div>
             </div>
 
             <div id="feed-container"></div>
         </div>
 
+        <!-- 3. شاشة الأصدقاء -->
         <div id="friends-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">مقترحات المتابعة</h3>
@@ -565,6 +568,7 @@
             </div>
         </div>
 
+        <!-- 4. شاشة الدردشة -->
         <div id="chat-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">الرسائل المباشرة</h3>
@@ -586,6 +590,7 @@
             </div>
         </div>
 
+        <!-- 5. شاشة حسابي مع إدارة الحظر وسلة المحذوفات -->
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي والإعدادات</h3>
@@ -607,9 +612,11 @@
                     <button class="btn-small" style="width: 100%; margin-top: 5px;" onclick="saveProfileChanges()">حفظ التعديلات</button>
                 </div>
 
+                <!-- قائمة المحذوفات -->
                 <div class="settings-section-title"><i class="fa-solid fa-trash-arrow-up"></i> سلة المحذوفات</div>
                 <div id="trash-list-box" style="text-align: right; font-size: 13px;"></div>
 
+                <!-- قائمة الحظر -->
                 <div class="settings-section-title"><i class="fa-solid fa-user-slash"></i> قائمة الحظر</div>
                 <div id="blocked-list-box" style="text-align: right; font-size: 13px;"></div>
 
@@ -621,6 +628,7 @@
 
     <!-- Modals -->
 
+    <!-- Welcome / Info Modal -->
     <div id="welcome-modal" class="modal">
         <div class="modal-content" style="text-align: center; padding: 20px; border-radius: 16px;">
             <div class="modal-header" style="justify-content: center; border: none; padding-bottom: 0;">
@@ -644,6 +652,7 @@
         </div>
     </div>
     
+    <!-- Feelings Modal -->
     <div id="feelings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -658,6 +667,7 @@
         </div>
     </div>
 
+    <!-- Share Modal -->
     <div id="share-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -675,6 +685,7 @@
         </div>
     </div>
 
+    <!-- Notifications Modal -->
     <div id="notif-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -685,6 +696,7 @@
         </div>
     </div>
 
+    <!-- User Profile Modal -->
     <div id="user-profile-modal" class="modal">
         <div class="modal-content" style="max-height: 90vh;">
             <div class="modal-header">
@@ -702,6 +714,7 @@
         </div>
     </div>
 
+    <!-- Navigation Bar -->
     <nav class="bottom-nav" id="main-nav">
         <div class="nav-item active" onclick="switchTab('home-view', this)">
             <i class="fa-solid fa-house nav-icon"></i>
@@ -721,32 +734,28 @@
         </div>
     </nav>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDummyKeyReplaceMeIfRequired",
-            authDomain: "kalimat-app.firebaseapp.com",
-            databaseURL: "https://kalimat-app-default-rtdb.firebaseio.com",
-            projectId: "kalimat-app",
-            storageBucket: "kalimat-app.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
-        };
-
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.database();
-
         let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
             { name: "سامر العلي", email: "samer@kalimat.com", image: null, blockedUsers: [] }
         ];
         let currentEmail = localStorage.getItem('kalimat_current_user') || null;
-        let posts = [];
+        let posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [
+            {
+                id: 1,
+                author: "محمد أحمد",
+                authorEmail: "demo@kalimat.com",
+                text: "أهلاً بك في منصة كلمات! يسعدنا انضمامك معنا.",
+                feeling: "متحمس 🚀",
+                image: null,
+                time: "منذ قليل",
+                likes: 0,
+                likedBy: [],
+                comments: []
+            }
+        ];
+
         let trashPosts = JSON.parse(localStorage.getItem('kalimat_trash')) || [];
+
         let notifications = JSON.parse(localStorage.getItem('kalimat_notifs')) || [
             { id: 1, text: "قام سامر العلي بالإعجاب بصفحتك", time: "منذ 10 دقائق", read: false },
             { id: 2, text: "مرحباً بك في منصة كلمات!", time: "منذ ساعة", read: false }
@@ -755,39 +764,6 @@
         let selectedPostImage = null;
         let currentSelectedFeeling = null;
         let activePostToShare = null;
-
-        // ضغط الصور تلقائياً لتفادي رفض Firebase لحجم البيانات
-        function compressImage(file, maxWidth, quality, callback) {
-            let reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function (event) {
-                let img = new Image();
-                img.src = event.target.result;
-                img.onload = function () {
-                    let canvas = document.createElement('canvas');
-                    let scaleSize = maxWidth / img.width;
-                    if (scaleSize > 1) scaleSize = 1;
-                    canvas.width = img.width * scaleSize;
-                    canvas.height = img.height * scaleSize;
-                    let ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    let base64 = canvas.toDataURL('image/jpeg', quality);
-                    callback(base64);
-                };
-            };
-        }
-
-        db.ref('posts').on('value', (snapshot) => {
-            const data = snapshot.val();
-            posts = [];
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    posts.unshift({ id: key, ...data[key] });
-                });
-            }
-            renderPosts();
-            filterPosts();
-        });
 
         function openWelcomeModal() {
             document.getElementById('welcome-modal').style.display = 'flex';
@@ -812,6 +788,7 @@
                 let user = accounts.find(a => a.email === currentEmail);
                 if (user) {
                     loadUserData(user);
+                    renderPosts();
                     switchTab('home-view', null, false);
                 } else {
                     showAuthScreen();
@@ -887,6 +864,7 @@
             
             let user = accounts.find(a => a.email === email);
             loadUserData(user);
+            renderPosts();
             switchTab('home-view');
         }
 
@@ -899,6 +877,7 @@
 
             let user = accounts.find(a => a.email === email);
             loadUserData(user);
+            renderPosts();
             switchTab('home-view');
         }
 
@@ -926,12 +905,14 @@
             let file = event.target.files[0];
             if (!file) return;
 
-            compressImage(file, 800, 0.7, function(base64) {
-                selectedPostImage = base64;
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                selectedPostImage = e.target.result;
                 let img = document.getElementById('post-image-preview');
                 img.src = selectedPostImage;
                 img.style.display = 'block';
-            });
+            };
+            reader.readAsDataURL(file);
         }
 
         function publishPost() {
@@ -939,38 +920,30 @@
             if (!text && !selectedPostImage) return;
 
             let currentUser = accounts.find(a => a.email === currentEmail);
-            let publishBtn = document.getElementById('publish-btn');
-            publishBtn.disabled = true;
-            publishBtn.innerText = 'جاري النشر...';
 
             let newPost = {
+                id: Date.now(),
                 author: currentUser.name,
                 authorEmail: currentUser.email,
                 text: text,
-                feeling: currentSelectedFeeling || null,
-                image: selectedPostImage || null,
+                feeling: currentSelectedFeeling,
+                image: selectedPostImage,
                 time: "الآن",
                 likes: 0,
                 likedBy: [],
                 comments: []
             };
 
-            db.ref('posts').push(newPost, (error) => {
-                publishBtn.disabled = false;
-                publishBtn.innerText = 'نشر';
+            posts.unshift(newPost);
+            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
 
-                if (error) {
-                    alert('فشل النشر: يرجى التأكد من صلاحيات Firebase (Rules)');
-                } else {
-                    document.getElementById('new-post-text').value = '';
-                    document.getElementById('post-image-preview').style.display = 'none';
-                    document.getElementById('selected-feeling-tag').style.display = 'none';
-                    document.getElementById('global-search').value = ''; // تفريغ حقل البحث
-                    selectedPostImage = null;
-                    currentSelectedFeeling = null;
-                    document.getElementById('post-image-input').value = '';
-                }
-            });
+            document.getElementById('new-post-text').value = '';
+            document.getElementById('post-image-preview').style.display = 'none';
+            document.getElementById('selected-feeling-tag').style.display = 'none';
+            selectedPostImage = null;
+            currentSelectedFeeling = null;
+
+            renderPosts();
         }
 
         function toggleOptionsMenu(postId, event) {
@@ -982,28 +955,32 @@
             if (menu) menu.classList.toggle('active');
         }
 
+        /* نقل المنشور إلى سلة المحذوفات */
         function movePostToTrash(postId) {
-            let post = posts.find(p => p.id === postId);
-            if (post) {
-                trashPosts.unshift(post);
+            let postIndex = posts.findIndex(p => p.id === postId);
+            if (postIndex !== -1) {
+                let [deletedPost] = posts.splice(postIndex, 1);
+                trashPosts.unshift(deletedPost);
+                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
                 localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
-                db.ref('posts/' + postId).remove();
+                renderPosts();
             }
         }
 
+        /* استعادة من السلة */
         function restorePost(postId) {
             let trashIndex = trashPosts.findIndex(p => p.id === postId);
             if (trashIndex !== -1) {
                 let [restoredPost] = trashPosts.splice(trashIndex, 1);
+                posts.unshift(restoredPost);
+                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
                 localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
-                
-                let idToRestore = restoredPost.id;
-                delete restoredPost.id;
-                db.ref('posts/' + idToRestore).set(restoredPost);
+                renderPosts();
                 renderSettingsLists();
             }
         }
 
+        /* حذف نهائي من السلة */
         function deletePermanently(postId) {
             if (confirm("هل أنت تأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا إجراء.")) {
                 trashPosts = trashPosts.filter(p => p.id !== postId);
@@ -1046,9 +1023,8 @@
                 let authorObj = accounts.find(a => a.email === post.authorEmail) || { name: post.author, email: post.authorEmail, image: null };
                 let isLiked = post.likedBy && post.likedBy.includes(currentEmail);
                 let isOwner = post.authorEmail === currentEmail;
-                let postComments = post.comments || [];
 
-                let commentsHTML = postComments.map(c => `
+                let commentsHTML = post.comments.map(c => `
                     <div class="comment-item">
                         <strong>${c.author}:</strong> ${c.text}
                     </div>
@@ -1066,9 +1042,9 @@
                             </div>
                             
                             ${isOwner ? `
-                                <i class="fa-solid fa-ellipsis post-options-btn" onclick="toggleOptionsMenu('${post.id}', event)"></i>
+                                <i class="fa-solid fa-ellipsis post-options-btn" onclick="toggleOptionsMenu(${post.id}, event)"></i>
                                 <div class="options-menu" id="options-menu-${post.id}">
-                                    <div class="options-menu-item danger" onclick="movePostToTrash('${post.id}')">
+                                    <div class="options-menu-item danger" onclick="movePostToTrash(${post.id})">
                                         <i class="fa-solid fa-trash-can"></i> حذف المنشور
                                     </div>
                                 </div>
@@ -1078,15 +1054,15 @@
                         ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
                         
                         <div class="post-stats">
-                            <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                            <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
                                 <i class="fa-thumbs-up ${isLiked ? 'fa-solid' : 'fa-regular'}"></i>
                                 <span>${post.likes || 0} إعجاب</span>
                             </div>
                             <div class="stat-item">
                                 <i class="fa-regular fa-comment"></i>
-                                <span>${postComments.length} تعليق</span>
+                                <span>${post.comments.length} تعليق</span>
                             </div>
-                            <div class="stat-item" onclick="openShareModal('${post.id}')">
+                            <div class="stat-item" onclick="openShareModal(${post.id})">
                                 <i class="fa-solid fa-share"></i>
                                 <span>مشاركة</span>
                             </div>
@@ -1096,7 +1072,7 @@
 
                         <div class="comment-box">
                             <input type="text" placeholder="اكتب تعليقاً...">
-                            <button class="btn-small" onclick="addComment('${post.id}', this)"><i class="fa-solid fa-paper-plane"></i></button>
+                            <button class="btn-small" onclick="addComment(${post.id}, this)"><i class="fa-solid fa-paper-plane"></i></button>
                         </div>
                     </div>
                 `;
@@ -1106,6 +1082,7 @@
         }
 
         function renderSettingsLists() {
+            // 1. عرض سلة المحذوفات الخاصة بالمستخدم
             let trashContainer = document.getElementById('trash-list-box');
             let myTrash = trashPosts.filter(p => p.authorEmail === currentEmail);
             trashContainer.innerHTML = '';
@@ -1120,14 +1097,15 @@
                                 <strong>${p.text || 'صورة'}</strong>
                             </div>
                             <div style="display:flex; gap:5px;">
-                                <button class="btn-small" style="background:#28a745; padding:4px 8px; font-size:11px;" onclick="restorePost('${p.id}')">استعادة</button>
-                                <button class="btn-small" style="background:#dc3545; padding:4px 8px; font-size:11px;" onclick="deletePermanently('${p.id}')">حذف نهائي</button>
+                                <button class="btn-small" style="background:#28a745; padding:4px 8px; font-size:11px;" onclick="restorePost(${p.id})">استعادة</button>
+                                <button class="btn-small" style="background:#dc3545; padding:4px 8px; font-size:11px;" onclick="deletePermanently(${p.id})">حذف نهائي</button>
                             </div>
                         </div>
                     `;
                 });
             }
 
+            // 2. عرض قائمة الحظر الخاصة بالمستخدم
             let blockedContainer = document.getElementById('blocked-list-box');
             let currentUser = accounts.find(a => a.email === currentEmail);
             let blockedEmails = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
@@ -1154,23 +1132,25 @@
             let post = posts.find(p => p.id === postId);
             if (!post) return;
 
-            let likedBy = post.likedBy || [];
-            let index = likedBy.indexOf(currentEmail);
+            if (!post.likedBy) post.likedBy = [];
+
+            let index = post.likedBy.indexOf(currentEmail);
             let currentUser = accounts.find(a => a.email === currentEmail);
 
             if (index === -1) {
-                likedBy.push(currentEmail);
+                post.likedBy.push(currentEmail);
+                post.likes = (post.likes || 0) + 1;
+
                 if (post.authorEmail !== currentEmail) {
                     addNotification(`قام ${currentUser.name} بالإعجاب بمنشورك.`);
                 }
             } else {
-                likedBy.splice(index, 1);
+                post.likedBy.splice(index, 1);
+                post.likes = Math.max(0, (post.likes || 1) - 1);
             }
 
-            db.ref('posts/' + postId).update({
-                likedBy: likedBy,
-                likes: likedBy.length
-            });
+            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+            renderPosts();
         }
 
         function addComment(postId, btn) {
@@ -1182,8 +1162,8 @@
             let post = posts.find(p => p.id === postId);
 
             if (post) {
-                let comments = post.comments || [];
-                comments.push({
+                if (!post.comments) post.comments = [];
+                post.comments.push({
                     author: currentUser.name,
                     text: text
                 });
@@ -1192,9 +1172,8 @@
                     addNotification(`علق ${currentUser.name} على منشورك: "${text.substring(0, 20)}..."`);
                 }
 
-                db.ref('posts/' + postId).update({
-                    comments: comments
-                });
+                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+                renderPosts();
             }
         }
 
@@ -1208,18 +1187,21 @@
             let currentUser = accounts.find(a => a.email === currentEmail);
 
             let newPost = {
+                id: Date.now(),
                 author: currentUser.name,
                 authorEmail: currentUser.email,
                 text: `🔁 منشور مشارك عن (${activePostToShare.author}):\n"${activePostToShare.text || ''}"`,
-                image: activePostToShare.image || null,
+                image: activePostToShare.image,
                 time: "الآن",
                 likes: 0,
                 likedBy: [],
                 comments: []
             };
 
-            db.ref('posts').push(newPost);
+            posts.unshift(newPost);
+            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
             closeModal('share-modal');
+            renderPosts();
             alert('تمت مشاركة المنشور في حسابك بنجاح!');
         }
 
@@ -1331,15 +1313,18 @@
             let file = event.target.files[0];
             if (!file) return;
 
-            compressImage(file, 300, 0.8, function(base64) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let base64Image = e.target.result;
                 let userIndex = accounts.findIndex(a => a.email === currentEmail);
                 if (userIndex !== -1) {
-                    accounts[userIndex].image = base64;
+                    accounts[userIndex].image = base64Image;
                     localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
                     loadUserData(accounts[userIndex]);
                     renderPosts();
                 }
-            });
+            };
+            reader.readAsDataURL(file);
         }
 
         function saveProfileChanges() {
@@ -1411,15 +1396,11 @@
         }
 
         function filterPosts() {
-            let query = document.getElementById('global-search').value.toLowerCase().trim();
+            let query = document.getElementById('global-search').value.toLowerCase();
             let postsEls = document.querySelectorAll('#feed-container .post');
             postsEls.forEach(post => {
-                if(!query) {
-                    post.style.display = 'block';
-                } else {
-                    let content = post.innerText.toLowerCase();
-                    post.style.display = content.includes(query) ? 'block' : 'none';
-                }
+                let content = post.innerText.toLowerCase();
+                post.style.display = content.includes(query) ? 'block' : 'none';
             });
         }
 
