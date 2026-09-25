@@ -511,15 +511,11 @@
         <!-- 1. شاشة الدخول والتسجيل -->
         <div id="auth-view" class="view">
             <div class="card auth-card" style="text-align: center;">
-                <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام / تبديل الحساب</h3>
+                <h3 style="color: var(--primary-color); margin-bottom: 10px;">انضمام لمنصة كلمات</h3>
                 <input type="text" id="reg-name" placeholder="الاسم الظاهر">
                 <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-                <button class="btn-small" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="registerNewAccount()">دخول / إنشاء حساب</button>
-
-                <div style="margin-top: 20px; text-align: right;">
-                    <h5 style="margin-bottom: 8px; color: var(--text-secondary);">الحسابات المسجلة:</h5>
-                    <div id="saved-accounts-list"></div>
-                </div>
+                <input type="password" id="reg-pass" placeholder="كلمة المرور">
+                <button class="btn-small" style="width: 100%; padding: 10px; margin-top: 5px;" onclick="registerNewAccount()">دخول / إنشاء حساب سحابي</button>
             </div>
         </div>
 
@@ -555,9 +551,9 @@
         <div id="friends-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">مقترحات المتابعة</h3>
-                <div class="item-list" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">س</div>
+                        <div class="avatar">س</div>
                         <div>
                             <strong>سامر العلي</strong><br>
                             <small style="color:var(--text-secondary);">صديق مشترك</small>
@@ -572,17 +568,9 @@
         <div id="chat-view" class="view">
             <div class="card">
                 <h3 style="margin-bottom: 10px; font-size: 16px;">الرسائل المباشرة</h3>
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom: 15px; border-bottom: 1px solid #e4e6eb; padding-bottom: 10px;">
-                    <div class="avatar" onclick="openUserProfile('samer@kalimat.com')">س</div>
-                    <div>
-                        <strong>سامر العلي</strong>
-                    </div>
-                </div>
-                
                 <div class="chat-messages" id="chat-messages-box" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; margin-bottom: 10px;">
-                    <div style="background: #e4e6eb; padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; align-self: flex-start;">مرحباً بك في كلمات!</div>
+                    <div style="background: #e4e6eb; padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; align-self: flex-start;">مرحباً بك في كلمات السحابية!</div>
                 </div>
-
                 <div class="comment-box">
                     <input type="text" id="chat-input" placeholder="اكتب رسالة...">
                     <button class="btn-small" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -590,18 +578,11 @@
             </div>
         </div>
 
-        <!-- 5. شاشة حسابي مع إدارة الحظر وسلة المحذوفات -->
+        <!-- 5. شاشة حسابي -->
         <div id="profile-view" class="view">
             <div class="card" style="text-align: center;">
-                <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي والإعدادات</h3>
-                
+                <h3 style="margin-bottom: 15px; font-size: 16px;">الملف الشخصي</h3>
                 <div id="prof-img-box" style="margin: 0 auto 10px;"></div>
-
-                <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-                <button class="btn-small" style="background: #e4e6eb; color: #050505; margin-bottom: 15px;" onclick="document.getElementById('image-upload').click()">
-                    <i class="fa-solid fa-camera"></i> تغيير الصورة الشخصية
-                </button>
-
                 <div style="text-align: right; margin-top: 10px;">
                     <label style="font-size: 13px; color: var(--text-secondary);">الاسم الظاهر:</label>
                     <input type="text" id="prof-name-input" class="post-input" style="margin-bottom: 10px; border: 1px solid var(--border-color);">
@@ -611,15 +592,6 @@
 
                     <button class="btn-small" style="width: 100%; margin-top: 5px;" onclick="saveProfileChanges()">حفظ التعديلات</button>
                 </div>
-
-                <!-- قائمة المحذوفات -->
-                <div class="settings-section-title"><i class="fa-solid fa-trash-arrow-up"></i> سلة المحذوفات</div>
-                <div id="trash-list-box" style="text-align: right; font-size: 13px;"></div>
-
-                <!-- قائمة الحظر -->
-                <div class="settings-section-title"><i class="fa-solid fa-user-slash"></i> قائمة الحظر</div>
-                <div id="blocked-list-box" style="text-align: right; font-size: 13px;"></div>
-
                 <button class="btn-danger" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> تسجيل الخروج</button>
             </div>
         </div>
@@ -627,32 +599,14 @@
     </div>
 
     <!-- Modals -->
-
-    <!-- Welcome / Info Modal -->
     <div id="welcome-modal" class="modal">
         <div class="modal-content" style="text-align: center; padding: 20px; border-radius: 16px;">
-            <div class="modal-header" style="justify-content: center; border: none; padding-bottom: 0;">
-                <h2 style="color: var(--primary-color); font-size: 28px; font-weight: 800;">كلمات</h2>
-            </div>
-            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">منصة للتواصل الإنساني والكلمة الطيبة</p>
-            <hr style="border: none; border-top: 1px solid #e4e6eb; margin: 10px 0;">
-            <div style="text-align: right; font-size: 14px; line-height: 1.6; color: var(--text-color); margin: 15px 0;">
-                <p style="margin-bottom: 8px;"><strong>عن المنصة:</strong></p>
-                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 14px; text-align: justify;">
-                    تأسست منصة <strong>"كلمات"</strong> برؤية وتطوير من <strong>ياسر الحسين</strong>، لتكون مساحة عربية مستقلاّ وشخصية تهدف إلى إعلاء قيمة الحوار الراقي وتبادل الأفكار بعيداً عن الضوضاء.
-                </p>
-                <p style="margin-bottom: 8px;"><strong>🤝 الشرط والميثاق الأخلاقي للاستخدام:</strong></p>
-                <ul style="padding-right: 20px; font-size: 13px; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
-                    <li>أن تكون الكلمة نابعة من احترام ونافعة للجميع.</li>
-                    <li>احترام اختلاف الآراء والابتعاد عن التعصب والخلافات.</li>
-                    <li>الحفاظ على بيئة إيجابية تجمع القلوب ولا تفرقها.</li>
-                </ul>
-            </div>
+            <h2 style="color: var(--primary-color); font-size: 28px; font-weight: 800;">كلمات</h2>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 12px;">منصة للتواصل الإنساني والكلمة الطيبة (مدعومة سحابياً)</p>
             <button class="btn-small" style="width: 100%; padding: 10px; font-size: 14px;" onclick="closeModal('welcome-modal')">أوافق وأستمر</button>
         </div>
     </div>
     
-    <!-- Feelings Modal -->
     <div id="feelings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -663,54 +617,6 @@
             <div class="feeling-option" onclick="selectFeeling('متحمس 🚀')">🚀 متحمس</div>
             <div class="feeling-option" onclick="selectFeeling('مسترخي ☕')">☕ مسترخي</div>
             <div class="feeling-option" onclick="selectFeeling('مفكر 💭')">💭 مفكر</div>
-            <div class="feeling-option" onclick="selectFeeling('شاكر 🙏')">🙏 شاكر</div>
-        </div>
-    </div>
-
-    <!-- Share Modal -->
-    <div id="share-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>خيارات المشاركة</h4>
-                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('share-modal')"></i>
-            </div>
-            <div class="feeling-option" onclick="shareToFeed()">
-                <i class="fa-solid fa-retweet"></i>
-                <span>إعادة النشر في حسابك بـ "كلمات"</span>
-            </div>
-            <div class="feeling-option" onclick="shareExternal()">
-                <i class="fa-solid fa-share-nodes"></i>
-                <span>مشاركة عبر تطبيقات أخرى</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notifications Modal -->
-    <div id="notif-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>الإشعارات</h4>
-                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('notif-modal')"></i>
-            </div>
-            <div id="notifications-list"></div>
-        </div>
-    </div>
-
-    <!-- User Profile Modal -->
-    <div id="user-profile-modal" class="modal">
-        <div class="modal-content" style="max-height: 90vh;">
-            <div class="modal-header">
-                <h4 id="user-modal-title">الملف الشخصي</h4>
-                <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('user-profile-modal')"></i>
-            </div>
-            <div style="text-align: center; margin-bottom: 15px;">
-                <div id="user-modal-avatar" style="margin: 0 auto 10px;"></div>
-                <h3 id="user-modal-name"></h3>
-                <small id="user-modal-email" style="color: var(--text-secondary);"></small>
-                <div id="block-action-container" style="margin-top: 10px;"></div>
-            </div>
-            <h5 style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">منشورات المستخدم:</h5>
-            <div id="user-modal-posts"></div>
         </div>
     </div>
 
@@ -734,177 +640,158 @@
         </div>
     </nav>
 
-    <script>
-        let accounts = JSON.parse(localStorage.getItem('kalimat_accounts')) || [
-            { name: "سامر العلي", email: "samer@kalimat.com", image: null, blockedUsers: [] }
-        ];
-        let currentEmail = localStorage.getItem('kalimat_current_user') || null;
-        let posts = JSON.parse(localStorage.getItem('kalimat_posts')) || [
-            {
-                id: 1,
-                author: "محمد أحمد",
-                authorEmail: "demo@kalimat.com",
-                text: "أهلاً بك في منصة كلمات! يسعدنا انضمامك معنا.",
-                feeling: "متحمس 🚀",
-                image: null,
-                time: "منذ قليل",
-                likes: 0,
-                likedBy: [],
-                comments: []
-            }
-        ];
+    <!-- Firebase SDKs & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, updateProirity, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        let trashPosts = JSON.parse(localStorage.getItem('kalimat_trash')) || [];
-
-        let notifications = JSON.parse(localStorage.getItem('kalimat_notifs')) || [
-            { id: 1, text: "قام سامر العلي بالإعجاب بصفحتك", time: "منذ 10 دقائق", read: false },
-            { id: 2, text: "مرحباً بك في منصة كلمات!", time: "منذ ساعة", read: false }
-        ];
-
-        let selectedPostImage = null;
-        let currentSelectedFeeling = null;
-        let activePostToShare = null;
-
-        function openWelcomeModal() {
-            document.getElementById('welcome-modal').style.display = 'flex';
-        }
-
-        function getAvatarHTML(user, isLarge = false) {
-            let extraClass = isLarge ? 'avatar-lg' : '';
-            let emailAttr = user && user.email ? `onclick="openUserProfile('${user.email}')"` : '';
-            if (user && user.image) {
-                return `<img src="${user.image}" class="avatar ${extraClass}" ${emailAttr} alt="User">`;
-            } else {
-                let initial = user && user.name ? user.name.trim().charAt(0).toUpperCase() : '؟';
-                return `<div class="avatar ${extraClass}" ${emailAttr}>${initial}</div>`;
-            }
-        }
-
-        function initApp() {
-            updateNotifBadge();
-            if (!currentEmail || accounts.length === 0) {
-                showAuthScreen();
-            } else {
-                let user = accounts.find(a => a.email === currentEmail);
-                if (user) {
-                    loadUserData(user);
-                    renderPosts();
-                    switchTab('home-view', null, false);
-                } else {
-                    showAuthScreen();
-                }
-            }
-
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.post-options-btn')) {
-                    document.querySelectorAll('.options-menu').forEach(m => m.classList.remove('active'));
-                }
-            });
-        }
-
-        window.onpopstate = function(event) {
-            if (event.state && event.state.viewId) {
-                switchTab(event.state.viewId, null, false);
-            }
+        const firebaseConfig = {
+          apiKey: "AIzaSyBznOsrwmvtWDFKTbqz3bFry94J7hJFn0c",
+          authDomain: "gogo1982-2026.firebaseapp.com",
+          databaseURL: "https://gogo1982-2026-default-rtdb.firebaseio.com",
+          projectId: "gogo1982-2026",
+          storageBucket: "gogo1982-2026.firebasestorage.app",
+          messagingSenderId: "79409104235",
+          appId: "1:79409104235:web:5d7ad5dcda013b32f6f82e",
+          measurementId: "G-5V553NQLDK"
         };
 
-        function switchTab(viewId, element, pushState = true) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-            if (pushState) {
-                history.pushState({ viewId: viewId }, "", `#${viewId}`);
+        let currentUser = null;
+        let selectedPostImage = null;
+        let currentSelectedFeeling = null;
+
+        // مراقبة حالة تسجيل الدخول سحابياً
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('main-nav').style.display = 'flex';
+                document.getElementById('main-header').style.display = 'flex';
+                loadUserData(user);
+                switchTab('home-view');
+                listenToPosts();
+            } else {
+                currentUser = null;
+                showAuthScreen();
             }
+        });
 
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            let navMap = {
-                'home-view': 0,
-                'friends-view': 1,
-                'chat-view': 2,
-                'profile-view': 3
-            };
-            if (navMap[viewId] !== undefined) {
-                document.querySelectorAll('.nav-item')[navMap[viewId]].classList.add('active');
-            }
-
-            if (viewId === 'profile-view') {
-                renderSettingsLists();
-            }
-        }
-
-        function showAuthScreen() {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('auth-view').classList.add('active');
-            document.getElementById('main-nav').style.display = 'none';
-            document.getElementById('main-header').style.display = 'none';
-            renderSavedAccounts();
-        }
-
-        function registerNewAccount() {
+        window.registerNewAccount = async function() {
             let name = document.getElementById('reg-name').value.trim();
             let email = document.getElementById('reg-email').value.trim();
+            let pass = document.getElementById('reg-pass').value.trim();
 
-            if (!name || !email) {
-                alert('يرجى كتابة الاسم والبريد الإلكتروني');
+            if (!name || !email || !pass) {
+                alert('يرجى تعبئة كافة الحقول');
                 return;
             }
 
-            let existing = accounts.find(a => a.email === email);
-            if (!existing) {
-                let newUser = { name: name, email: email, image: null, blockedUsers: [] };
-                accounts.push(newUser);
-                localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
+            try {
+                // محاولة تسجيل الدخول مباشرة، وإن لم يكن موجوداً قم بإنشائه
+                let res;
+                try {
+                    res = await signInWithEmailAndPassword(auth, email, pass);
+                } catch (e) {
+                    res = await createUserWithEmailAndPassword(auth, email, pass);
+                    await updateProfile(res.user, { displayName: name });
+                }
+                alert('تم تسجيل الدخول بنجاح!');
+            } catch (error) {
+                alert('خطأ: ' + error.message);
             }
-
-            localStorage.setItem('kalimat_current_user', email);
-            currentEmail = email;
-
-            document.getElementById('main-nav').style.display = 'flex';
-            document.getElementById('main-header').style.display = 'flex';
-            
-            let user = accounts.find(a => a.email === email);
-            loadUserData(user);
-            renderPosts();
-            switchTab('home-view');
         }
 
-        function switchAccount(email) {
-            localStorage.setItem('kalimat_current_user', email);
-            currentEmail = email;
-            
-            document.getElementById('main-nav').style.display = 'flex';
-            document.getElementById('main-header').style.display = 'flex';
-
-            let user = accounts.find(a => a.email === email);
-            loadUserData(user);
-            renderPosts();
-            switchTab('home-view');
+        window.logout = function() {
+            signOut(auth);
         }
 
         function loadUserData(user) {
-            document.getElementById('header-avatar-box').innerHTML = getAvatarHTML(user);
-            document.getElementById('post-box-avatar-box').innerHTML = getAvatarHTML(user);
-            document.getElementById('prof-img-box').innerHTML = getAvatarHTML(user, true);
-            document.getElementById('prof-name-input').value = user.name;
+            let name = user.displayName || "مستخدم كلمات";
+            let initial = name.charAt(0).toUpperCase();
+            let avatarHTML = `<div class="avatar">${initial}</div>`;
+            
+            document.getElementById('header-avatar-box').innerHTML = avatarHTML;
+            document.getElementById('post-box-avatar-box').innerHTML = avatarHTML;
+            document.getElementById('prof-img-box').innerHTML = `<div class="avatar avatar-lg">${initial}</div>`;
+            document.getElementById('prof-name-input').value = name;
             document.getElementById('prof-email-input').value = user.email;
         }
 
-        function openFeelingsModal() {
-            document.getElementById('feelings-modal').style.display = 'flex';
+        window.publishPost = async function() {
+            let text = document.getElementById('new-post-text').value.trim();
+            if (!text && !selectedPostImage) return;
+
+            try {
+                await addDoc(collection(db, "posts"), {
+                    author: currentUser.displayName || "مستخدم",
+                    authorEmail: currentUser.email,
+                    text: text,
+                    feeling: currentSelectedFeeling || "",
+                    image: selectedPostImage || "",
+                    createdAt: serverTimestamp(),
+                    likes: 0,
+                    likedBy: []
+                });
+
+                document.getElementById('new-post-text').value = '';
+                document.getElementById('post-image-preview').style.display = 'none';
+                document.getElementById('selected-feeling-tag').style.display = 'none';
+                selectedPostImage = null;
+                currentSelectedFeeling = null;
+            } catch (e) {
+                alert("خطأ أثناء النشر: " + e.message);
+            }
         }
 
-        function selectFeeling(feeling) {
-            currentSelectedFeeling = feeling;
-            let tag = document.getElementById('selected-feeling-tag');
-            tag.innerText = `يشعر بـ ${feeling}`;
-            tag.style.display = 'inline-block';
-            closeModal('feelings-modal');
+        // جلب المنشورات بشكل حي (Real-time) من Firestore
+        function listenToPosts() {
+            const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                let container = document.getElementById('feed-container');
+                container.innerHTML = '';
+                
+                snapshot.forEach((docSnap) => {
+                    let post = docSnap.data();
+                    let postId = docSnap.id;
+                    let isLiked = post.likedBy && post.likedBy.includes(currentUser.email);
+
+                    let postHTML = `
+                        <div class="card post">
+                            <div class="post-header">
+                                <div class="post-author-info">
+                                    <div class="avatar">${post.author.charAt(0)}</div>
+                                    <div>
+                                        <div class="post-author">${post.author} ${post.feeling ? `<small style="color:gray;">— ${post.feeling}</small>` : ''}</div>
+                                        <div class="post-time">منذ قليل</div>
+                                    </div>
+                                </div>
+                            </div>
+                            ${post.text ? `<div class="post-content">${post.text}</div>` : ''}
+                            ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
+                            <div class="post-stats">
+                                <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="toggleLike('${postId}', ${post.likes || 0}, ${JSON.stringify(post.likedBy || [])})">
+                                    <i class="fa-thumbs-up ${isLiked ? 'fa-solid' : 'fa-regular'}"></i>
+                                    <span>${post.likes || 0} إعجاب</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', postHTML);
+                });
+            });
         }
 
-        function previewPostImage(event) {
+        window.toggleLike = async function(postId, currentLikes, likedByArr) {
+            // سيتم تفعيل تفاعلات الإعجاب السحابية هنا
+        }
+
+        window.previewPostImage = function(event) {
             let file = event.target.files[0];
             if (!file) return;
-
             let reader = new FileReader();
             reader.onload = function(e) {
                 selectedPostImage = e.target.result;
@@ -915,496 +802,20 @@
             reader.readAsDataURL(file);
         }
 
-        function publishPost() {
-            let text = document.getElementById('new-post-text').value.trim();
-            if (!text && !selectedPostImage) return;
-
-            let currentUser = accounts.find(a => a.email === currentEmail);
-
-            let newPost = {
-                id: Date.now(),
-                author: currentUser.name,
-                authorEmail: currentUser.email,
-                text: text,
-                feeling: currentSelectedFeeling,
-                image: selectedPostImage,
-                time: "الآن",
-                likes: 0,
-                likedBy: [],
-                comments: []
-            };
-
-            posts.unshift(newPost);
-            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-
-            document.getElementById('new-post-text').value = '';
-            document.getElementById('post-image-preview').style.display = 'none';
-            document.getElementById('selected-feeling-tag').style.display = 'none';
-            selectedPostImage = null;
-            currentSelectedFeeling = null;
-
-            renderPosts();
+        window.openFeelingsModal = () => document.getElementById('feelings-modal').style.display = 'flex';
+        window.selectFeeling = (feeling) => {
+            currentSelectedFeeling = feeling;
+            let tag = document.getElementById('selected-feeling-tag');
+            tag.innerText = `يشعر بـ ${feeling}`;
+            tag.style.display = 'inline-block';
+            document.getElementById('feelings-modal').style.display = 'none';
         }
-
-        function toggleOptionsMenu(postId, event) {
-            event.stopPropagation();
-            document.querySelectorAll('.options-menu').forEach(m => {
-                if (m.id !== `options-menu-${postId}`) m.classList.remove('active');
-            });
-            let menu = document.getElementById(`options-menu-${postId}`);
-            if (menu) menu.classList.toggle('active');
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+        window.openWelcomeModal = () => document.getElementById('welcome-modal').style.display = 'flex';
+        window.switchTab = function(viewId, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
         }
-
-        /* نقل المنشور إلى سلة المحذوفات */
-        function movePostToTrash(postId) {
-            let postIndex = posts.findIndex(p => p.id === postId);
-            if (postIndex !== -1) {
-                let [deletedPost] = posts.splice(postIndex, 1);
-                trashPosts.unshift(deletedPost);
-                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-                localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
-                renderPosts();
-            }
-        }
-
-        /* استعادة من السلة */
-        function restorePost(postId) {
-            let trashIndex = trashPosts.findIndex(p => p.id === postId);
-            if (trashIndex !== -1) {
-                let [restoredPost] = trashPosts.splice(trashIndex, 1);
-                posts.unshift(restoredPost);
-                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-                localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
-                renderPosts();
-                renderSettingsLists();
-            }
-        }
-
-        /* حذف نهائي من السلة */
-        function deletePermanently(postId) {
-            if (confirm("هل أنت تأكد من الحذف النهائي؟ لا يمكن التراجع عن هذا إجراء.")) {
-                trashPosts = trashPosts.filter(p => p.id !== postId);
-                localStorage.setItem('kalimat_trash', JSON.stringify(trashPosts));
-                renderSettingsLists();
-            }
-        }
-
-        function toggleBlockUser(targetEmail) {
-            let currentUser = accounts.find(a => a.email === currentEmail);
-            if (!currentUser) return;
-
-            if (!currentUser.blockedUsers) currentUser.blockedUsers = [];
-
-            let index = currentUser.blockedUsers.indexOf(targetEmail);
-            if (index === -1) {
-                currentUser.blockedUsers.push(targetEmail);
-                alert("تم حظر العضو بنجاح.");
-            } else {
-                currentUser.blockedUsers.splice(index, 1);
-                alert("تم إلغاء الحظر.");
-            }
-
-            localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
-            closeModal('user-profile-modal');
-            renderPosts();
-            renderSettingsLists();
-        }
-
-        function renderPosts() {
-            let container = document.getElementById('feed-container');
-            container.innerHTML = '';
-
-            let currentUser = accounts.find(a => a.email === currentEmail);
-            let blockedList = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
-
-            posts.forEach(post => {
-                if (blockedList.includes(post.authorEmail)) return;
-
-                let authorObj = accounts.find(a => a.email === post.authorEmail) || { name: post.author, email: post.authorEmail, image: null };
-                let isLiked = post.likedBy && post.likedBy.includes(currentEmail);
-                let isOwner = post.authorEmail === currentEmail;
-
-                let commentsHTML = post.comments.map(c => `
-                    <div class="comment-item">
-                        <strong>${c.author}:</strong> ${c.text}
-                    </div>
-                `).join('');
-
-                let postHTML = `
-                    <div class="card post" data-id="${post.id}">
-                        <div class="post-header">
-                            <div class="post-author-info">
-                                ${getAvatarHTML(authorObj)}
-                                <div>
-                                    <div class="post-author" onclick="openUserProfile('${post.authorEmail}')">${post.author} ${post.feeling ? `<small style="font-weight:normal; color:var(--text-secondary);">— يشعر بـ ${post.feeling}</small>` : ''}</div>
-                                    <div class="post-time">${post.time}</div>
-                                </div>
-                            </div>
-                            
-                            ${isOwner ? `
-                                <i class="fa-solid fa-ellipsis post-options-btn" onclick="toggleOptionsMenu(${post.id}, event)"></i>
-                                <div class="options-menu" id="options-menu-${post.id}">
-                                    <div class="options-menu-item danger" onclick="movePostToTrash(${post.id})">
-                                        <i class="fa-solid fa-trash-can"></i> حذف المنشور
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                        ${post.text ? `<div class="post-content">${post.text}</div>` : ''}
-                        ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
-                        
-                        <div class="post-stats">
-                            <div class="stat-item ${isLiked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
-                                <i class="fa-thumbs-up ${isLiked ? 'fa-solid' : 'fa-regular'}"></i>
-                                <span>${post.likes || 0} إعجاب</span>
-                            </div>
-                            <div class="stat-item">
-                                <i class="fa-regular fa-comment"></i>
-                                <span>${post.comments.length} تعليق</span>
-                            </div>
-                            <div class="stat-item" onclick="openShareModal(${post.id})">
-                                <i class="fa-solid fa-share"></i>
-                                <span>مشاركة</span>
-                            </div>
-                        </div>
-
-                        <div class="comments-list">${commentsHTML}</div>
-
-                        <div class="comment-box">
-                            <input type="text" placeholder="اكتب تعليقاً...">
-                            <button class="btn-small" onclick="addComment(${post.id}, this)"><i class="fa-solid fa-paper-plane"></i></button>
-                        </div>
-                    </div>
-                `;
-
-                container.insertAdjacentHTML('beforeend', postHTML);
-            });
-        }
-
-        function renderSettingsLists() {
-            // 1. عرض سلة المحذوفات الخاصة بالمستخدم
-            let trashContainer = document.getElementById('trash-list-box');
-            let myTrash = trashPosts.filter(p => p.authorEmail === currentEmail);
-            trashContainer.innerHTML = '';
-
-            if (myTrash.length === 0) {
-                trashContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">لا توجد عناصر محذوفة.</p>';
-            } else {
-                myTrash.forEach(p => {
-                    trashContainer.innerHTML += `
-                        <div class="account-badge">
-                            <div style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;">
-                                <strong>${p.text || 'صورة'}</strong>
-                            </div>
-                            <div style="display:flex; gap:5px;">
-                                <button class="btn-small" style="background:#28a745; padding:4px 8px; font-size:11px;" onclick="restorePost(${p.id})">استعادة</button>
-                                <button class="btn-small" style="background:#dc3545; padding:4px 8px; font-size:11px;" onclick="deletePermanently(${p.id})">حذف نهائي</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            // 2. عرض قائمة الحظر الخاصة بالمستخدم
-            let blockedContainer = document.getElementById('blocked-list-box');
-            let currentUser = accounts.find(a => a.email === currentEmail);
-            let blockedEmails = currentUser && currentUser.blockedUsers ? currentUser.blockedUsers : [];
-            blockedContainer.innerHTML = '';
-
-            if (blockedEmails.length === 0) {
-                blockedContainer.innerHTML = '<p style="color:var(--text-secondary); font-size:12px; padding:5px 0;">لا توجد أعضاء محظورين.</p>';
-            } else {
-                blockedEmails.forEach(bEmail => {
-                    let bUser = accounts.find(a => a.email === bEmail) || { name: bEmail, email: bEmail };
-                    blockedContainer.innerHTML += `
-                        <div class="account-badge">
-                            <div>
-                                <strong>${bUser.name}</strong>
-                            </div>
-                            <button class="btn-small" style="background:#45bd62; padding:4px 8px; font-size:11px;" onclick="toggleBlockUser('${bEmail}')">إلغاء الحظر</button>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        function toggleLike(postId) {
-            let post = posts.find(p => p.id === postId);
-            if (!post) return;
-
-            if (!post.likedBy) post.likedBy = [];
-
-            let index = post.likedBy.indexOf(currentEmail);
-            let currentUser = accounts.find(a => a.email === currentEmail);
-
-            if (index === -1) {
-                post.likedBy.push(currentEmail);
-                post.likes = (post.likes || 0) + 1;
-
-                if (post.authorEmail !== currentEmail) {
-                    addNotification(`قام ${currentUser.name} بالإعجاب بمنشورك.`);
-                }
-            } else {
-                post.likedBy.splice(index, 1);
-                post.likes = Math.max(0, (post.likes || 1) - 1);
-            }
-
-            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-            renderPosts();
-        }
-
-        function addComment(postId, btn) {
-            let input = btn.previousElementSibling;
-            let text = input.value.trim();
-            if (!text) return;
-
-            let currentUser = accounts.find(a => a.email === currentEmail);
-            let post = posts.find(p => p.id === postId);
-
-            if (post) {
-                if (!post.comments) post.comments = [];
-                post.comments.push({
-                    author: currentUser.name,
-                    text: text
-                });
-
-                if (post.authorEmail !== currentEmail) {
-                    addNotification(`علق ${currentUser.name} على منشورك: "${text.substring(0, 20)}..."`);
-                }
-
-                localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-                renderPosts();
-            }
-        }
-
-        function openShareModal(postId) {
-            activePostToShare = posts.find(p => p.id === postId);
-            document.getElementById('share-modal').style.display = 'flex';
-        }
-
-        function shareToFeed() {
-            if (!activePostToShare) return;
-            let currentUser = accounts.find(a => a.email === currentEmail);
-
-            let newPost = {
-                id: Date.now(),
-                author: currentUser.name,
-                authorEmail: currentUser.email,
-                text: `🔁 منشور مشارك عن (${activePostToShare.author}):\n"${activePostToShare.text || ''}"`,
-                image: activePostToShare.image,
-                time: "الآن",
-                likes: 0,
-                likedBy: [],
-                comments: []
-            };
-
-            posts.unshift(newPost);
-            localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-            closeModal('share-modal');
-            renderPosts();
-            alert('تمت مشاركة المنشور في حسابك بنجاح!');
-        }
-
-        function shareExternal() {
-            if (!activePostToShare) return;
-            let shareText = `${activePostToShare.author}: ${activePostToShare.text || 'منشور على منصة كلمات'}`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'منصة كلمات',
-                    text: shareText,
-                    url: window.location.href
-                }).catch(() => {});
-            } else {
-                navigator.clipboard.writeText(shareText);
-                alert('تم نسخ نص المنشور إلى الحافظة!');
-            }
-            closeModal('share-modal');
-        }
-
-        function openUserProfile(email) {
-            let user = accounts.find(a => a.email === email) || { name: "مستخدم", email: email, image: null };
-            document.getElementById('user-modal-name').innerText = user.name;
-            document.getElementById('user-modal-email').innerText = user.email;
-            document.getElementById('user-modal-avatar').innerHTML = getAvatarHTML(user, true);
-
-            let blockContainer = document.getElementById('block-action-container');
-            if (email !== currentEmail) {
-                let currentUser = accounts.find(a => a.email === currentEmail);
-                let isBlocked = currentUser && currentUser.blockedUsers && currentUser.blockedUsers.includes(email);
-                
-                blockContainer.innerHTML = `
-                    <button class="btn-small" style="background: ${isBlocked ? '#28a745' : '#dc3545'}; margin-top: 5px;" onclick="toggleBlockUser('${email}')">
-                        <i class="fa-solid ${isBlocked ? 'fa-user-check' : 'fa-user-slash'}"></i> 
-                        ${isBlocked ? 'إلغاء حظر العضو' : 'حظر العضو'}
-                    </button>
-                `;
-            } else {
-                blockContainer.innerHTML = '';
-            }
-
-            let userPosts = posts.filter(p => p.authorEmail === email);
-            let postsContainer = document.getElementById('user-modal-posts');
-            postsContainer.innerHTML = '';
-
-            if (userPosts.length === 0) {
-                postsContainer.innerHTML = '<p style="text-align:center; color:#888; font-size:13px;">لا توجد منشورات لهذا المستخدم بعد.</p>';
-            } else {
-                userPosts.forEach(p => {
-                    postsContainer.innerHTML += `
-                        <div class="card" style="box-shadow:none; border:1px solid #eee; margin-bottom:8px;">
-                            <small style="color:var(--text-secondary);">${p.time}</small>
-                            <p style="font-size:14px; margin-top:5px;">${p.text || ''}</p>
-                            ${p.image ? `<img src="${p.image}" style="width:100%; max-height:180px; object-fit:cover; border-radius:6px; margin-top:6px;">` : ''}
-                        </div>
-                    `;
-                });
-            }
-
-            document.getElementById('user-profile-modal').style.display = 'flex';
-        }
-
-        function addNotification(text) {
-            notifications.unshift({
-                id: Date.now(),
-                text: text,
-                time: "الآن",
-                read: false
-            });
-            localStorage.setItem('kalimat_notifs', JSON.stringify(notifications));
-            updateNotifBadge();
-        }
-
-        function updateNotifBadge() {
-            let unread = notifications.filter(n => !n.read).length;
-            let badge = document.getElementById('notif-count');
-            badge.innerText = unread;
-            badge.style.display = unread > 0 ? 'inline-block' : 'none';
-        }
-
-        function openNotificationsModal() {
-            let list = document.getElementById('notifications-list');
-            list.innerHTML = '';
-
-            if (notifications.length === 0) {
-                list.innerHTML = '<p style="text-align:center; color:#888;">لا توجد إشعارات حالياً.</p>';
-            } else {
-                notifications.forEach(n => {
-                    list.innerHTML += `
-                        <div style="padding: 10px; border-bottom: 1px solid #eee; background: ${n.read ? '#fff' : '#e7f3ff'}; border-radius: 6px; margin-bottom: 5px;">
-                            <div style="font-size: 13px;">${n.text}</div>
-                            <small style="color: var(--text-secondary); font-size: 11px;">${n.time}</small>
-                        </div>
-                    `;
-                    n.read = true;
-                });
-            }
-
-            localStorage.setItem('kalimat_notifs', JSON.stringify(notifications));
-            updateNotifBadge();
-            document.getElementById('notif-modal').style.display = 'flex';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function handleImageUpload(event) {
-            let file = event.target.files[0];
-            if (!file) return;
-
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let base64Image = e.target.result;
-                let userIndex = accounts.findIndex(a => a.email === currentEmail);
-                if (userIndex !== -1) {
-                    accounts[userIndex].image = base64Image;
-                    localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
-                    loadUserData(accounts[userIndex]);
-                    renderPosts();
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function saveProfileChanges() {
-            let newName = document.getElementById('prof-name-input').value.trim();
-            if (!newName) return;
-
-            let userIndex = accounts.findIndex(a => a.email === currentEmail);
-            if (userIndex !== -1) {
-                accounts[userIndex].name = newName;
-                localStorage.setItem('kalimat_accounts', JSON.stringify(accounts));
-                loadUserData(accounts[userIndex]);
-                renderPosts();
-                alert('تم حفظ التعديلات!');
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('kalimat_current_user');
-            currentEmail = null;
-            showAuthScreen();
-        }
-
-        function renderSavedAccounts() {
-            let container = document.getElementById('saved-accounts-list');
-            container.innerHTML = '';
-
-            if (accounts.length === 0) {
-                container.innerHTML = '<small style="color:#888;">لا توجد حسابات مسجلة.</small>';
-                return;
-            }
-
-            accounts.forEach(acc => {
-                let div = document.createElement('div');
-                div.className = 'account-badge';
-                div.innerHTML = `
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        ${getAvatarHTML(acc)}
-                        <div>
-                            <strong style="font-size:13px;">${acc.name}</strong><br>
-                            <small style="color:#777; font-size:11px;">${acc.email}</small>
-                        </div>
-                    </div>
-                    <button class="btn-small" onclick="switchAccount('${acc.email}')">دخول</button>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function sendMessage() {
-            let input = document.getElementById('chat-input');
-            let text = input.value.trim();
-            if (!text) return;
-
-            let box = document.getElementById('chat-messages-box');
-            let msgHTML = `<div style="background: var(--primary-color); color: white; padding: 8px 12px; border-radius: 12px; max-width: 80%; font-size: 13px; align-self: flex-end;">${text}</div>`;
-            box.insertAdjacentHTML('beforeend', msgHTML);
-            input.value = '';
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function toggleFollow(btn) {
-            if (btn.innerText.includes('متابعة')) {
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> تتابعه';
-                btn.style.background = '#45bd62';
-            } else {
-                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> متابعة';
-                btn.style.background = '#1877f2';
-            }
-        }
-
-        function filterPosts() {
-            let query = document.getElementById('global-search').value.toLowerCase();
-            let postsEls = document.querySelectorAll('#feed-container .post');
-            postsEls.forEach(post => {
-                let content = post.innerText.toLowerCase();
-                post.style.display = content.includes(query) ? 'block' : 'none';
-            });
-        }
-
-        initApp();
     </script>
 </body>
 </html>
